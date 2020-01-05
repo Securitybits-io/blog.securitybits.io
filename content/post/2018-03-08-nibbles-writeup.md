@@ -22,7 +22,7 @@ showPagination: true
 showSocial: true
 showDate: true
 comments: false
-summary: "My writeup o"f the Hack the box Nibbles box... Nibble nibble!"
+summary: "My writeup of the Hack the box Nibbles box... Nibble nibble!"
 ---
 Connecting to Hack the Box[^1] using the supplied VPN, my Nibbles box have the IP: 10.10.10.75
 As per usual, lets start with Recon and NMAP the target IP
