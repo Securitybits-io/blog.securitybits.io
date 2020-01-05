@@ -28,12 +28,9 @@ jobs:
         ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         PUBLISH_BRANCH: master
         PUBLISH_DIR: ./public
-        
-  slackNotification:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Slack Notification
-      uses: rtCamp/action-slack-notify@master
+    - uses: 8398a7/action-slack@v2
+      with:
+        status: ${{ job.status }}
       env:
-        SLACK_USERNAME: 'Github-Bot'
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
