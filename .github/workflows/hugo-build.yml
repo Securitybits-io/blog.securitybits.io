@@ -28,7 +28,10 @@ jobs:
         ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         PUBLISH_BRANCH: master
         PUBLISH_DIR: ./public
-
+        
+  slackNotification:
+    runs-on: ubuntu-latest
+    steps:
     - name: Slack Notification
       uses: rtCamp/action-slack-notify@master
       env:
