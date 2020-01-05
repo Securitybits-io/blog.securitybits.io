@@ -34,9 +34,9 @@ dp = 819195772616111188086602822995016674222414765313689424808867824454881508674
 dq = 3570695757580148093370242608506191464756425954703930236924583065811730548932270595568088372441809535917032142349986828862994856575730078580414026791444659
 ```
 Lets take "PicoCTF - Weird RSA flag"
-Now had these primes been sufficiently small, we could do the decryption of the cipher text manually. But having Prime numbers that are 150+ chars long will make it (at least for me rather difficult).
-The Python script can be found at my Github-Repo [Securitybits-io](http://https://github.com/Securitybits-io/RSA-Primes---Chinese-Remainder-Theorem).
-Using it is fairly simple, as it has a help section, Try it with the above primes to verify the results.
+Now had these primes been sufficiently small, we could do the decryption of the cipher text manually. But having Prime numbers that are 150+ chars long will make it (at least for me rather difficult).  
+The Python script can be found at my Github-Repo [Securitybits-io](http://https://github.com/Securitybits-io/RSA-Primes---Chinese-Remainder-Theorem).  
+Using it is fairly simple, as it has a help section, try it with the above primes to verify the results.
 I did not invent the Chinese Theorem or the RSA Algorithm. But merely implemented them, if you are further interested in the algorithm and techniques behind. Then i recommend to spend an hour reading the wiki page as well as the other two links i put under "References".
 ```bash
 root@Kali:~# python rsa-prime-decryption.py --help

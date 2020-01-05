@@ -27,7 +27,7 @@ comments: false
 summary: "Doing a ROPEmporium Series, time to switch it up with Split!"
 ---
 
-Before you read any further go back and have a look on my previous [ROPEmporium](https://blog.securitybits.io/2019/08/08/ropemporium-0-ret2win/) post, as this post will build on that knowledge. But also have some familiarity of
+Before you read any further go back and have a look on my previous [ROPEmporium](https://blog.securitybits.io/2019/08/ropemporium-0-ret2win-64-bit/) post, as this post will build on that knowledge. But also have some familiarity of
 
 - GDB
 - Radare2

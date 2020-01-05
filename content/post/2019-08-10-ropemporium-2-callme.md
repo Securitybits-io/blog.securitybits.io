@@ -27,7 +27,7 @@ comments: false
 summary: "Continuing the ROP Series with Callme, this time going through Calling conventions"
 ---
 
-Now if you haven't caught on, this is a series! I went through a bit about calling parameters in the previous post [1-Split](/2019/08/10/ropemporium-1-split-64-bit/), and in this post we'll dig into it a bit more and make 3 consecutive calls with 3 specific parameters.
+Now if you haven't caught on, this is a series! I went through a bit about calling parameters in the previous post [1-Split](https://blog.securitybits.io/2019/08/ropemporium-1-split-64-bit/), and in this post we'll dig into it a bit more and make 3 consecutive calls with 3 specific parameters.
 
 ## Description
 

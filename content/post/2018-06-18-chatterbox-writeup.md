@@ -161,6 +161,8 @@ c:\Users\Administrator>type Desktop\root.txt
 type Desktop\root.txt
 EatSleepPwnRepeat
 ```
-[^1]: [www.hackthebox.eu](www.hackthebox.eu)
-[^2]: [www.sourceforge.net/projects/achat/](https://sourceforge.net/projects/achat/)
+
+
+[^1]: [www.hackthebox.eu](www.hackthebox.eu)  
+[^2]: [www.sourceforge.net/projects/achat/](https://sourceforge.net/projects/achat/)  
 [^3]: [www.github.com/rasta-mouse](https://github.com/rasta-mouse/Sherlock/blob/master/Sherlock.ps1)
