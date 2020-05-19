@@ -71,7 +71,7 @@ I've split my VMs into a few different subnets to keep them organized!
 
 ## VMWare
 ### vCenter
-{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/vcenter_screenshot.png" title='vCenter Dashboard' >}}
+{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/vcenter_screenshot.png" title="vCenter Dashboard" >}}
 
 4 vCPU/16GB RAM/~200GB Disk  
 My vCenter is the main control hub for my homelab and its VMs, where all the provisioning happens, as well as the internal vmware network. It's chomping RAM like nobody's business, but it is necessary as i do not want to switch to Proxmox or Xen server.
@@ -80,13 +80,13 @@ My vCenter is the main control hub for my homelab and its VMs, where all the pro
 My Private stack is where I put the VMs that I do not want to have direct internet access and mainly where I put internal services.
 
 ### SaltStack
-{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/SaltStack-logo.png" title='SaltSTack Logo' >}}
+{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/SaltStack-logo.png" title="SaltSTack Logo" >}}
 
 2 vCPU/2GB Ram/100GB Disk  
 Many people have probably heard of puppet, chef and ansible... but maybe not [SaltStack](https://saltstack.com). It works by a master-minion system, this is the master, and on each linux VM there is a minion process running. You can also use salt-ssh, which makes it login and run commands, which works, but you loose some of the functions such as the reactor-bus etc. which define actions/states that the minion will perform on changes. Now there's a rather big debate on what orchestration tool that you should use. Granted there is a lot that's already made for ansible, and it is popular and more heard of as well. The reason that i fell down into SaltStack is that i found it had all the features that i wanted from ansible, and then some. Suffice it to say that all the following virtual machines are provisioned to my vCenter using Salt-Cloud.
 
 ### SIEM / Network logging solution
-{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/Elastic-Stack.png" title='Elastic-Stack Architecture' >}}
+{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/Elastic-Stack.png" title="Elastic-Stack Architecture" >}}
 
 Now this setup might warrant some comments about "overkill" (and probably its own post), but safe to say is that i am a huge elastic-stack fan. My cluster is a Hot-Warm architecture, with the addition of, if i ever need to, also do cold storage. Each of the nodes are properly secured, which isn't the easiest task. All the log transfer, rotation etc. are being done by either syslog, or beats. I do run the whole suite of beats:
 - Filebeat, for every relevant file based log.
@@ -114,7 +114,7 @@ Now other Elastic-Stack purists might yell at me for running beats through logst
 4 vCPU/4GB Ram/32GB Disk  
 Every logging solution, wether it be influx, nagios etc. need a front end. Elastic-Stacks solution is Kibana, this also contains apps such as Development tools for API-calls, SIEM detection, Health metric visualization etc.  
 
-{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/kibana_dashboard.png" title='Kibana Metricbeat Dashboard' >}}
+{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/kibana_dashboard.png" title="Kibana Metricbeat Dashboard" >}}
 
 ### PHP Ipam
 1 vCPU/1GB Ram/32GB Disk  
@@ -156,7 +156,7 @@ This is a self hosted application where users can create requests for plex.
 I am a member of a local rock climbing community, and have been for the last couple years hosted a small php web application for smartphones, which displays the club activities the coming 2 weeks in a nice format.
 
 ### Gitlab
-{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/GitLab-Logo.jpg" title='GitLab Logo' >}}
+{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/GitLab-Logo.jpg" title="GitLab Logo" >}}
 
 Everyone needs somewhere to store their source code, this gitlab instance is responsible to house my own projects which i do not want to have on any other SaaS solution (Github). I do a lot of security research, writing malware etc. for professional use. Working as a pentester and Security Researcher I hate going out and compromising a client (on purpose and with authorization), and my malware is detected by signatures or even before execution time. Before I started hosting my own gitlab, I did a test with creating a unseen custom backdoor, tested on a fully updated windows 10, upload it to a private repo, wait for a week and retest it on a __fresh__ windows 10 instance... detected, while yes it was not a 'state of the art' malware, but it was enough for me to question where i should store my research. Remember, the cloud is just someone else computer. I also store all the states and maps for SaltStack on my Gitlab, which makes it accessible even if my internet dies.
 
