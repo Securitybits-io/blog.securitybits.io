@@ -31,7 +31,9 @@ showDate: true
 comments: false
 summary: "Every server that i run in my homelab is more then often a virtual machine, and heres the run down!"
 ---
-Disclaimer, this is subject to change... very often and very quickly!
+{{< alert info >}}
+**Disclaimer, this is subject to change... very often and very quickly!**
+{{< /alert >}}
 
 {{< wide-image src="/img/posts/2020/05/what-virtual-machines-am-i-running/home_network-securitybits.png" title="The 'current' network architecture" >}}
 
@@ -125,6 +127,7 @@ Since I like organization, this was one of the best VMs that i could create. As 
 This is actually the only docker host that i have, and is a companion to my gitlab server. This is responsible to run the pipelines in docker containers that are defined in gitlab. wether it can be to build malware stubs or compile malicious binaries (Yeah I'm a pentester, what did you expect).
 
 ### Plex server
+4 vCPU/4GB Ram/100GB Disk  
 This is my only plex server for movies and tv-series. Since i travel 2-3 days sometimes, making hotel rooms boring! so this is accessible for me using my plex account. All the media is stored on Yggdrasil(NAS) and accessed over SMB.
 
 ### Transmission
@@ -158,6 +161,7 @@ I am a member of a local rock climbing community, and have been for the last cou
 ### Gitlab
 {{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/GitLab-Logo.jpg" title="GitLab Logo" >}}
 
+2 vCPU/4GB Ram/250GB Disk  
 Everyone needs somewhere to store their source code, this gitlab instance is responsible to house my own projects which i do not want to have on any other SaaS solution (Github). I do a lot of security research, writing malware etc. for professional use. Working as a pentester and Security Researcher I hate going out and compromising a client (on purpose and with authorization), and my malware is detected by signatures or even before execution time. Before I started hosting my own gitlab, I did a test with creating a unseen custom backdoor, tested on a fully updated windows 10, upload it to a private repo, wait for a week and retest it on a __fresh__ windows 10 instance... detected, while yes it was not a 'state of the art' malware, but it was enough for me to question where i should store my research. Remember, the cloud is just someone else computer. I also store all the states and maps for SaltStack on my Gitlab, which makes it accessible even if my internet dies.
 
 ### Nginx Reverse Proxy
@@ -167,23 +171,29 @@ A simple reverse proxy for my different web services, nothing that's out of the 
 ## Malware
 Now for the fun stuff, my malware net is the most restrictive net that i have, basically only accessible from a VPN and only have a outbound monitored internet connection. This is also the Segment that have the VMs in highest rotation, for good reason. Its purpose is basically a safe place to detonate malware and reverse live samples.
 ### GooseFlare
+4 vCPU/8GB Ram/80GB Disk  
 There's always 1-3 instances of FireEYEs Flare VM available in this net for malware research. If you haven't heard of [FlareVM](https://github.com/fireeye/flare-vm) it's a simple setup script for a windows VMs that contains most of all tools you'll need in order to reverse engineer a malware. The script is actively maintained by pull requests and FireEYE, highly recommended if you are interested in reverse engineering.
 
 
 ## GooseDev
 Much like the Malware segment, I have a segment for developing malware. I will put up another blog post specifically on this network and its hosts but the general idea is to have a network with hosts that have different AVs installed  and block by GPO and in the network firewall malware submissions to the mother ship.
 ### GooseDev
+4 vCPU/8GB Ram/150GB Disk  
 A simple windows 10 Pro host, with Python and visual studio installed. Since a lot of malwares and C2 framework have moved on from Powershell into a more unmonitored .NET and Powershell-Less execution, there was a need to have a development machine which was easily restored to an original state when a project was completed, so that there was no lingering artifacts. During Red-Team engagements this is also a Lab which goes through heavy modifications whenever we learn something new from the client, in order to mimic our target environment as good as can be to come out successful in the end. My current project is .NET DLL injections into memory for which I'm doing a small write up, stay tuned!
 ### GooseTarget
+2 vCPU/4GB Ram/60GB Disk  
 A standard windows 7/8/10 VM which is usually as default as can be, with the only modification is that i turn off sample submissions in the Group Policy so that i don't burn my applications pre-engagement.
 
 ## GooseLab
 Much like GooseDev subnet there's GooseLab, which is more of a static environment and a small domain playground to test new attacks and applications in a more controlled domain. Whats currently missing is actually a logging solution, which will probably be another Elastic-Stack and Winlogbeat.
 ### GooseSQL
+2 vCPU/4GB Ram/40GB Disk  
 Simple SQL Server with one database defined at the moment. Used for Authentication and some basic data storage for GooseWeb.
 ### GooseWEB
+2 vCPU/4GB Ram/40GB Disk  
 IIS Server that runs a small inventory management application connected to the SQL Database for authentication and data storage.
 ### GooseDC
+2 vCPU/4GB Ram/40GB Disk  
 Domain controller for the domain "Goose.Lab" 20 users with different degrees of access. There's also some small special case configurations in GPO, Groups and auth schemes which makes for an interesting Saturday evening of hacking.
 
 ## Finishing up
