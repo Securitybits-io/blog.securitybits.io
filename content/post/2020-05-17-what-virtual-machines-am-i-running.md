@@ -1,7 +1,7 @@
 ---
 title: 'What Virtual Machines Am I Running?'
 date: 2020-05-17
-thumbnailImagePosition: left
+thumbnailImagePosition: bottom
 thumbnailImage: /img/posts/2020/05/what-virtual-machines-am-i-running/header.png
 coverImage: /img/posts/2020/05/what-virtual-machines-am-i-running/header.png
 coversize: partial
@@ -34,7 +34,7 @@ summary: "Every server that i run in my homelab is more then often a virtual mac
 {{< alert info >}}
 **Disclaimer, this is subject to change... very often and very quickly!**
 {{< /alert >}}  
-  
+
 {{< wide-image src="/img/posts/2020/05/what-virtual-machines-am-i-running/home_network-securitybits.png" title="The 'current' network architecture" >}}
 
 To start off everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1.
@@ -198,5 +198,5 @@ Domain controller for the domain "Goose.Lab" 20 users with different degrees of 
 
 ## Finishing up
 Now people might ask "But what about docker or kubernetes?", And yes valid questions, but right now I don't really have the time to dig into a completely new architecture! Although i do run a couple of Docker containers for CTFs and for some tooling at work but i haven't not taken the step to host things of it. Also right now i have vCenter which gives me a rather solid single pane of glass on my environment, i do not feel like i would enjoy having multiple management console.  
-One might also ask where this blog is hosted? Actually it is on Github-Pages together with a small actions script which runs every time i make a push to the blog branch. If you want you can clone and repurpose the repo for your own blog, you can find the repo here: [Securitybits Github](https://github.com/Securitybits-io/blog.securitybits.io)
+One might also ask where this blog is hosted? Actually it is on Github-Pages together with a small actions script which runs every time i make a push to the blog branch. If you want you can clone and repurpose the repo for your own blog, you can find the repo here: [Securitybits Github](https://github.com/Securitybits-io/blog.securitybits.io)  
 If you have read this far, Good job! and thank you, if you have any questions don't hesitate to contact me!
