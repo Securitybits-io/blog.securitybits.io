@@ -33,7 +33,7 @@ summary: "Every server that i run in my homelab is more then often a virtual mac
 ---
 Disclaimer, this is subject to change... very often and very quickly!
 
-{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/home_network-securitybits.png" title='The "current" network architecture' >}}
+{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/home_network-securitybits.png" title="The 'current' network architecture" >}}
 
 To start off everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1.
 
