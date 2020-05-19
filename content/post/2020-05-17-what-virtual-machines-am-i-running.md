@@ -1,7 +1,7 @@
 ---
 title: 'What Virtual Machines Am I Running?'
 date: 2020-05-17
-thumbnailImagePosition: bottom
+thumbnailImagePosition: left
 thumbnailImage: /img/posts/2020/05/what-virtual-machines-am-i-running/header.png
 coverImage: /img/posts/2020/05/what-virtual-machines-am-i-running/header.png
 coversize: partial
