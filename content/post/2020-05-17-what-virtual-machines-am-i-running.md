@@ -198,4 +198,5 @@ Domain controller for the domain "Goose.Lab" 20 users with different degrees of 
 
 ## Finishing up
 Now people might ask "But what about docker or kubernetes?", And yes valid questions, but right now I don't really have the time to dig into a completely new architecture! Although i do run a couple of Docker containers for CTFs and for some tooling at work but i haven't not taken the step to host things of it. Also right now i have vCenter which gives me a rather solid single pane of glass on my environment, i do not feel like i would enjoy having multiple management console.  
+One might also ask where this blog is hosted? Actually it is on Github-Pages together with a small actions script which runs every time i make a push to the blog branch. If you want you can clone and repurpose the repo for your own blog, you can find the repo here: [Securitybits Github](https://github.com/Securitybits-io/blog.securitybits.io)
 If you have read this far, Good job! and thank you, if you have any questions don't hesitate to contact me!
