@@ -28,13 +28,13 @@ showDate: true
 comments: false
 summary: "This should be a brief overview on why and how to perform a password audit on a windows domain"
 ---
-In this post we are going to explore some of the attacks/audits that can be performed on the Active Directory credential database. In order to be able to extract the hashes to crack, we need to aquire the NTDS.dit file in one way or another. The NTDS.dit is a database which stores the data and information about user objects, groups and group memberships. It also includes the LM (if configured) and the NTLM hashes for all users. A password audit should be performed on a regular basis, in order to ensure that a correct security level is upheld. So that there does not exist any kind fo weak or easily guessable passwords, eg. Winter2020, <companyname>2017 etc. It is also useful during penetration tests and red team operations to aquire the hashes and clear text passwords, in case there is domain trust between two domains with shared credentials, or to forge golden tickets.  
+In this post we are going to explore some of the attacks/audits that can be performed on the Active Directory credential database. In order to be able to extract the hashes to crack, we need to acquire the NTDS.dit file in one way or another. The NTDS.dit is a database which stores the data and information about user objects, groups and group memberships. It also includes the LM (if configured) and the NTLM hashes for all users. A password audit should be performed on a regular basis, in order to ensure that a correct security level is upheld. So that there does not exist any kind fo weak or easily guessable passwords, eg. Winter2020, <companyname>2017 etc. It is also useful during penetration tests and red team operations to acquire the hashes and clear text passwords, in case there is domain trust between two domains with shared credentials, or to forge golden tickets.  
 
 While extracting the hashes makes it possible to use tools such as mimikatz, psexec or smbclient to pass the hash, we will in this post focus on getting to a state to audit the hashes (read cracking) using [hashcat](https://hashcat.net/hashcat/) or the LM/NTLM offline cracker of your choice.  
-  
+
 The premise of these audits is that the administrator have access to a user with the correct rights to the Domain Controller, either by having Domain Administrative rights, or the ACL GetChangesAll for the domain or Domain Controller object. The examples below will utilize Domain Administrative credentials for simplicity's sake.  
 In order to create a successful dump to audit, we need two specific files:
-1. **NTDS.dit** - The database itself, which depending on the size of the domain can be a few MegaBytes to several Gigabytes.
+1. **NTDS.dit** - The database itself, which depending on the size of the domain can be a few Megabytes to several Gigabytes.
 2. **SYSTEM Hive** - Registry hive which contains the bootkey used to decrypt the NTDS.dit file.
 
 {{< alert warning >}}  
@@ -134,4 +134,4 @@ Save to a file by appending the parameter ```-outputfile <FILE>```
 
 {{< image classes="fancybox center" src="/img/posts/2020/06/password-audit/secretsdump-local-screenshot.png" title="Secretsdump Local Export" >}}  
 
-Thank you for reading this rather lengthy post, Especially if you also tried each technique (On your own domain controller with permission of course). I will keeo coming back to this one and add new techniques as i find/learn them so remember to re-visit once in a while!
+Thank you for reading this rather lengthy post, Especially if you also tried each technique (On your own domain controller with permission of course). I will keep coming back to this one and add new techniques as i find/learn them so remember to re-visit once in a while!
