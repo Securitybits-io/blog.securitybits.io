@@ -35,7 +35,8 @@ summary: "Every server that i run in my homelab is more then often a virtual mac
 **Disclaimer, this is subject to change... very often and very quickly!**
 {{< /alert >}}  
 
-{{< wide-image src="/img/posts/2020/05/what-virtual-machines-am-i-running/home_network-securitybits.png" title="The 'current' network architecture" >}}
+
+{{< wide-image src="/img/posts/2020/05/what-virtual-machines-am-i-running/home_network-securitybits-v2.0.png" title="The 'current' network architecture" >}}
 
 To start off everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1.
 
@@ -59,13 +60,9 @@ The VRTX comes with 25 2,5" SAS Disk shelf! which makes it possible to have up 4
 Currently I have 9 drives, with 8 of them spanned in a Raid50 for 3,3TB and one in hot spare (in case one drive would break it would automatically re-silver).
 
 ## Fileserver
-### Dell R510
-Now this server started off as a 10gig file server that where used to store shared VMs, back when i ran multiple 2u rack servers.  
-But the specs are quite simple  
-Single Xeon E5620  
-32GB DDR3 ECC Ram  
-12x 4tb Seagate Constellation Es.3 (Main storage)  
-2x 240GB WD Green SATA SSD (SLOG)  
+### QNAP TS-832X
+While the R510 was a pretty potent server, it was quite redundant as any kind of fast storage since the VRTX had its own internal diskshelf. So i began to look for replacement, and landed on the QNAP Ts-832X with dual 10Gbps SFP+, and dual 1GbE. Together with 8 disk slots it became a pretty good bulk storage for backups of clients and server configs.
+There's currently 5 disks which are shucked WD Elements 10TB, so far they have been chugging along pretty well. And it also left me room for 3 additional drives before the next serious upgrade.
 
 ## Virtual Machines
 Now that we got that out of the way, lets dive into the meat of this post.
@@ -94,7 +91,7 @@ Now this setup might warrant some comments about "overkill" (and probably its ow
 - Filebeat, for every relevant file based log.
 - Auditbeat, security events such as file changes, user logins or processes.
 - Packetbeat, packets and netflow.
-- Metricbeat, I used to run a influxdb and grafana, but recently switched to metricbeat for convenience.  
+- Metricbeat, Well basically what it says, it gathers metrics from VMs and Docker containers.
 
 #### SIEM Elasticsearch Master
 2 vCPU/4GB Ram/32GB Disk  
@@ -118,6 +115,54 @@ Every logging solution, wether it be influx, nagios etc. need a front end. Elast
 
 {{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/kibana_dashboard.png" title="Kibana Metricbeat Dashboard" >}}
 
+### Breachsearch Elastic Cluster
+So this setup is not much more different then what the SIEM solution looks like, except its not in a Hot-Warm configuration as in this cluster there is only "hot" data. Though the purpose is a bit different, I do enjoy my fair share of data breaches. And i have a couple times referenced those breaches in engagements, and found working passwords (Credential stuffing). Which is always fun! But one dark secret of mine is that i like as with the SIEM Cluster to mangle and pivot data all manner of ways, and i love password statistics, so this was a extremely fun project. How i specifically did this setup, with code examples and the Goose.Lab database will be provided in an upcoming blogpost which will be linked [Placeholder](http://YouShouldNeverClickOnRandomLinks.com).
+
+#### Breachsearch Master
+2 vCPU/4GB RAM/32GB Disk  
+Again, these are the brains of the operation, and they are running a tight ship. I have 3 Masters in order to avoid the Split-brain syndrome,
+
+#### Breachsearch Hot
+6 vCPU/6GB RAM/250GB Disk
+Need somewhere to hold the data. While i don't have a Hot-Warm architecture for the Breachsearch cluster, it still acts as a hot node in regards to shard count. The data is also not indexed depending on the timestamp, but more like a straight database where you make searches on all data at the same time, hence these have a bit more resources then the SIEM cluster.
+
+#### Breachsearch Kibana
+4 vCPU/4GB RAM/32GB Disk
+The main function of this VM is only to visualize the data in a proper way.
+
+#### Breachsearch Ingest
+4 vCPU/4GB RAM/100GB Disk  
+Now this is where it gets interesting, and where most of the data ingestion happens. The field inexation happens in a Logstash dissect filter which looks like:
+```
+filter{
+  dissect {
+    mapping => { "message" => "%{DumpName} %{Username} %{Password} %{Hash} %{Hashformat} %{Cracked} %{Domain}" }
+  }
+  mutate{
+    remove_field => [ "host", "port" ]
+  }
+}
+```
+Which basically takes a netcat session, or a specific file and splits the message into different headers and indexes the data into the proper elastic-index. I'm also positive that this could be achieved with a Filebeat processor, but im lazy(-ish) and i know Logstash!
+
+{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/breachsearch_dashboard.png" title="Breachsearch Dashboard for Goose.Lab" >}}
+
+### TIG(V)-Stack
+So yeah, i broke and actually started using the TIG Stack again, not because my ELK stack is bad or anything but more because Telegraf and Varken are easier to integrate to more "esoteric" devices, such as BSD, Switches, UniFi etc.
+#### Telegraf
+2 vCPU/2GB RAM/32GB Disk  
+Telegraf is the TIG stacks application which pulls the data and metrics from devices, such as iDRAC, or switch port speeds from switches and routers, and seamlessly puts that data into InfluxDB so that it can be displayed with Grafana.
+
+#### InfluxDB
+4 vCPU/4GB RAM/100GB Disk  
+This is the "I" in the TIG stack, and InfluxDB is the de facto standard time series database for this kind of implementation. The VM currently holds two different databases:
+* Telegraf - A database which holds the direct output of the Telegraf VM, for example; VMWare Metrics, Switch and SNMP Metrics.
+* Varken - The database for Varken, which collects metrics and items from Radarr, Sonarr, Tautulli, Ombi and UniFi.
+
+#### Varken
+2 vCPU/2GB RAM/32GB Disk  
+[Varken](https://github.com/Boerderij/Varken) is a tool which pulls data and metrics from applications like, radarr, lidarr, sonarr Unifi etc. It is a cool project and currently a really effective way to see the requests which comes from Ombi and its users.
+
 ### PHP Ipam
 1 vCPU/1GB Ram/32GB Disk  
 Since I like organization, this was one of the best VMs that i could create. As this allows me to have my IP address space organized also makes it easy to look up where i have free addresses for new projects.
@@ -126,36 +171,78 @@ Since I like organization, this was one of the best VMs that i could create. As 
 2 vCPU/2GB Ram/250GB Disk  
 This is actually the only docker host that i have, and is a companion to my gitlab server. This is responsible to run the pipelines in docker containers that are defined in gitlab. wether it can be to build malware stubs or compile malicious binaries (Yeah I'm a pentester, what did you expect).
 
+### AFL-Master
+4 vCPU/4GB RAM/100GB Disk  
+Since i do a bunch of work in Penetration Testing etc. i thought that having a dedicated, easily re-provisioned Fuzzing VM would be beneficial. This is a machine that automatically installs [AFL](https://lcamtuf.coredump.c/afl), and is usually one of those that are just best left be to do its thing.  
+{{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/AmericanFuzzyLoop.png" title="AFL Currently fuzzing for De-serialization bugs in PHP-7.12" >}}  
+
+### Jotta Cloud-Backup
+2 vCPU/4GB RAM/40GB Disk  
+This is the only Non-Testing Windows VM that i run, because through my ISP and my contract I get a "Unlimited Cloud Backup solution" to JottaCloud... did i mention that I got it for free? You can probably also guess what drives are currently mounted to be backed up!
+
 ### Plex server
 4 vCPU/4GB Ram/100GB Disk  
-This is my only plex server for movies and tv-series. Since i travel 2-3 days sometimes, making hotel rooms boring! so this is accessible for me using my plex account. All the media is stored on Yggdrasil(NAS) and accessed over SMB.
+This is my only plex server for movies and tv-series. Since i travel 2-3 days sometimes, making hotel rooms boring! so this is accessible for me using my plex account. All the media is stored on Nidhoggr(NAS) and accessed over SMB.
 
 ### Transmission
+2 vCPU/2GB Ram/250GB Disk  
 A torrent client with a WebUI, which is running over a VPN.... for Linux ISOs...
 
 ### Tautulli
+2 vCPU/2GB Ram/32GB Disk  
 This one provides me some monitoring and statistics on movies and series on the Plex media server. This is not being used so much, but graphs are fun!
 
 ### Radarr
+2 vCPU/2GB Ram/100GB Disk  
 A VM which will organize and keep track of all your Movies, and also hooks into the download client so that it gets the highest quality.
 
 ### Sonarr
+2 vCPU/2GB Ram/100GB Disk  
 It's a similar too as Radarr, but for TV Shows, keeping track of your episodes and series automatically.
 
 ### Bazarr
+2 vCPU/2GB Ram/100GB Disk  
 Bazarr hooks up to your Radarr and Sonarr, and will download the correct subtitles for your specific languages and media!
 
 ### Jackett
+2 vCPU/2GB Ram/100GB Disk  
 Jackett hooks into the Radarr and Sonarr VMs and just adds different trackers, and more options for finding the correct media.
 
+### Docker 01
+4 vCPU/4GB RAM/100GB Disk  
+So I finally caved and started messing with Docker a bit more for my network services, and I wont hide and say that i don't like it! We'll see how much of my running services that i actually will convert to containers, but its nice as some tooling likes to run on docker.  
+This Docker host is mainly for general containers, that should be in the private network and is not really touching or osting anything for the public web.
+#### Portainer/Portainer
+So this is the docker master, it's connected to all the docker hosts with the Portainer/Agent. Basically it is my interface to deploy containers across all docker hosts, and manage my containers.
+#### Linuxserver/Heimdall
+Well, it was either this or organizr. And i liked the name Heimdall better! And its a dashboard for all my applications.
+
+### Docker 02
+4 vCPU/4GB RAM/100GB Disk  
+So this Docker host is for those tools that i don't really want to associate with my Home IP, therefor it is bound to the same VPN Connection as Transmission.
+#### Cobbr/Covenant
+This is a development and testing suite for the Covenant C2 Framework, been mostly using Cobalt-strike as a C2 Framework. While it IS really potent, its still too much powershell based. So i am currently trying Covenant C2 as an alternative.
+#### Yogeshojha/Rengine
+An Automated Recon Engine to do discovery on public accessible sites.  
+Link: [Rengine](https://github.com/yogeshojha/rengine)
+#### Ctdc/Spiderfoot
+An automated Open Source Intelligence Framework, which i use On and off of work!  
+Link: [Spiderfoot](https://github.com/smicallef/spiderfoot)
+#### Mpepping/CyberChef
+This is the Docker image of the British Intelligence GCHQ Web App that does simple and complex encoding/decoding operations. Mainly used as an internal tool for CTFs.  
+Link: [Github/CyberChef](https://github.com/gchq/CyberChef)
 
 ## Public / DMZ
 This segment is where i put all my public facing applications, with rather strict firewall rule set which is based on host to host traffic.
 
 ### Ombi
+2 vCPU/2GB Ram/250GB Disk  
 This is a self hosted application where users can create requests for plex.
 
-### Apache WebCalendar
+### Docker 03
+4 vCPU/4GB RAM/100GB Disk  
+This host is in my Public/DMZ Segment and is the main docker host where I'll host all my public websites.
+#### Securitybits/Jkk-Webcalendar
 I am a member of a local rock climbing community, and have been for the last couple years hosted a small php web application for smartphones, which displays the club activities the coming 2 weeks in a nice format.
 
 ### Gitlab
@@ -165,8 +252,11 @@ I am a member of a local rock climbing community, and have been for the last cou
 Everyone needs somewhere to store their source code, this gitlab instance is responsible to house my own projects which i do not want to have on any other SaaS solution (Github). I do a lot of security research, writing malware etc. for professional use. Working as a pentester and Security Researcher I hate going out and compromising a client (on purpose and with authorization), and my malware is detected by signatures or even before execution time. Before I started hosting my own gitlab, I did a test with creating a unseen custom backdoor, tested on a fully updated windows 10, upload it to a private repo, wait for a week and retest it on a __fresh__ windows 10 instance... detected, while yes it was not a 'state of the art' malware, but it was enough for me to question where i should store my research. Remember, the cloud is just someone else computer. I also store all the states and maps for SaltStack on my Gitlab, which makes it accessible even if my internet dies.
 
 ### Nginx Reverse Proxy
+2 vCPU/2GB RAM/32GB Disk
 A simple reverse proxy for my different web services, nothing that's out of the ordinary. This VM also handles Lets Encrypt TLS Certificates.
 
+### Grafana
+So Grafana is the last component in the TIG(V)-Stack, an its the famous frontend that all homelabbers love to show off!
 
 ## Malware
 Now for the fun stuff, my malware net is the most restrictive net that i have, basically only accessible from a VPN and only have a outbound monitored internet connection. This is also the Segment that have the VMs in highest rotation, for good reason. Its purpose is basically a safe place to detonate malware and reverse live samples.
@@ -174,12 +264,11 @@ Now for the fun stuff, my malware net is the most restrictive net that i have, b
 4 vCPU/8GB Ram/80GB Disk  
 There's always 1-3 instances of FireEYEs Flare VM available in this net for malware research. If you haven't heard of [FlareVM](https://github.com/fireeye/flare-vm) it's a simple setup script for a windows VMs that contains most of all tools you'll need in order to reverse engineer a malware. The script is actively maintained by pull requests and FireEYE, highly recommended if you are interested in reverse engineering.
 
-
 ## GooseDev
 Much like the Malware segment, I have a segment for developing malware. I will put up another blog post specifically on this network and its hosts but the general idea is to have a network with hosts that have different AVs installed  and block by GPO and in the network firewall malware submissions to the mother ship.
 ### GooseDev
 4 vCPU/8GB Ram/150GB Disk  
-A simple windows 10 Pro host, with Python and visual studio installed. Since a lot of malwares and C2 framework have moved on from Powershell into a more unmonitored .NET and Powershell-Less execution, there was a need to have a development machine which was easily restored to an original state when a project was completed, so that there was no lingering artifacts. During Red-Team engagements this is also a Lab which goes through heavy modifications whenever we learn something new from the client, in order to mimic our target environment as good as can be to come out successful in the end. My current project is .NET DLL injections into memory for which I'm doing a small write up, stay tuned!
+A simple windows 10 Pro host, with Python and visual studio installed. Since a lot of malware and C2 framework have moved on from Powershell into a more unmonitored .NET and Powershell-Less execution, there was a need to have a development machine which was easily restored to an original state when a project was completed, so that there was no lingering artifacts. During Red-Team engagements this is also a Lab which goes through heavy modifications whenever we learn something new from the client, in order to mimic our target environment as good as can be to come out successful in the end. My current project is .NET DLL injections into memory for which I'm doing a small write up, stay tuned!
 ### GooseTarget
 2 vCPU/4GB Ram/60GB Disk  
 A standard windows 7/8/10 VM which is usually as default as can be, with the only modification is that i turn off sample submissions in the Group Policy so that i don't burn my applications pre-engagement.
@@ -197,6 +286,33 @@ IIS Server that runs a small inventory management application connected to the S
 Domain controller for the domain "Goose.Lab" 20 users with different degrees of access. There's also some small special case configurations in GPO, Groups and auth schemes which makes for an interesting Saturday evening of hacking.
 
 ## Finishing up
-Now people might ask "But what about docker or kubernetes?", And yes valid questions, but right now I don't really have the time to dig into a completely new architecture! Although i do run a couple of Docker containers for CTFs and for some tooling at work but i haven't not taken the step to host things of it. Also right now i have vCenter which gives me a rather solid single pane of glass on my environment, i do not feel like i would enjoy having multiple management console.  
+So yeah, now i finally took the step and started using Docker to some extent. I can at least say that it is going to be a mainstay server in my VM stack, though i don't know how much but at least for some toolings. But I'll still use vCenter as the mainstay application to manage the VMs, and Portainer (or maybe take another step to Rancher) to manage my containers.  
 One might also ask where this blog is hosted? Actually it is on Github-Pages together with a small actions script which runs every time i make a push to the blog branch. If you want you can clone and repurpose the repo for your own blog, you can find the repo here: [Securitybits Github](https://github.com/Securitybits-io/blog.securitybits.io)  
 If you have read this far, Good job! and thank you, if you have any questions don't hesitate to contact me!
+
+### Changelog
+##### 2020-10-20
+Hardware changes:
+* Removed Cisco C2960-48TS-S in favor to a Ubiquiti 48-Port Switch
+* Added Raspberry Pi 4GB Unifi Controller
+* Added Ubiquiti NanoHD Access Point
+* Switched Dell R510 FreeNAS to a Qnap TS-832X
+
+Virtual Machine Changes:
+* Added: AFL-Master
+* Added: BreachSearch cluster
+* Added: Jotta Cloud-Backup (Windows VM)
+* Added: InfluxDB
+* Added: Varken
+* Added: Telegraf
+* Added: Grafana
+* Added: Docker-host 01/02/03
+* Added: Rancher-Master & Rancher-Worker 01/02
+* Removed: WebCalendar
+* Container: Portainer/Portainer
+* Container: Linuxserver/Heimdall
+* Container: Securitybits-io/jkk-WebCalendar
+* Container: Covenant/Covenant
+* Container: Yogeshojha/Rengine
+* Container: Ctdc/Spiderfoot
+* Container: Mpepping/CyberChef
