@@ -262,28 +262,28 @@ So Grafana is the last component in the TIG(V)-Stack, an its the famous frontend
 So this is a network segment where I keep "Closed Public"-servers, as in those servers that people can access if they have access. And as the name implies this segment is mostly for gameservers that I'd like to share access to.
 
 ### ODA-Arma3
-4 vCPU/6GB RAM/240GB Disk
+4 vCPU/6GB RAM/240GB Disk  
 So this is one of the first gameservers that I put up, and is a always on server for me and my friends to have our standing game nights on, as we do enjoy that "Milsim" gameplay of a ODA/SF Unit.
 
 ### DayZ
-4 vCPU/6GB RAM/240GB Disk
+4 vCPU/6GB RAM/240GB Disk  
 Same as the ODA-Arma3 server but this is for DayZ Standalone.
 
 ### TakServer
 {{< image classes="fancybox center" src="/img/posts/2020/05/what-virtual-machines-am-i-running/TAK-CIV-Banner.png" title="TakServer Logo" >}}
-2 vCPU/2GB RAM/100GB Disk
+2 vCPU/2GB RAM/100GB Disk  
 So ATAK-Civ has been one of those applications that I really wanted to try out for a long time. What it is, a Blue Force Tracker and information sharing app for Android and Windows. FreeTAKServer is built on a python3 Implementation of TakServer, which is lightweight and easy to run on much of any hardware that has pip and python. (Stay Tuned for a SaltStack installation script)
 
 ### WinTAK
-2 vCPU/4GB RAM/42GB Disk
+2 vCPU/4GB RAM/42GB Disk  
 Having the TakServer does nothing without also having clients to share the information with. The WinTAK server is a Windows based server where I can remote to using a VPN and have access to the TAK network wherever I go.
 
 ### RTMP
-2 vCPU/4GB RAM/100GB Disk
+2 vCPU/4GB RAM/100GB Disk  
 RTMP Is a "Real-Time Messaging Protocol" which I am currently using to collect and share media streams from various types of cameras and applications. This is a NGINX implementation as I found that was the easiest to implement and run.
 
 ### Mumble
-2 vCPU/2GB RAM/32GB Disk
+2 vCPU/2GB RAM/32GB Disk  
 Mumble is one of those VoIP applications that are just simple and they work. This is for a project I've had in my head for a while and is dedicated to radio communication using hand held PMR Radios.
 
 ## Malware
