@@ -17,7 +17,7 @@ figure.highlight,
     .gutter,
     .code,
     .tag {
-        background-color: #4a4a4a;//inherit;
+        background-color: inherit;
         font-family:      #{map-get($font-families, 'highlight')};
         border:           none;
         padding:          0;
