@@ -2,8 +2,8 @@
 title: 'Reverse Engineering an unknown digital protocol: RHME2, Whac a mole'
 date: 2021-05-18
 thumbnailImagePosition: left
-thumbnailImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.png
-coverImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.png
+thumbnailImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg
+coverImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg
 coversize: partial
 coverMeta: out
 metaAlignment: center
