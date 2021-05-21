@@ -133,7 +133,7 @@ With that set, came the problem of number 1, to bruteforce the pins. We know fro
 
 The bruteforce function simply checks the amount of peaks that are registered on the input D13 pin, which corresponds to the array `pins[n]`. If the `pin[peak] is 0` try the pin in `candidates[peak]` in this case, it starts by sending a peak out on pin D2. If the hit missed, the function `miss()` will increase `candidates[peak]` with one, so that the next time the program registers the same peak it will try pin D3. If however the peak would be a hit, the method `hit()` will be called and register pin D2 into the `pins[n]` table to be remembered for the future identical number of peaks.
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png" title="Console of the microcontroller which are performing the bruteforce" >}}
+{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png" title="Console of the microcontroller which is performing the bruteforce" >}}
 
 Running the code should eventually bruteforce each pin position, and print the flag in your terminal connected to the target!
 
