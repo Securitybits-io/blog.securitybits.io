@@ -25,8 +25,7 @@ comments: false
 summary: "My writeup of the Hack the box Chatterbox."
 ---
 
-> Never tell everything you know...
--Roger H. Lincoln
+> Never tell everything you know... -Roger H. Lincoln
 
 A box that warranted a lot of resets and frustrations. Due to the fact that the initial shell was provided with a Buffer Overflow, and crashing the service at the same time.
 
