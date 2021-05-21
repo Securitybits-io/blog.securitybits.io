@@ -57,7 +57,7 @@ That means when hooking up a oscilloscope to a serial connection, we'll see a na
 
 ## First Connection
 
-Having that knowledge that we have the correct baudrate, we can use `screen /dev/\<NANO Target\> 19200` or whichever fancy serial program that's available. Once connected we get presented by the following screen:
+Having that knowledge that we have the correct baudrate, we can use `screen /dev/<NANO Target> 19200` or whichever fancy serial program that's available. Once connected we get presented by the following screen:
 
     root@linux:~# screen /dev/ttyUSB0 19200
     Welcome adventurer.
