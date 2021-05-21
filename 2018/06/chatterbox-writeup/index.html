@@ -14,8 +14,7 @@ hasCoverMetaOut"><article class=post itemscope itemtype=http://schema.org/BlogPo
 <span>in</span>
 <a class=category-link href=https://blog.securitybits.io/categories/hackthebox>Hackthebox</a>,
 <a class=category-link href=https://blog.securitybits.io/categories/ctf>CTF</a>,
-<a class=category-link href=https://blog.securitybits.io/categories/writeup>Writeup</a></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><blockquote><p>Never tell everything you know&mldr;
--Roger H. Lincoln</p></blockquote><p>A box that warranted a lot of resets and frustrations. Due to the fact that the initial shell was provided with a Buffer Overflow, and crashing the service at the same time.</p><p>Connecting with my supplied VPN from HackTheBox<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>, and performing the initial NMAP scan on the box IP: 10.10.10.74</p><pre><code>root@kali:~/Chatterbox$ nmap -p- -T4 -Pn 10.10.10.74
+<a class=category-link href=https://blog.securitybits.io/categories/writeup>Writeup</a></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><blockquote><p>Never tell everything you know&mldr; -Roger H. Lincoln</p></blockquote><p>A box that warranted a lot of resets and frustrations. Due to the fact that the initial shell was provided with a Buffer Overflow, and crashing the service at the same time.</p><p>Connecting with my supplied VPN from HackTheBox<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>, and performing the initial NMAP scan on the box IP: 10.10.10.74</p><pre><code>root@kali:~/Chatterbox$ nmap -p- -T4 -Pn 10.10.10.74
 Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-18 16:57 CEST
 Nmap scan report for AChat (10.10.10.74)
 Host is up (0.041s latency).
