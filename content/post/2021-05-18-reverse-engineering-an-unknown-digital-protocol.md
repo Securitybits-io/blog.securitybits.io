@@ -2,8 +2,8 @@
 title: 'Reverse Engineering an unknown digital protocol: RHME2, Whac a mole'
 date: 2021-05-18
 thumbnailImagePosition: left
-thumbnailImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner2.jpg
-coverImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg
+thumbnailImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.png
+coverImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.png
 coversize: partial
 coverMeta: out
 metaAlignment: center
@@ -85,9 +85,9 @@ Looking at the schematics of the Arduino Nano, we can identify that there are a 
 
 Hooking up the Saleae Logic to the 2-8 pins gave no results after pressing enter on the Serial Prompt, but taking the next set of pins 9-13 and A0-A2 resulted in some traffic on the yellow cable, Channel 4, which was connected to the pin D13.
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.jpg" title="Logic Software result" >}}
+{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png" title="Logic Software result" >}}
 
-## Making assumptions
+## Making some assumptions
 While further investigating the board and signals, I went in with a couple assumptions
 - The Signals on pin D13, reflected the pin to hit
 - The pin should be one of the other Digital pins 2-12
@@ -133,9 +133,11 @@ With that set, came the problem of number 1, to bruteforce the pins. We know fro
 
 The bruteforce function simply checks the amount of peaks that are registered on the input D13 pin, which corresponds to the array `pins[n]`. If the `pin[peak] is 0` try the pin in `candidates[peak]` in this case, it starts by sending a peak out on pin D2. If the hit missed, the function `miss()` will increase `candidates[peak]` with one, so that the next time the program registers the same peak it will try pin D3. If however the peak would be a hit, the method `hit()` will be called and register pin D2 into the `pins[n]` table to be remembered for the future identical number of peaks.
 
+{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png" title="Console of the microcontroller which are performing the bruteforce" >}}
+
 Running the code should eventually bruteforce each pin position, and print the flag in your terminal connected to the target!
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png" title="Successful bruteforce of the pin positions for the flag" >}}
+{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png" title="Successful bruteforce of the pin positions for the flag on the target Nano" >}}
 
 ### Source Code
 Putting all the code together should look something like:
