@@ -77,7 +77,7 @@ Pressing enter at the screen just gives the following message over and over agai
 
 The name of the challenge, refer to the physical game of Whack the mole! which is a carnival game where heads pop up through holes, and the objective is to hit those in order to score points. Ok so that's easy enough if you'd know where to hit the moles.
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png" title="Arduino Nano pinout schematic" >}}
+{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png" title="Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/" >}}
 
 Looking at the schematics of the Arduino Nano, we can identify that there are a bunch of digital pins. 0/1 are dedicated to Tx and Rx for the Serial, 2-13 are dedicated Digital pins, and 14-19 are analog pins. Lets hook up a Logic Analyzer to the digital pins in order to see if there's any other signals.
 
@@ -298,7 +298,7 @@ Putting all the code together should look something like:
         }
     }
 
-### Github
-The complete source code and fritzing scheme can be found at  
+### Resources
+The complete source code and fritzing scheme can be found at:  
 Fritzing - [scheme.fzz](https://blog.securitybits.io/misc/2021/05/reverse-engineering-an-unknown-digital-protocol/scheme.fzz)  
 Arduino Sketch - [whacker.ino](https://blog.securitybits.io/misc/2021/05/reverse-engineering-an-unknown-digital-protocol/whacker.ino)
