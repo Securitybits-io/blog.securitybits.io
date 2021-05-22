@@ -107,8 +107,8 @@ In order to successfully automate the process of retrieving the flag there are s
 
 So in order to solve the resetting and verifying problem, I relied on using the `SoftwareSerial.h` library, as that can create a Software emulated Serial Tx/Rx out of any other pin. The idea was to interpret the messages that the target board was echoing depending if you hit a mole or not. Where the different states are:
 - You whacked it > Success
-- You missed it > fail
-- Welcome > start of the game
+- You missed it > fFail
+- Welcome > Start of the game
 
 With that set, came the problem of number 1, to bruteforce the pins. We know from the research that there are pins 2-12 as input on the target board to hit, and there are a maximum of 6 peaks on each iteration.
 
@@ -166,7 +166,7 @@ Putting all the code together should look something like:
     int candidates[6] = {2, 2, 2, 2, 2, 2};
     int pins[6] = {0, 0, 0, 0, 0, 0};
 
-    SoftwareSerial ser(SER_RX, SER_TX);
+    SoftwareSerial target(SER_RX, SER_TX);
 
     void setup() {
       Serial.begin(BAUDRATE);
@@ -181,7 +181,7 @@ Putting all the code together should look something like:
         }
 
       Serial.println("Ready");
-      ser.begin(19200);
+      target.begin(19200);
     }
 
     void set_used_pins(int pin){
@@ -254,8 +254,8 @@ Putting all the code together should look something like:
       }
 
     void loop() {
-      while(ser.available()){
-        inData = ser.read();
+      while(target.available()){
+        inData = target.read();
         strBuf += inData;
         }
 
@@ -265,20 +265,21 @@ Putting all the code together should look something like:
         strBuf = "";
         }
 
-      if (str.indexOf(F("You missed it")) >= 0) {
+      if (str.indexOf(F("missed")) >= 0) {
         miss();
         str = "";
-        ser.write("\r");
+        target.write("\r");
 
-      } else if (str.indexOf(F("You whacked it")) >= 0) {
+      } else if (str.indexOf(F("whacked")) >= 0) {
         hit();
         str = "";     
 
-      } else if (str.indexOf(F(" please step into the yard by pressing")) >= 0) {
+      } else if (str.indexOf(F("When you are ready")) >= 0) {
         Serial.println("Start the game");
+        delay(500);
         print_status();
         str = "";
-        ser.write("\r");
+        target.write("\r");
       }
 
       int value = digitalRead(PIN_READ);
@@ -290,7 +291,7 @@ Putting all the code together should look something like:
           }
         }
 
-      if (peak_start && peak_start + 103 < millis() && state == 0){
+      if (state == 0 && peak_start && peak_start + 100 < millis()){
         peak_state = peak_count - 1;
         whack(peak_state);
         peak_start = 0;
