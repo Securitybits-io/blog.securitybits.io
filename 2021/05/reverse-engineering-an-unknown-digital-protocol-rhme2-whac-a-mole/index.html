@@ -33,7 +33,7 @@ You missed it. Try again by pressing &lt;Enter&gt;.
 <span class=caption>Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/</span></div><p>Looking at the schematics of the Arduino Nano, we can identify that there are a bunch of digital pins. 0/1 are dedicated to Tx and Rx for the Serial, 2-13 are dedicated Digital pins, and 14-19 are analog pins. Lets hook up a Logic Analyzer to the digital pins in order to see if there&rsquo;s any other signals.</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg title="Saleae Logic Setup" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg alt="Saleae Logic Setup"></a>
 <span class=caption>Saleae Logic Setup</span></div><p>Hooking up the Saleae Logic to the 2-8 pins gave no results after pressing enter on the Serial Prompt, but taking the next set of pins 9-13 and A0-A2 resulted in some traffic on the yellow cable, Channel 4, which was connected to the pin D13.</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png title="Logic Software result" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png alt="Logic Software result"></a>
 <span class=caption>Logic Software result</span></div><h2 id=making-some-assumptions>Making some assumptions</h2><p>While further investigating the board and signals, I went in with a couple assumptions</p><ul><li>The Signals on pin D13, reflected the pin to hit</li><li>The pin should be one of the other Digital pins 2-12</li><li>There are multiple levels and not just one hit that has to be made</li><li>The signal should be received within 100ms from the peak</li></ul><p>While I was successful in making one or two hits and manually mapping out the pins that needed to be hit, each time that the board target resets the pins changed. Which pushed me in the direction of needing to do some proper logic on the micro controller in order to automate the process as much as possible.</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png title="Registering multiple mole whacks using the oscilloscope" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png alt="Registering multiple mole whacks using the oscilloscope"></a>
-<span class=caption>Registering multiple mole whacks using the oscilloscope</span></div><h2 id=codesplaining>Codesplaining</h2><p>In order to successfully automate the process of retrieving the flag there are some code requirements:</p><ol><li>Be able to bruteforce multiple pins</li><li>The amount of observable peaks are between 1-6</li><li>Automated process of verifying and resetting the board</li><li>The time to hit should be ~100ms</li></ol><p>So in order to solve the resetting and verifying problem, I relied on using the <code>SoftwareSerial.h</code> library, as that can create a Software emulated Serial Tx/Rx out of any other pin. The idea was to interpret the messages that the target board was echoing depending if you hit a mole or not. Where the different states are:</p><ul><li>You whacked it > Success</li><li>You missed it > fail</li><li>Welcome > start of the game</li></ul><p>With that set, came the problem of number 1, to bruteforce the pins. We know from the research that there are pins 2-12 as input on the target board to hit, and there are a maximum of 6 peaks on each iteration.</p><pre><code>int candidates[6] = {2, 2, 2, 2, 2, 2};
+<span class=caption>Registering multiple mole whacks using the oscilloscope</span></div><h2 id=codesplaining>Codesplaining</h2><p>In order to successfully automate the process of retrieving the flag there are some code requirements:</p><ol><li>Be able to bruteforce multiple pins</li><li>The amount of observable peaks are between 1-6</li><li>Automated process of verifying and resetting the board</li><li>The time to hit should be ~100ms</li></ol><p>So in order to solve the resetting and verifying problem, I relied on using the <code>SoftwareSerial.h</code> library, as that can create a Software emulated Serial Tx/Rx out of any other pin. The idea was to interpret the messages that the target board was echoing depending if you hit a mole or not. Where the different states are:</p><ul><li>You whacked it > Success</li><li>You missed it > fFail</li><li>Welcome > Start of the game</li></ul><p>With that set, came the problem of number 1, to bruteforce the pins. We know from the research that there are pins 2-12 as input on the target board to hit, and there are a maximum of 6 peaks on each iteration.</p><pre><code>int candidates[6] = {2, 2, 2, 2, 2, 2};
 int pins[6] = {0, 0, 0, 0, 0, 0};
 
 void peak(int pin){
@@ -77,7 +77,7 @@ String pins_used[12] = {&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ 
 int candidates[6] = {2, 2, 2, 2, 2, 2};
 int pins[6] = {0, 0, 0, 0, 0, 0};
 
-SoftwareSerial ser(SER_RX, SER_TX);
+SoftwareSerial target(SER_RX, SER_TX);
 
 void setup() {
   Serial.begin(BAUDRATE);
@@ -92,7 +92,7 @@ void setup() {
     }
 
   Serial.println(&quot;Ready&quot;);
-  ser.begin(19200);
+  target.begin(19200);
 }
 
 void set_used_pins(int pin){
@@ -165,8 +165,8 @@ void miss(){
   }
 
 void loop() {
-  while(ser.available()){
-    inData = ser.read();
+  while(target.available()){
+    inData = target.read();
     strBuf += inData;
     }
 
@@ -176,20 +176,21 @@ void loop() {
     strBuf = &quot;&quot;;
     }
 
-  if (str.indexOf(F(&quot;You missed it&quot;)) &gt;= 0) {
+  if (str.indexOf(F(&quot;missed&quot;)) &gt;= 0) {
     miss();
     str = &quot;&quot;;
-    ser.write(&quot;\r&quot;);
+    target.write(&quot;\r&quot;);
 
-  } else if (str.indexOf(F(&quot;You whacked it&quot;)) &gt;= 0) {
+  } else if (str.indexOf(F(&quot;whacked&quot;)) &gt;= 0) {
     hit();
     str = &quot;&quot;;     
 
-  } else if (str.indexOf(F(&quot; please step into the yard by pressing&quot;)) &gt;= 0) {
+  } else if (str.indexOf(F(&quot;When you are ready&quot;)) &gt;= 0) {
     Serial.println(&quot;Start the game&quot;);
+    delay(500);
     print_status();
     str = &quot;&quot;;
-    ser.write(&quot;\r&quot;);
+    target.write(&quot;\r&quot;);
   }
 
   int value = digitalRead(PIN_READ);
@@ -201,7 +202,7 @@ void loop() {
       }
     }
 
-  if (peak_start &amp;&amp; peak_start + 103 &lt; millis() &amp;&amp; state == 0){
+  if (state == 0 &amp;&amp; peak_start &amp;&amp; peak_start + 100 &lt; millis()){
     peak_state = peak_count - 1;
     whack(peak_state);
     peak_start = 0;
