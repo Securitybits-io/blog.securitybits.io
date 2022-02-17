@@ -1,22 +1,187 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.83.1 with theme Tranquilpeak 0.4.8-BETA"><meta name=author content="Christoffer Claesson"><meta name=keywords content><meta name=description content="Almost like King of the Lab this time!"><meta property="og:description" content="Almost like King of the Lab this time!"><meta property="og:type" content="article"><meta property="og:title" content="Reverse Engineering an unknown digital protocol: RHME2, Whac a mole"><meta name=twitter:title content="Reverse Engineering an unknown digital protocol: RHME2, Whac a mole"><meta property="og:url" content="https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/"><meta property="twitter:url" content="https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/"><meta property="og:site_name" content="Securitybits.io"><meta property="og:description" content="Almost like King of the Lab this time!"><meta name=twitter:description content="Almost like King of the Lab this time!"><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2021-05-18T00:00:00"><meta property="article:modified_time" content="2021-05-18T00:00:00"><meta property="article:section" content="Hardware"><meta property="article:section" content="CTF"><meta property="article:tag" content="riscure"><meta property="article:tag" content="rhme2"><meta property="article:tag" content="hardware"><meta property="article:tag" content="ctf"><meta property="article:tag" content="security"><meta property="article:tag" content="pentest"><meta name=twitter:card content="summary"><meta name=twitter:site content="@Securitybits_io"><meta name=twitter:creator content="@Securitybits_io"><meta property="og:image" content="https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg"><meta property="og:image" content="https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg"><meta property="og:image" content="https://blog.securitybits.io/img/profile.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/profile.jpg"><title>Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</title><link rel=icon href=https://blog.securitybits.io/favicon.png><link rel=canonical href=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=https://blog.securitybits.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-115328400-1','auto'),ga('send','pageview'))</script></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=https://blog.securitybits.io/>Securitybits.io</a></div><a class=header-right-picture href=https://blog.securitybits.io/#about><img class=header-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=https://blog.securitybits.io/#about><img class=sidebar-profile-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"></a><h4 class=sidebar-profile-name>Christoffer Claesson</h4><h5 class=sidebar-profile-bio>Security ramblings from a viking</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/><i class="sidebar-button-icon fa fa-lg fa-home"></i>
-<span class=sidebar-button-desc>Home</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/categories><i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
-<span class=sidebar-button-desc>Categories</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-<span class=sidebar-button-desc>Tags</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-<span class=sidebar-button-desc>Archives</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/page/about-me><i class="sidebar-button-icon fa fa-lg fa-question"></i>
-<span class=sidebar-button-desc>About Me</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i>
-<span class=sidebar-button-desc>GitHub</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
-<span class=sidebar-button-desc>Twitter</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-code-fork"></i>
-<span class=sidebar-button-desc>Keybase.io</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-<span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div class="post-header-cover
+<!doctype html><html lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=generator content="Hugo 0.92.2 with theme Tranquilpeak 0.4.8-BETA">
+<meta name=author content="Christoffer Claesson">
+<meta name=keywords content>
+<meta name=description content="Almost like King of the Lab this time!">
+<meta property="og:description" content="Almost like King of the Lab this time!">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reverse Engineering an unknown digital protocol: RHME2, Whac a mole">
+<meta name=twitter:title content="Reverse Engineering an unknown digital protocol: RHME2, Whac a mole">
+<meta property="og:url" content="https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/">
+<meta property="twitter:url" content="https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/">
+<meta property="og:site_name" content="Securitybits.io">
+<meta property="og:description" content="Almost like King of the Lab this time!">
+<meta name=twitter:description content="Almost like King of the Lab this time!">
+<meta property="og:locale" content="en-us">
+<meta property="article:published_time" content="2021-05-18T00:00:00">
+<meta property="article:modified_time" content="2021-05-18T00:00:00">
+<meta property="article:section" content="Hardware">
+<meta property="article:section" content="CTF">
+<meta property="article:tag" content="riscure">
+<meta property="article:tag" content="rhme2">
+<meta property="article:tag" content="hardware">
+<meta property="article:tag" content="ctf">
+<meta property="article:tag" content="security">
+<meta property="article:tag" content="pentest">
+<meta name=twitter:card content="summary">
+<meta name=twitter:site content="@Securitybits_io">
+<meta name=twitter:creator content="@Securitybits_io">
+<meta property="og:image" content="https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg">
+<meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg">
+<meta property="og:image" content="https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg">
+<meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg">
+<meta property="og:image" content="https://blog.securitybits.io/img/profile.jpg">
+<meta property="twitter:image" content="https://blog.securitybits.io/img/profile.jpg">
+<title>Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</title>
+<link rel=icon href=https://blog.securitybits.io/favicon.png>
+<link rel=canonical href=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
+<link rel=stylesheet href=https://blog.securitybits.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-115328400-1','auto'),ga('send','pageview'))</script>
+</head>
+<body>
+<div id=blog>
+<header id=header data-behavior=5>
+<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
+<div class=header-title>
+<a class=header-title-link href=https://blog.securitybits.io/>Securitybits.io</a>
+</div>
+<a class=header-right-picture href=https://blog.securitybits.io/#about>
+<img class=header-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
+</a>
+</header>
+<nav id=sidebar data-behavior=5>
+<div class=sidebar-container>
+<div class=sidebar-profile>
+<a href=https://blog.securitybits.io/#about>
+<img class=sidebar-profile-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
+</a>
+<h4 class=sidebar-profile-name>Christoffer Claesson</h4>
+<h5 class=sidebar-profile-bio>Security ramblings from a viking</h5>
+</div>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://blog.securitybits.io/>
+<i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>Home</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://blog.securitybits.io/categories>
+<i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+<span class=sidebar-button-desc>Categories</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://blog.securitybits.io/tags>
+<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>Tags</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://blog.securitybits.io/archives>
+<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>Archives</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://blog.securitybits.io/page/about-me>
+<i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>About Me</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+<span class=sidebar-button-desc>Twitter</span>
+</a>
+</li>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener>
+<i class="sidebar-button-icon fa fa-lg fa-code-fork"></i>
+<span class=sidebar-button-desc>Keybase.io</span>
+</a>
+</li>
+</ul>
+<ul class=sidebar-buttons>
+<li class=sidebar-button>
+<a class=sidebar-button-link href=https://blog.securitybits.io/index.xml>
+<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<div class="post-header-cover
 text-center
-post-header-cover--partial" style=background-image:url(/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg) data-behavior=5></div><div id=main data-behavior=5 class="hasCover
-hasCoverMetaOut"><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-center"><h1 class=post-title itemprop=headline>Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2021-05-18T00:00:00Z>May 18, 2021</time>
+post-header-cover--partial" style=background-image:url(/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg) data-behavior=5>
+</div>
+<div id=main data-behavior=5 class="hasCover
+hasCoverMetaOut">
+<article class=post itemscope itemtype=http://schema.org/BlogPosting>
+<div class="post-header main-content-wrap text-center">
+<h1 class=post-title itemprop=headline>
+Reverse Engineering an unknown digital protocol: RHME2, Whac a mole
+</h1>
+<div class="postShorten-meta post-meta">
+<time itemprop=datePublished datetime=2021-05-18T00:00:00Z>
+May 18, 2021
+</time>
 <span>in</span>
 <a class=category-link href=https://blog.securitybits.io/categories/hardware>Hardware</a>,
-<a class=category-link href=https://blog.securitybits.io/categories/ctf>CTF</a></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><blockquote><p>Who doesn&rsquo;t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer&rsquo;s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the darn things will be greatly rewarded. Are you up for the task?</p></blockquote><p>So I wanted to do some more hardware based CTF, especially now in covid times I don&rsquo;t get out as much to client sites doing some of these things on site. So I picked up yet another Riscure RHME2 CTF binary and tossed it into one of my Arduino Nano boards to have a go at it! This time I&rsquo;ll tackle the challenge Whack a Mole (links are down below) which is a (at the time of writing) 5 year old challenge, but it&rsquo;s been on my todo list for a while.</p><h2 id=setup>Setup</h2><p>So the Bill of Materials needed are:</p><ul><li>2x Arduino Nano</li><li>Breadboard</li><li>Various cables for the breadboard</li><li>Digital Oscilloscope with at least one channel (I used a Rigol DS1054Z)</li><li>Optional: Logic Analyzer</li></ul><p>Lets kick things off by actually loading the binary onto our target arduino. The writing of the binary will be done by using avrdude, which is available in most package repos.</p><pre><code>root@linux:~# wget https://github.com/Riscure/Rhme-2016/raw/master/challenges/binaries/whac_the_mole/whac_the_mole.hex
+<a class=category-link href=https://blog.securitybits.io/categories/ctf>CTF</a>
+</div>
+</div>
+<div class="post-content markdown" itemprop=articleBody>
+<div class=main-content-wrap>
+<blockquote>
+<p>Who doesn&rsquo;t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer&rsquo;s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the darn things will be greatly rewarded. Are you up for the task?</p>
+</blockquote>
+<p>So I wanted to do some more hardware based CTF, especially now in covid times I don&rsquo;t get out as much to client sites doing some of these things on site. So I picked up yet another Riscure RHME2 CTF binary and tossed it into one of my Arduino Nano boards to have a go at it! This time I&rsquo;ll tackle the challenge Whack a Mole (links are down below) which is a (at the time of writing) 5 year old challenge, but it&rsquo;s been on my todo list for a while.</p>
+<h2 id=setup>Setup</h2>
+<p>So the Bill of Materials needed are:</p>
+<ul>
+<li>2x Arduino Nano</li>
+<li>Breadboard</li>
+<li>Various cables for the breadboard</li>
+<li>Digital Oscilloscope with at least one channel (I used a Rigol DS1054Z)</li>
+<li>Optional: Logic Analyzer</li>
+</ul>
+<p>Lets kick things off by actually loading the binary onto our target arduino. The writing of the binary will be done by using avrdude, which is available in most package repos.</p>
+<pre><code>root@linux:~# wget https://github.com/Riscure/Rhme-2016/raw/master/challenges/binaries/whac_the_mole/whac_the_mole.hex
 root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&lt;NANO Device&gt; -b115200 -u -V -U flash:w:whac_the_mole.hex
-</code></pre><p>Doing that should produce a successful flash of the device with the correct binary. The next step is to power up the board and check if there&rsquo;s any data on the serial connection. But to do that we also need to find the baudrate of the device, which can be done by either trying and getting lucky, or using the oscilloscope to measure the peaks and data rate that is sent. But before actually hooking up the scope to the circuit,I highly recommend looking through EEVblogs guide on &ldquo;<a href="https://www.youtube.com/watch?v=xaELqAo4kkQ">How NOT to blow up your oscilloscope</a>&rdquo;, first and last warning!</p><p>So just to give the low down on serial communication. Devices communicate over a serial connection to other devices, it does so in binary representation by managing Peaks and Valleys on a digital connection. The Digital connection have two states:</p><ul><li>+5/3.3v represent a 0</li><li>+/-0v represent a 1</li></ul><p>That means when hooking up a oscilloscope to a serial connection, we&rsquo;ll see a natural +5v baseline on the screen. It also means that when we are triggering the probe in order to pause the data on the screen, we need to trigger on a downward slope. So hooking up the scope to the target Tx pin (Nano Pin0), setting the trigger to a -2.5v downward slope on the correct probe and resetting the arduino board we get presented with a fixed image of a serial transmission. Looking at the oscilloscopes automagic measurements, it&rsquo;s quite easy to determine a Rate of 192kV/s, so a baudrate of 19200 will work perfectly. Another great feature of the DS1054Z and many other digital oscilloscopes is that it can do RS232 decode directly in the device. Plugging in the known baudate to the Decode function outputs some of the sent strings.</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/RS232_Decode.png title="Oscilloscope Serial Decoding" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/RS232_Decode.png alt="Oscilloscope Serial Decoding"></a>
-<span class=caption>Oscilloscope Serial Decoding</span></div><h2 id=first-connection>First Connection</h2><p>Having that knowledge that we have the correct baudrate, we can use <code>screen /dev/&lt;NANO Target> 19200</code> or whichever fancy serial program that&rsquo;s available. Once connected we get presented by the following screen:</p><pre><code>root@linux:~# screen /dev/ttyUSB0 19200
+</code></pre>
+<p>Doing that should produce a successful flash of the device with the correct binary. The next step is to power up the board and check if there&rsquo;s any data on the serial connection. But to do that we also need to find the baudrate of the device, which can be done by either trying and getting lucky, or using the oscilloscope to measure the peaks and data rate that is sent. But before actually hooking up the scope to the circuit,I highly recommend looking through EEVblogs guide on &ldquo;<a href="https://www.youtube.com/watch?v=xaELqAo4kkQ">How NOT to blow up your oscilloscope</a>&rdquo;, first and last warning!</p>
+<p>So just to give the low down on serial communication. Devices communicate over a serial connection to other devices, it does so in binary representation by managing Peaks and Valleys on a digital connection. The Digital connection have two states:</p>
+<ul>
+<li>+5/3.3v represent a 0</li>
+<li>+/-0v represent a 1</li>
+</ul>
+<p>That means when hooking up a oscilloscope to a serial connection, we&rsquo;ll see a natural +5v baseline on the screen. It also means that when we are triggering the probe in order to pause the data on the screen, we need to trigger on a downward slope. So hooking up the scope to the target Tx pin (Nano Pin0), setting the trigger to a -2.5v downward slope on the correct probe and resetting the arduino board we get presented with a fixed image of a serial transmission. Looking at the oscilloscopes automagic measurements, it&rsquo;s quite easy to determine a Rate of 192kV/s, so a baudrate of 19200 will work perfectly. Another great feature of the DS1054Z and many other digital oscilloscopes is that it can do RS232 decode directly in the device. Plugging in the known baudate to the Decode function outputs some of the sent strings.</p>
+<div class="figure center">
+<a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/RS232_Decode.png title="Oscilloscope Serial Decoding" data-fancybox-group>
+<img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/RS232_Decode.png alt="Oscilloscope Serial Decoding">
+</a>
+<span class=caption>Oscilloscope Serial Decoding</span>
+</div>
+<h2 id=first-connection>First Connection</h2>
+<p>Having that knowledge that we have the correct baudrate, we can use <code>screen /dev/&lt;NANO Target> 19200</code> or whichever fancy serial program that&rsquo;s available. Once connected we get presented by the following screen:</p>
+<pre><code>root@linux:~# screen /dev/ttyUSB0 19200
 Welcome adventurer.
 
 We are glad you are here. We are in dire need of assistance.
@@ -29,11 +194,60 @@ Ready?
 Get set!
 GO!
 You missed it. Try again by pressing &lt;Enter&gt;.
-</code></pre><p>Pressing enter at the screen just gives the following message over and over again, and the program does not seem to accepts characters or and form of input over the Serial connection. So it is time to start exploring other options!</p><p>The name of the challenge, refer to the physical game of Whack the mole! which is a carnival game where heads pop up through holes, and the objective is to hit those in order to score points. Ok so that&rsquo;s easy enough if you&rsquo;d know where to hit the moles.</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png title="Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png alt="Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/"></a>
-<span class=caption>Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/</span></div><p>Looking at the schematics of the Arduino Nano, we can identify that there are a bunch of digital pins. 0/1 are dedicated to Tx and Rx for the Serial, 2-13 are dedicated Digital pins, and 14-19 are analog pins. Lets hook up a Logic Analyzer to the digital pins in order to see if there&rsquo;s any other signals.</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg title="Saleae Logic Setup" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg alt="Saleae Logic Setup"></a>
-<span class=caption>Saleae Logic Setup</span></div><p>Hooking up the Saleae Logic to the 2-8 pins gave no results after pressing enter on the Serial Prompt, but taking the next set of pins 9-13 and A0-A2 resulted in some traffic on the yellow cable, Channel 4, which was connected to the pin D13.</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png title="Logic Software result" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png alt="Logic Software result"></a>
-<span class=caption>Logic Software result</span></div><h2 id=making-some-assumptions>Making some assumptions</h2><p>While further investigating the board and signals, I went in with a couple assumptions</p><ul><li>The Signals on pin D13, reflected the pin to hit</li><li>The pin should be one of the other Digital pins 2-12</li><li>There are multiple levels and not just one hit that has to be made</li><li>The signal should be received within 100ms from the peak</li></ul><p>While I was successful in making one or two hits and manually mapping out the pins that needed to be hit, each time that the board target resets the pins changed. Which pushed me in the direction of needing to do some proper logic on the micro controller in order to automate the process as much as possible.</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png title="Registering multiple mole whacks using the oscilloscope" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png alt="Registering multiple mole whacks using the oscilloscope"></a>
-<span class=caption>Registering multiple mole whacks using the oscilloscope</span></div><h2 id=codesplaining>Codesplaining</h2><p>In order to successfully automate the process of retrieving the flag there are some code requirements:</p><ol><li>Be able to bruteforce multiple pins</li><li>The amount of observable peaks are between 1-6</li><li>Automated process of verifying and resetting the board</li><li>The time to hit should be ~100ms</li></ol><p>So in order to solve the resetting and verifying problem, I relied on using the <code>SoftwareSerial.h</code> library, as that can create a Software emulated Serial Tx/Rx out of any other pin. The idea was to interpret the messages that the target board was echoing depending if you hit a mole or not. Where the different states are:</p><ul><li>You whacked it > Success</li><li>You missed it > fFail</li><li>Welcome > Start of the game</li></ul><p>With that set, came the problem of number 1, to bruteforce the pins. We know from the research that there are pins 2-12 as input on the target board to hit, and there are a maximum of 6 peaks on each iteration.</p><pre><code>int candidates[6] = {2, 2, 2, 2, 2, 2};
+</code></pre>
+<p>Pressing enter at the screen just gives the following message over and over again, and the program does not seem to accepts characters or and form of input over the Serial connection. So it is time to start exploring other options!</p>
+<p>The name of the challenge, refer to the physical game of Whack the mole! which is a carnival game where heads pop up through holes, and the objective is to hit those in order to score points. Ok so that&rsquo;s easy enough if you&rsquo;d know where to hit the moles.</p>
+<div class="figure center">
+<a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png title="Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/" data-fancybox-group>
+<img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png alt="Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/">
+</a>
+<span class=caption>Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/</span>
+</div>
+<p>Looking at the schematics of the Arduino Nano, we can identify that there are a bunch of digital pins. 0/1 are dedicated to Tx and Rx for the Serial, 2-13 are dedicated Digital pins, and 14-19 are analog pins. Lets hook up a Logic Analyzer to the digital pins in order to see if there&rsquo;s any other signals.</p>
+<div class="figure center">
+<a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg title="Saleae Logic Setup" data-fancybox-group>
+<img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg alt="Saleae Logic Setup">
+</a>
+<span class=caption>Saleae Logic Setup</span>
+</div>
+<p>Hooking up the Saleae Logic to the 2-8 pins gave no results after pressing enter on the Serial Prompt, but taking the next set of pins 9-13 and A0-A2 resulted in some traffic on the yellow cable, Channel 4, which was connected to the pin D13.</p>
+<div class="figure center">
+<a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png title="Logic Software result" data-fancybox-group>
+<img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png alt="Logic Software result">
+</a>
+<span class=caption>Logic Software result</span>
+</div>
+<h2 id=making-some-assumptions>Making some assumptions</h2>
+<p>While further investigating the board and signals, I went in with a couple assumptions</p>
+<ul>
+<li>The Signals on pin D13, reflected the pin to hit</li>
+<li>The pin should be one of the other Digital pins 2-12</li>
+<li>There are multiple levels and not just one hit that has to be made</li>
+<li>The signal should be received within 100ms from the peak</li>
+</ul>
+<p>While I was successful in making one or two hits and manually mapping out the pins that needed to be hit, each time that the board target resets the pins changed. Which pushed me in the direction of needing to do some proper logic on the micro controller in order to automate the process as much as possible.</p>
+<div class="figure center">
+<a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png title="Registering multiple mole whacks using the oscilloscope" data-fancybox-group>
+<img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png alt="Registering multiple mole whacks using the oscilloscope">
+</a>
+<span class=caption>Registering multiple mole whacks using the oscilloscope</span>
+</div>
+<h2 id=codesplaining>Codesplaining</h2>
+<p>In order to successfully automate the process of retrieving the flag there are some code requirements:</p>
+<ol>
+<li>Be able to bruteforce multiple pins</li>
+<li>The amount of observable peaks are between 1-6</li>
+<li>Automated process of verifying and resetting the board</li>
+<li>The time to hit should be ~100ms</li>
+</ol>
+<p>So in order to solve the resetting and verifying problem, I relied on using the <code>SoftwareSerial.h</code> library, as that can create a Software emulated Serial Tx/Rx out of any other pin. The idea was to interpret the messages that the target board was echoing depending if you hit a mole or not. Where the different states are:</p>
+<ul>
+<li>You whacked it > Success</li>
+<li>You missed it > fFail</li>
+<li>Welcome > Start of the game</li>
+</ul>
+<p>With that set, came the problem of number 1, to bruteforce the pins. We know from the research that there are pins 2-12 as input on the target board to hit, and there are a maximum of 6 peaks on each iteration.</p>
+<pre><code>int candidates[6] = {2, 2, 2, 2, 2, 2};
 int pins[6] = {0, 0, 0, 0, 0, 0};
 
 void peak(int pin){
@@ -51,10 +265,25 @@ void whack(int pin){
     }
     digitalWrite(PIN_MONITOR, LOW);
   }
-</code></pre><p>The bruteforce function simply checks the amount of peaks that are registered on the input D13 pin, which corresponds to the array <code>pins[n]</code>. If the <code>pin[peak] is 0</code> try the pin in <code>candidates[peak]</code> in this case, it starts by sending a peak out on pin D2. If the hit missed, the function <code>miss()</code> will increase <code>candidates[peak]</code> with one, so that the next time the program registers the same peak it will try pin D3. If however the peak would be a hit, the method <code>hit()</code> will be called and register pin D2 into the <code>pins[n]</code> table to be remembered for the future identical number of peaks.</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png title="Console of the microcontroller which is performing the bruteforce" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png alt="Console of the microcontroller which is performing the bruteforce"></a>
-<span class=caption>Console of the microcontroller which is performing the bruteforce</span></div><p>Running the code should eventually bruteforce each pin position, and print the flag in your terminal connected to the target!</p><div class="figure center"><a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png title="Successful bruteforce of the pin positions for the flag on the target Nano" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png alt="Successful bruteforce of the pin positions for the flag on the target Nano"></a>
-<span class=caption>Successful bruteforce of the pin positions for the flag on the target Nano</span></div><h3 id=source-code>Source Code</h3><p>Putting all the code together should look something like:
-#include &lt;SoftwareSerial.h></p><pre><code>#define MAXPINS 12
+</code></pre>
+<p>The bruteforce function simply checks the amount of peaks that are registered on the input D13 pin, which corresponds to the array <code>pins[n]</code>. If the <code>pin[peak] is 0</code> try the pin in <code>candidates[peak]</code> in this case, it starts by sending a peak out on pin D2. If the hit missed, the function <code>miss()</code> will increase <code>candidates[peak]</code> with one, so that the next time the program registers the same peak it will try pin D3. If however the peak would be a hit, the method <code>hit()</code> will be called and register pin D2 into the <code>pins[n]</code> table to be remembered for the future identical number of peaks.</p>
+<div class="figure center">
+<a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png title="Console of the microcontroller which is performing the bruteforce" data-fancybox-group>
+<img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png alt="Console of the microcontroller which is performing the bruteforce">
+</a>
+<span class=caption>Console of the microcontroller which is performing the bruteforce</span>
+</div>
+<p>Running the code should eventually bruteforce each pin position, and print the flag in your terminal connected to the target!</p>
+<div class="figure center">
+<a class=fancybox href=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png title="Successful bruteforce of the pin positions for the flag on the target Nano" data-fancybox-group>
+<img class=fig-img src=https://blog.securitybits.io/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png alt="Successful bruteforce of the pin positions for the flag on the target Nano">
+</a>
+<span class=caption>Successful bruteforce of the pin positions for the flag on the target Nano</span>
+</div>
+<h3 id=source-code>Source Code</h3>
+<p>Putting all the code together should look something like:
+#include &lt;SoftwareSerial.h></p>
+<pre><code>#define MAXPINS 12
 #define PEAKDELAY 30
 #define BAUDRATE 19200
 #define SER_TX 18
@@ -209,8 +438,162 @@ void loop() {
     peak_count = 0;
     }
 }
-</code></pre><h3 id=resources>Resources</h3><p>The complete source code and fritzing scheme can be found at:<br>Fritzing - <a href=https://blog.securitybits.io/misc/2021/05/reverse-engineering-an-unknown-digital-protocol/scheme.fzz>scheme.fzz</a><br>Arduino Sketch - <a href=https://blog.securitybits.io/misc/2021/05/reverse-engineering-an-unknown-digital-protocol/whacker.ino>whacker.ino</a></p></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--disabled"><i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2020/06/password-audits/ data-tooltip="Password audits"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
-<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2021 Christoffer Claesson. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--disabled"><i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2020/06/password-audits/ data-tooltip="Password audits"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
-<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.securitybits.io%2F2021%2F05%2Freverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole%2F"><i class="fa fa-facebook-official"></i><span>Share on Facebook</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fblog.securitybits.io%2F2021%2F05%2Freverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole%2F"><i class="fa fa-twitter"></i><span>Share on Twitter</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fblog.securitybits.io%2F2021%2F05%2Freverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole%2F"><i class="fa fa-google-plus"></i><span>Share on Google+</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"><h4 id=about-card-name>Christoffer Claesson</h4><div id=about-card-bio>Security ramblings from a viking</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Senior Penetration Tester</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Sweden</div></div></div><div id=cover style=background-image:url(https://blog.securitybits.io/img/side-banner.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script><script src=https://blog.securitybits.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script><script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script></body></html>
+</code></pre>
+<h3 id=resources>Resources</h3>
+<p>The complete source code and fritzing scheme can be found at:<br>
+Fritzing - <a href=https://blog.securitybits.io/misc/2021/05/reverse-engineering-an-unknown-digital-protocol/scheme.fzz>scheme.fzz</a><br>
+Arduino Sketch - <a href=https://blog.securitybits.io/misc/2021/05/reverse-engineering-an-unknown-digital-protocol/whacker.ino>whacker.ino</a></p>
+</div>
+</div>
+<div id=post-footer class="post-footer main-content-wrap">
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2022/02/securityaudit-of-an-opensource-software-freetakserver/ data-tooltip="Securityaudit of an OpenSource Software: FreeTAKServer">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2020/06/password-audits/ data-tooltip="Password audits">
+<span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/">
+<i class="fa fa-google-plus"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</article>
+<footer id=footer class=main-content-wrap>
+<span class=copyrights>
+&copy; 2022 Christoffer Claesson. All Rights Reserved
+</span>
+</footer>
+</div>
+<div id=bottom-bar class=post-bottom-bar data-behavior=5>
+<div class=post-actions-wrap>
+<nav>
+<ul class="post-actions post-action-nav">
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2022/02/securityaudit-of-an-opensource-software-freetakserver/ data-tooltip="Securityaudit of an OpenSource Software: FreeTAKServer">
+<i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2020/06/password-audits/ data-tooltip="Password audits">
+<span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i>
+</a>
+</li>
+</ul>
+</nav>
+<ul class="post-actions post-action-share">
+<li class="post-action hide-lg hide-md hide-sm">
+<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
+<i class="fa fa-share-alt"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/">
+<i class="fa fa-facebook-official"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/">
+<i class="fa fa-twitter"></i>
+</a>
+</li>
+<li class="post-action hide-xs">
+<a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2021/05/reverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole/">
+<i class="fa fa-google-plus"></i>
+</a>
+</li>
+<li class=post-action>
+<a class="post-action-btn btn btn--default" href=#>
+<i class="fa fa-list"></i>
+</a>
+</li>
+</ul>
+</div>
+</div>
+<div id=share-options-bar class=share-options-bar data-behavior=5>
+<i id=btn-close-shareoptions class="fa fa-close"></i>
+<ul class=share-options>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.securitybits.io%2F2021%2F05%2Freverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole%2F">
+<i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fblog.securitybits.io%2F2021%2F05%2Freverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole%2F">
+<i class="fa fa-twitter"></i><span>Share on Twitter</span>
+</a>
+</li>
+<li class=share-option>
+<a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fblog.securitybits.io%2F2021%2F05%2Freverse-engineering-an-unknown-digital-protocol-rhme2-whac-a-mole%2F">
+<i class="fa fa-google-plus"></i><span>Share on Google+</span>
+</a>
+</li>
+</ul>
+</div>
+<div id=share-options-mask class=share-options-mask></div>
+</div>
+<div id=about>
+<div id=about-card>
+<div id=about-btn-close>
+<i class="fa fa-remove"></i>
+</div>
+<img id=about-card-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
+<h4 id=about-card-name>Christoffer Claesson</h4>
+<div id=about-card-bio>Security ramblings from a viking</div>
+<div id=about-card-job>
+<i class="fa fa-briefcase"></i>
+<br>
+Senior Penetration Tester
+</div>
+<div id=about-card-location>
+<i class="fa fa-map-marker"></i>
+<br>
+Sweden
+</div>
+</div>
+</div>
+<div id=cover style=background-image:url(https://blog.securitybits.io/img/side-banner.jpg)></div>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
+<script src=https://blog.securitybits.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
+<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
+</body>
+</html>
