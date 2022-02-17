@@ -211,7 +211,7 @@ def upload():
   else:
     return "https://" + IP + ':' + str(HTTPPORT) + "/Marti/api/sync/metadata/" + file_hash + "/tool"
 ```
-Whats visible in the vulnerable code block is that the parameter `filename` is passed to `os.path.join((str(directory), filename))` which when supplied alot of `../` (8 to be exact) it puts the base directory at the root of the filesystem and then the file is put wherever its directed (given write permissions)  
+Whats visible in the vulnerable code block is that the parameter `hash` is passed to `os.path.join((str(directory), filename))` which when supplied alot of `../` (8 to be exact) it puts the base directory at the root of the filesystem and then the file is put wherever its directed (given write permissions)  
 {{< hl-text danger >}}
 Note that this does not require any _authentication_ only that you are connected to the FreeTAKServer with a valid connection.
 {{< /hl-text >}}
