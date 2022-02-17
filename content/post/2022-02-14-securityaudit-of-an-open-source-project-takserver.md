@@ -237,6 +237,7 @@ In discussions with the developers, they mentioned that FreeTAKServer is Unsafe 
 14-02-2022 Discovered Vulnerabilities  
 15-02-2022 Wrote this Blog post  
 15-02-2022 Disclosed to developers  
+16-02-2022 Applied for CVE Through MITRE  
 17-02-2022 Developers pushed patch to FreeTAKServer v1.9.9  
 
 ## Resources
