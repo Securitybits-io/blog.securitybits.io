@@ -27,8 +27,6 @@ summary: "The parrot is not dead, its RESTing"
 
 > A colleague and I decided to have a look at a open-source project called [FreeTAKServer](https://github.com/FreeTAKTeam/FreeTakServer) and its frontend [FreeTAKServer-UI](https://github.com/FreeTAKTeam/UI). Mostly for fun, but there's always bugs to be had!
 
-{{< toc >}}
-
 ## What is FreeTAKServer
 
 According to the Github pages: 
