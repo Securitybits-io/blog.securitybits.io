@@ -2,8 +2,8 @@
 title: 'Securityaudit of an OpenSource Software: FreeTAKServer'
 date: 2022-02-14
 thumbnailImagePosition: left
-thumbnailImage: /img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg
-coverImage: /img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/thumbnail.jpg
+thumbnailImage: /img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/thumbnail.jpg
+coverImage: /img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg
 coversize: partial
 coverMeta: out
 metaAlignment: center
