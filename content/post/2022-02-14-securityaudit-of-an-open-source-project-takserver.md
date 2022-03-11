@@ -43,14 +43,14 @@ The vulnerabilities that will be discussed below affects currently the:
 - Werkzeug 2.0.3
 
 A list of the following vulnerabilities was discovered:
-1. Hardcoded Flask Secrets Key
-2. API and Websocket key leakage
-3. Unauthenticated RestAPI Endpoints
-4. XSS through Emergency Broadcast System from WebUI
-5. XSS through Emergency Broadcast System from End User Device
-6. SQL Injection leaking User Database
+1. Hardcoded Flask Secrets Key - CVE-2022-25510
+2. API and Websocket key leakage - CVE-2022-25512
+3. Unauthenticated RestAPI Endpoints - CVE-2022-25508
+4. XSS through Emergency Broadcast System from WebUI - CVE-2022-25507
+5. XSS through Emergency Broadcast System from End User Device - CVE-2022-25507
+6. SQL Injection leaking User Database - CVE-2022-25506
 7. Arbitrary File Write Leading to Remote Code Execution
-   1. Through WebUI (Authenticated)
+   1. Through WebUI (Authenticated) - CVE-2022-25511
    2. Through End User Device (Unauthenticated)
 
 Lets begin!
@@ -239,6 +239,7 @@ In discussions with the developers, they mentioned that FreeTAKServer is Unsafe 
 15-02-2022 Disclosed to developers  
 16-02-2022 Applied for CVE Through MITRE  
 17-02-2022 Developers pushed patch to FreeTAKServer v1.9.9  
+11-03-2022 Assigned CVEs
 
 ## Resources
 
