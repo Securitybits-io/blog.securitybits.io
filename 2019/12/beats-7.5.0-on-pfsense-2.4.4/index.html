@@ -1,192 +1,41 @@
-<!doctype html><html lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=generator content="Hugo 0.92.2 with theme Tranquilpeak 0.4.8-BETA">
-<meta name=author content="Christoffer Claesson">
-<meta name=keywords content>
-<meta name=description content="Long time wanting a beats client to PFsense which runs on FreeBSD, so lets compile it our self from source!">
-<meta property="og:description" content="Long time wanting a beats client to PFsense which runs on FreeBSD, so lets compile it our self from source!">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Beats 7.5.0 on PFsense 2.4.4">
-<meta name=twitter:title content="Beats 7.5.0 on PFsense 2.4.4">
-<meta property="og:url" content="https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/">
-<meta property="twitter:url" content="https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/">
-<meta property="og:site_name" content="Securitybits.io">
-<meta property="og:description" content="Long time wanting a beats client to PFsense which runs on FreeBSD, so lets compile it our self from source!">
-<meta name=twitter:description content="Long time wanting a beats client to PFsense which runs on FreeBSD, so lets compile it our self from source!">
-<meta property="og:locale" content="en-us">
-<meta property="article:published_time" content="2019-12-11T00:00:00">
-<meta property="article:modified_time" content="2019-12-11T00:00:00">
-<meta property="article:section" content="Homelab">
-<meta property="article:section" content="Elastic-co">
-<meta property="article:tag" content="homelab">
-<meta property="article:tag" content="security">
-<meta property="article:tag" content="filebeat">
-<meta property="article:tag" content="auditbeat">
-<meta property="article:tag" content="metricbeat">
-<meta property="article:tag" content="packetbeat">
-<meta property="article:tag" content="elasticsearch">
-<meta property="article:tag" content="elk">
-<meta property="article:tag" content="kibana">
-<meta property="article:tag" content="logstash">
-<meta property="article:tag" content="elastic-co">
-<meta name=twitter:card content="summary">
-<meta name=twitter:site content="@Securitybits_io">
-<meta name=twitter:creator content="@Securitybits_io">
-<meta property="og:image" content="https://blog.securitybits.io/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg">
-<meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg">
-<meta property="og:image" content="https://blog.securitybits.io/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg">
-<meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg">
-<meta property="og:image" content="https://blog.securitybits.io/img/profile.jpg">
-<meta property="twitter:image" content="https://blog.securitybits.io/img/profile.jpg">
-<title>Beats 7.5.0 on PFsense 2.4.4</title>
-<link rel=icon href=https://blog.securitybits.io/favicon.png>
-<link rel=canonical href=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
-<link rel=stylesheet href=https://blog.securitybits.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-115328400-1','auto'),ga('send','pageview'))</script>
-</head>
-<body>
-<div id=blog>
-<header id=header data-behavior=5>
-<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
-<div class=header-title>
-<a class=header-title-link href=https://blog.securitybits.io/>Securitybits.io</a>
-</div>
-<a class=header-right-picture href=https://blog.securitybits.io/#about>
-<img class=header-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
-</a>
-</header>
-<nav id=sidebar data-behavior=5>
-<div class=sidebar-container>
-<div class=sidebar-profile>
-<a href=https://blog.securitybits.io/#about>
-<img class=sidebar-profile-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
-</a>
-<h4 class=sidebar-profile-name>Christoffer Claesson</h4>
-<h5 class=sidebar-profile-bio>Security ramblings from a viking</h5>
-</div>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/>
-<i class="sidebar-button-icon fa fa-lg fa-home"></i>
-<span class=sidebar-button-desc>Home</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/categories>
-<i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
-<span class=sidebar-button-desc>Categories</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/tags>
-<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-<span class=sidebar-button-desc>Tags</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/archives>
-<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-<span class=sidebar-button-desc>Archives</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/page/about-me>
-<i class="sidebar-button-icon fa fa-lg fa-question"></i>
-<span class=sidebar-button-desc>About Me</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-github"></i>
-<span class=sidebar-button-desc>GitHub</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
-<span class=sidebar-button-desc>Twitter</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-code-fork"></i>
-<span class=sidebar-button-desc>Keybase.io</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/index.xml>
-<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-<span class=sidebar-button-desc>RSS</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<div class="post-header-cover
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.94.0 with theme Tranquilpeak 0.4.8-BETA"><meta name=author content="Christoffer Claesson"><meta name=keywords content><meta name=description content="Long time wanting a beats client to PFsense which runs on FreeBSD, so lets compile it our self from source!"><meta property="og:description" content="Long time wanting a beats client to PFsense which runs on FreeBSD, so lets compile it our self from source!"><meta property="og:type" content="article"><meta property="og:title" content="Beats 7.5.0 on PFsense 2.4.4"><meta name=twitter:title content="Beats 7.5.0 on PFsense 2.4.4"><meta property="og:url" content="https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/"><meta property="twitter:url" content="https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/"><meta property="og:site_name" content="Securitybits.io"><meta property="og:description" content="Long time wanting a beats client to PFsense which runs on FreeBSD, so lets compile it our self from source!"><meta name=twitter:description content="Long time wanting a beats client to PFsense which runs on FreeBSD, so lets compile it our self from source!"><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2019-12-11T00:00:00"><meta property="article:modified_time" content="2019-12-11T00:00:00"><meta property="article:section" content="Homelab"><meta property="article:section" content="Elastic-co"><meta property="article:tag" content="homelab"><meta property="article:tag" content="security"><meta property="article:tag" content="filebeat"><meta property="article:tag" content="auditbeat"><meta property="article:tag" content="metricbeat"><meta property="article:tag" content="packetbeat"><meta property="article:tag" content="elasticsearch"><meta property="article:tag" content="elk"><meta property="article:tag" content="kibana"><meta property="article:tag" content="logstash"><meta property="article:tag" content="elastic-co"><meta name=twitter:card content="summary"><meta name=twitter:site content="@Securitybits_io"><meta name=twitter:creator content="@Securitybits_io"><meta property="og:image" content="https://blog.securitybits.io/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg"><meta property="og:image" content="https://blog.securitybits.io/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg"><meta property="og:image" content="https://blog.securitybits.io/img/profile.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/profile.jpg"><title>Beats 7.5.0 on PFsense 2.4.4</title><link rel=icon href=https://blog.securitybits.io/favicon.png><link rel=canonical href=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=https://blog.securitybits.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-115328400-1","auto"),ga("send","pageview"))</script></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=https://blog.securitybits.io/>Securitybits.io</a></div><a class=header-right-picture href=https://blog.securitybits.io/#about><img class=header-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=https://blog.securitybits.io/#about><img class=sidebar-profile-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"></a><h4 class=sidebar-profile-name>Christoffer Claesson</h4><h5 class=sidebar-profile-bio>Security ramblings from a viking</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/><i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>Home</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/categories><i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+<span class=sidebar-button-desc>Categories</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>Tags</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>Archives</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/page/about-me><i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>About Me</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+<span class=sidebar-button-desc>Twitter</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-code-fork"></i>
+<span class=sidebar-button-desc>Keybase.io</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div class="post-header-cover
 text-center
-post-header-cover--partial" style=background-image:url(/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg) data-behavior=5>
-</div>
-<div id=main data-behavior=5 class="hasCover
-hasCoverMetaOut">
-<article class=post itemscope itemtype=http://schema.org/BlogPosting>
-<div class="post-header main-content-wrap text-center">
-<h1 class=post-title itemprop=headline>
-Beats 7.5.0 on PFsense 2.4.4
-</h1>
-<div class="postShorten-meta post-meta">
-<time itemprop=datePublished datetime=2019-12-11T00:00:00Z>
-December 11, 2019
-</time>
+post-header-cover--partial" style=background-image:url(/img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg) data-behavior=5></div><div id=main data-behavior=5 class="hasCover
+hasCoverMetaOut"><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-center"><h1 class=post-title itemprop=headline>Beats 7.5.0 on PFsense 2.4.4</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2019-12-11T00:00:00Z>December 11, 2019</time>
 <span>in</span>
 <a class=category-link href=https://blog.securitybits.io/categories/homelab>Homelab</a>,
-<a class=category-link href=https://blog.securitybits.io/categories/elastic-co>Elastic-co</a>
-</div>
-</div>
-<div class="post-content markdown" itemprop=articleBody>
-<div class=main-content-wrap>
-<p>There is always the option to send it via syslog, but it would be easier just using the beats to parse and send logs to a centralized logging platform. in this case a Hot-Warm elastic search cluster fronted by two Logstash machines (definitely overkill though).</p>
-<h2 id=initial-setup>Initial Setup</h2>
-<p>So for this task i&rsquo;ll be using Vagrant in order to simple have a VM that i can build the beats from the git source.</p>
-<p>Best way to install with current instructions is using the official <a href=https://www.vagrantup.com/docs/installation/>Vagrant Installation Guide</a>.</p>
-<p>I&rsquo;ll be also using Virtual box as a provider.</p>
-<h3 id=vagrantfile>Vagrantfile</h3>
-<p>Vagrant deploys virtual machines by a Vagrant File specification. We are compiling to a FreeBSD 11.2 system which means that we&rsquo;ll also specify for vagrant to spin up such a box.</p>
-<p>My Vagrant file looks like following, now you can certainly put it somewhere else, bu i just need the FreeBSD machine for this purpose, and will be destroyed after this compile hence putting it into /tmp.</p>
-<pre tabindex=0><code>root@ubuntu:~# mkdir freebsd-compile
+<a class=category-link href=https://blog.securitybits.io/categories/elastic-co>Elastic-co</a></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><p>There is always the option to send it via syslog, but it would be easier just using the beats to parse and send logs to a centralized logging platform. in this case a Hot-Warm elastic search cluster fronted by two Logstash machines (definitely overkill though).</p><h2 id=initial-setup>Initial Setup</h2><p>So for this task i&rsquo;ll be using Vagrant in order to simple have a VM that i can build the beats from the git source.</p><p>Best way to install with current instructions is using the official <a href=https://www.vagrantup.com/docs/installation/>Vagrant Installation Guide</a>.</p><p>I&rsquo;ll be also using Virtual box as a provider.</p><h3 id=vagrantfile>Vagrantfile</h3><p>Vagrant deploys virtual machines by a Vagrant File specification. We are compiling to a FreeBSD 11.2 system which means that we&rsquo;ll also specify for vagrant to spin up such a box.</p><p>My Vagrant file looks like following, now you can certainly put it somewhere else, bu i just need the FreeBSD machine for this purpose, and will be destroyed after this compile hence putting it into /tmp.</p><pre tabindex=0><code>root@ubuntu:~# mkdir freebsd-compile
 root@ubuntu:~# cd freebsd-compile/^C
 root@ubuntu:~# mkdir -p /tmp/freebsd-compile
 root@ubuntu:~# cd /tmp/freebsd-compile/
 root@ubuntu:/tmp/freebsd-compile# cat &lt;&lt;EOF &gt; Vagrantfile
-&gt; Vagrant.configure(&quot;2&quot;) do |config|
-&gt; config.vm.box = &quot;freebsd/FreeBSD-11.2-RELEASE&quot;
-&gt; config.vm.box_version = &quot;2018.06.22&quot;
+&gt; Vagrant.configure(&#34;2&#34;) do |config|
+&gt; config.vm.box = &#34;freebsd/FreeBSD-11.2-RELEASE&#34;
+&gt; config.vm.box_version = &#34;2018.06.22&#34;
 &gt; end
 &gt; EOF
 root@Valkyrie:/tmp/freebsd-compile# cat Vagrantfile
-Vagrant.configure(&quot;2&quot;) do |config|
-  config.vm.box = &quot;freebsd/FreeBSD-11.2-RELEASE&quot;
-  config.vm.box_version = &quot;2018.06.22&quot;
+Vagrant.configure(&#34;2&#34;) do |config|
+  config.vm.box = &#34;freebsd/FreeBSD-11.2-RELEASE&#34;
+  config.vm.box_version = &#34;2018.06.22&#34;
 end
 root@Valkyrie:/tmp/freebsd-compile#
-</code></pre><p>Good now that&rsquo;s all we need for our host system, lets start up the VM by using <code>vagrant up</code> in the vagrant file directory and wait.</p>
-<pre tabindex=0><code>root@ubuntu:/tmp/freebsd-compile# vagrant up
-Bringing machine 'default' up with 'virtualbox' provider...
-==&gt; default: Importing base box 'freebsd/FreeBSD-11.2-RELEASE'...
+</code></pre><p>Good now that&rsquo;s all we need for our host system, lets start up the VM by using <code>vagrant up</code> in the vagrant file directory and wait.</p><pre tabindex=0><code>root@ubuntu:/tmp/freebsd-compile# vagrant up
+Bringing machine &#39;default&#39; up with &#39;virtualbox&#39; provider...
+==&gt; default: Importing base box &#39;freebsd/FreeBSD-11.2-RELEASE&#39;...
 ==&gt; default: Generating MAC address for NAT networking...
-==&gt; default: Checking if box 'freebsd/FreeBSD-11.2-RELEASE' version '2018.06.22' is up to date...
+==&gt; default: Checking if box &#39;freebsd/FreeBSD-11.2-RELEASE&#39; version &#39;2018.06.22&#39; is up to date...
 [... snip ...]
-</code></pre><p>Now for me it did toss some errors trying to remote connect, but fear not. The machine is provisioned and started and we can now connect to it using <code>vagrant ssh</code>.</p>
-<pre tabindex=0><code>root@Valkyrie:/tmp/freebsd-compile# vagrant ssh
+</code></pre><p>Now for me it did toss some errors trying to remote connect, but fear not. The machine is provisioned and started and we can now connect to it using <code>vagrant ssh</code>.</p><pre tabindex=0><code>root@Valkyrie:/tmp/freebsd-compile# vagrant ssh
 FreeBSD 11.2-RELEASE-p14 (GENERIC) #0: Mon Aug 19 22:38:50 UTC 2019
 
 Welcome to FreeBSD!
@@ -194,10 +43,7 @@ Welcome to FreeBSD!
 vagrant@freebsd:~ % sudo su
 root@freebsd:/home/vagrant # cd
 root@freebsd:~ #
-</code></pre><p>Now comes the compiling of beats. And for this chapter i actually want to give a very large kudos to <a href=https://github.com/jakommo>Jakommo</a> who came up with it, but its too good not to have it drown in a <a href=https://github.com/elastic/beats/issues/1034#issuecomment-557276051>github issue.</a></p>
-<h2 id=package-installation-and-compilation>Package installation and Compilation</h2>
-<p>Now in order to succeed, we need a couple of packages installed into our VM.</p>
-<pre tabindex=0><code>root@freebsd:~ # pkg install git gmake go bash
+</code></pre><p>Now comes the compiling of beats. And for this chapter i actually want to give a very large kudos to <a href=https://github.com/jakommo>Jakommo</a> who came up with it, but its too good not to have it drown in a <a href=https://github.com/elastic/beats/issues/1034#issuecomment-557276051>github issue.</a></p><h2 id=package-installation-and-compilation>Package installation and Compilation</h2><p>Now in order to succeed, we need a couple of packages installed into our VM.</p><pre tabindex=0><code>root@freebsd:~ # pkg install git gmake go bash
 Updating FreeBSD repository catalogue...
 FreeBSD repository is up to date.
 All repositories are up to date.
@@ -212,11 +58,10 @@ Number of packages to be installed: 25
 Proceed with this action? [y/N]: y
 
 root@freebsd:~ #
-</code></pre><p>Now we have all the dependencies in order to compile, lets get the code and checkout the correct version. (I deliberately removed a lot of the output as that is of no importance if it throws no errors)</p>
-<pre tabindex=0><code>root@freebsd:~ # go get github.com/elastic/beats
+</code></pre><p>Now we have all the dependencies in order to compile, lets get the code and checkout the correct version. (I deliberately removed a lot of the output as that is of no importance if it throws no errors)</p><pre tabindex=0><code>root@freebsd:~ # go get github.com/elastic/beats
 root@freebsd:~ # cd src/github.com/elastic/beats/
 root@freebsd:~/src/github.com/elastic/beats # git checkout v7.5.0
-Note: switching to 'v7.5.0'.
+Note: switching to &#39;v7.5.0&#39;.
 root@freebsd:~/src/github.com/elastic/beats # cd /filebeat
 root@freebsd:~/src/github.com/elastic/beats/filebeat # gmake
 root@freebsd:~/src/github.com/elastic/beats/filebeat # file filebeat
@@ -226,160 +71,12 @@ filebeat version 7.5.0 (amd64), libbeat 7.5.0 ....
 root@freebsd:~/src/github.com/elastic/beats/metricbeat # ./metricbeat version
 metricbeat version 7.5.0 (amd64), libbeat 7.5.0 ....
 root@freebsd:~/src/github.com/elastic/beats/metricbeat #
-</code></pre><p>Now its just a matter of copy the filebeat binary to your pfsense and configure it according to the beats documentation.</p>
-<p>Note: This also work for auditbeat, packetbeat and metricbeat. but would be a redundant wall of text showing all 4 binaries.</p>
-<p>Again all credit goes to <a href=https://github.com/jakommo>Jakommo</a> for writing the comment on Github.</p>
-</div>
-</div>
-<div id=post-footer class="post-footer main-content-wrap">
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2020/05/what-virtual-machines-am-i-running/ data-tooltip="What Virtual Machines Am I Running?">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2019/12/ropemporium-3-write4-64-bit/ data-tooltip="ROPEmporium: 3-Write4 (64-bit)">
-<span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/">
-<i class="fa fa-google-plus"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-</article>
-<footer id=footer class=main-content-wrap>
-<span class=copyrights>
-&copy; 2022 Christoffer Claesson. All Rights Reserved
-</span>
-</footer>
-</div>
-<div id=bottom-bar class=post-bottom-bar data-behavior=5>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2020/05/what-virtual-machines-am-i-running/ data-tooltip="What Virtual Machines Am I Running?">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2019/12/ropemporium-3-write4-64-bit/ data-tooltip="ROPEmporium: 3-Write4 (64-bit)">
-<span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/">
-<i class="fa fa-google-plus"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-<div id=share-options-bar class=share-options-bar data-behavior=5>
-<i id=btn-close-shareoptions class="fa fa-close"></i>
-<ul class=share-options>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.securitybits.io%2F2019%2F12%2Fbeats-7.5.0-on-pfsense-2.4.4%2F">
-<i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fblog.securitybits.io%2F2019%2F12%2Fbeats-7.5.0-on-pfsense-2.4.4%2F">
-<i class="fa fa-twitter"></i><span>Share on Twitter</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fblog.securitybits.io%2F2019%2F12%2Fbeats-7.5.0-on-pfsense-2.4.4%2F">
-<i class="fa fa-google-plus"></i><span>Share on Google+</span>
-</a>
-</li>
-</ul>
-</div>
-<div id=share-options-mask class=share-options-mask></div>
-</div>
-<div id=about>
-<div id=about-card>
-<div id=about-btn-close>
-<i class="fa fa-remove"></i>
-</div>
-<img id=about-card-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
-<h4 id=about-card-name>Christoffer Claesson</h4>
-<div id=about-card-bio>Security ramblings from a viking</div>
-<div id=about-card-job>
-<i class="fa fa-briefcase"></i>
-<br>
-Senior Penetration Tester
-</div>
-<div id=about-card-location>
-<i class="fa fa-map-marker"></i>
-<br>
-Sweden
-</div>
-</div>
-</div>
-<div id=cover style=background-image:url(https://blog.securitybits.io/img/side-banner.jpg)></div>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+</code></pre><p>Now its just a matter of copy the filebeat binary to your pfsense and configure it according to the beats documentation.</p><p>Note: This also work for auditbeat, packetbeat and metricbeat. but would be a redundant wall of text showing all 4 binaries.</p><p>Again all credit goes to <a href=https://github.com/jakommo>Jakommo</a> for writing the comment on Github.</p></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2020/05/what-virtual-machines-am-i-running/ data-tooltip="What Virtual Machines Am I Running?"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2019/12/ropemporium-3-write4-64-bit/ data-tooltip="ROPEmporium: 3-Write4 (64-bit)"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2022 Christoffer Claesson. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2020/05/what-virtual-machines-am-i-running/ data-tooltip="What Virtual Machines Am I Running?"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2019/12/ropemporium-3-write4-64-bit/ data-tooltip="ROPEmporium: 3-Write4 (64-bit)"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2019/12/beats-7.5.0-on-pfsense-2.4.4/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.securitybits.io%2F2019%2F12%2Fbeats-7.5.0-on-pfsense-2.4.4%2F"><i class="fa fa-facebook-official"></i><span>Share on Facebook</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fblog.securitybits.io%2F2019%2F12%2Fbeats-7.5.0-on-pfsense-2.4.4%2F"><i class="fa fa-twitter"></i><span>Share on Twitter</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fblog.securitybits.io%2F2019%2F12%2Fbeats-7.5.0-on-pfsense-2.4.4%2F"><i class="fa fa-google-plus"></i><span>Share on Google+</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"><h4 id=about-card-name>Christoffer Claesson</h4><div id=about-card-bio>Security ramblings from a viking</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Senior Penetration Tester</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Sweden</div></div></div><div id=cover style=background-image:url(https://blog.securitybits.io/img/side-banner.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
 <script src=https://blog.securitybits.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
-<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
-<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
-</body>
-</html>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var t=document.getElementById("sidebar"),n,s,o,e=document.getElementById("main");e.style.minWidth="",n=getComputedStyle(e).getPropertyValue("min-width"),s=getComputedStyle(t).getPropertyValue("width"),o=getComputedStyle(t).getPropertyValue("left"),e.style.minWidth=`calc(${n} - ${s} - ${o})`}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$("pre.code-highlight > code, pre > code").each(function(t,e){$(this).hasClass("codeblock")||$(this).addClass("codeblock"),hljs.highlightBlock(e)})})</script></body></html>

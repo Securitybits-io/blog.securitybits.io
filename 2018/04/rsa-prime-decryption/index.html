@@ -1,342 +1,51 @@
-<!doctype html><html lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=generator content="Hugo 0.92.2 with theme Tranquilpeak 0.4.8-BETA">
-<meta name=author content="Christoffer Claesson">
-<meta name=keywords content>
-<meta name=description content="Description and usage of a decryption script that I wrote for CTF Challenges.">
-<meta property="og:description" content="Description and usage of a decryption script that I wrote for CTF Challenges.">
-<meta property="og:type" content="article">
-<meta property="og:title" content="RSA Prime Decryption">
-<meta name=twitter:title content="RSA Prime Decryption">
-<meta property="og:url" content="https://blog.securitybits.io/2018/04/rsa-prime-decryption/">
-<meta property="twitter:url" content="https://blog.securitybits.io/2018/04/rsa-prime-decryption/">
-<meta property="og:site_name" content="Securitybits.io">
-<meta property="og:description" content="Description and usage of a decryption script that I wrote for CTF Challenges.">
-<meta name=twitter:description content="Description and usage of a decryption script that I wrote for CTF Challenges.">
-<meta property="og:locale" content="en-us">
-<meta property="article:published_time" content="2018-04-16T00:00:00">
-<meta property="article:modified_time" content="2018-04-16T00:00:00">
-<meta property="article:section" content="Hackthebox">
-<meta property="article:section" content="CTF">
-<meta property="article:section" content="Development">
-<meta property="article:tag" content="htb">
-<meta property="article:tag" content="hackthebox">
-<meta property="article:tag" content="dev">
-<meta property="article:tag" content="ctf">
-<meta name=twitter:card content="summary">
-<meta name=twitter:site content="@Securitybits_io">
-<meta name=twitter:creator content="@Securitybits_io">
-<meta property="og:image" content="https://blog.securitybits.io/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg">
-<meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg">
-<meta property="og:image" content="https://blog.securitybits.io/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg">
-<meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg">
-<meta property="og:image" content="https://blog.securitybits.io/img/profile.jpg">
-<meta property="twitter:image" content="https://blog.securitybits.io/img/profile.jpg">
-<title>RSA Prime Decryption</title>
-<link rel=icon href=https://blog.securitybits.io/favicon.png>
-<link rel=canonical href=https://blog.securitybits.io/2018/04/rsa-prime-decryption/>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
-<link rel=stylesheet href=https://blog.securitybits.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-115328400-1','auto'),ga('send','pageview'))</script>
-</head>
-<body>
-<div id=blog>
-<header id=header data-behavior=5>
-<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
-<div class=header-title>
-<a class=header-title-link href=https://blog.securitybits.io/>Securitybits.io</a>
-</div>
-<a class=header-right-picture href=https://blog.securitybits.io/#about>
-<img class=header-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
-</a>
-</header>
-<nav id=sidebar data-behavior=5>
-<div class=sidebar-container>
-<div class=sidebar-profile>
-<a href=https://blog.securitybits.io/#about>
-<img class=sidebar-profile-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
-</a>
-<h4 class=sidebar-profile-name>Christoffer Claesson</h4>
-<h5 class=sidebar-profile-bio>Security ramblings from a viking</h5>
-</div>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/>
-<i class="sidebar-button-icon fa fa-lg fa-home"></i>
-<span class=sidebar-button-desc>Home</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/categories>
-<i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
-<span class=sidebar-button-desc>Categories</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/tags>
-<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-<span class=sidebar-button-desc>Tags</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/archives>
-<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-<span class=sidebar-button-desc>Archives</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/page/about-me>
-<i class="sidebar-button-icon fa fa-lg fa-question"></i>
-<span class=sidebar-button-desc>About Me</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-github"></i>
-<span class=sidebar-button-desc>GitHub</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
-<span class=sidebar-button-desc>Twitter</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-code-fork"></i>
-<span class=sidebar-button-desc>Keybase.io</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/index.xml>
-<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-<span class=sidebar-button-desc>RSS</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<div class="post-header-cover
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.94.0 with theme Tranquilpeak 0.4.8-BETA"><meta name=author content="Christoffer Claesson"><meta name=keywords content><meta name=description content="Description and usage of a decryption script that I wrote for CTF Challenges."><meta property="og:description" content="Description and usage of a decryption script that I wrote for CTF Challenges."><meta property="og:type" content="article"><meta property="og:title" content="RSA Prime Decryption"><meta name=twitter:title content="RSA Prime Decryption"><meta property="og:url" content="https://blog.securitybits.io/2018/04/rsa-prime-decryption/"><meta property="twitter:url" content="https://blog.securitybits.io/2018/04/rsa-prime-decryption/"><meta property="og:site_name" content="Securitybits.io"><meta property="og:description" content="Description and usage of a decryption script that I wrote for CTF Challenges."><meta name=twitter:description content="Description and usage of a decryption script that I wrote for CTF Challenges."><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2018-04-16T00:00:00"><meta property="article:modified_time" content="2018-04-16T00:00:00"><meta property="article:section" content="Hackthebox"><meta property="article:section" content="CTF"><meta property="article:section" content="Development"><meta property="article:tag" content="htb"><meta property="article:tag" content="hackthebox"><meta property="article:tag" content="dev"><meta property="article:tag" content="ctf"><meta name=twitter:card content="summary"><meta name=twitter:site content="@Securitybits_io"><meta name=twitter:creator content="@Securitybits_io"><meta property="og:image" content="https://blog.securitybits.io/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg"><meta property="og:image" content="https://blog.securitybits.io/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg"><meta property="og:image" content="https://blog.securitybits.io/img/profile.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/profile.jpg"><title>RSA Prime Decryption</title><link rel=icon href=https://blog.securitybits.io/favicon.png><link rel=canonical href=https://blog.securitybits.io/2018/04/rsa-prime-decryption/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=https://blog.securitybits.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-115328400-1","auto"),ga("send","pageview"))</script></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=https://blog.securitybits.io/>Securitybits.io</a></div><a class=header-right-picture href=https://blog.securitybits.io/#about><img class=header-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=https://blog.securitybits.io/#about><img class=sidebar-profile-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"></a><h4 class=sidebar-profile-name>Christoffer Claesson</h4><h5 class=sidebar-profile-bio>Security ramblings from a viking</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/><i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>Home</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/categories><i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+<span class=sidebar-button-desc>Categories</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>Tags</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>Archives</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/page/about-me><i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>About Me</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+<span class=sidebar-button-desc>Twitter</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-code-fork"></i>
+<span class=sidebar-button-desc>Keybase.io</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div class="post-header-cover
 text-center
-post-header-cover--partial" style=background-image:url(/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg) data-behavior=5>
-</div>
-<div id=main data-behavior=5 class="hasCover
-hasCoverMetaOut">
-<article class=post itemscope itemtype=http://schema.org/BlogPosting>
-<div class="post-header main-content-wrap text-center">
-<h1 class=post-title itemprop=headline>
-RSA Prime Decryption
-</h1>
-<div class="postShorten-meta post-meta">
-<time itemprop=datePublished datetime=2018-04-16T00:00:00Z>
-April 16, 2018
-</time>
+post-header-cover--partial" style=background-image:url(/img/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg) data-behavior=5></div><div id=main data-behavior=5 class="hasCover
+hasCoverMetaOut"><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-center"><h1 class=post-title itemprop=headline>RSA Prime Decryption</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2018-04-16T00:00:00Z>April 16, 2018</time>
 <span>in</span>
 <a class=category-link href=https://blog.securitybits.io/categories/hackthebox>Hackthebox</a>,
 <a class=category-link href=https://blog.securitybits.io/categories/ctf>CTF</a>,
-<a class=category-link href=https://blog.securitybits.io/categories/development>Development</a>
-</div>
-</div>
-<div class="post-content markdown" itemprop=articleBody>
-<div class=main-content-wrap>
-<p>So I&rsquo;ve encountered this problem in a couple Capture the Flag Challenges, where you are given the Primes, as well as a ciphertext in decimal number form.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>c = 95272795986475189505518980251137003509292621140166383887854853863720692420204142448424074834657149326853553097626486371206617513769930277580823116437975487148956107509247564965652417450550680181691869432067892028368985007229633943149091684419834136214793476910417359537696632874045272326665036717324623992885
-p = 11387480584909854985125335848240384226653929942757756384489381242206157197986555243995335158328781970310603060671486688856263776452654268043936036556215243
-q = 12972222875218086547425818961477257915105515705982283726851833508079600460542479267972050216838604649742870515200462359007315431848784163790312424462439629
-dp = 8191957726161111880866028229950166742224147653136894248088678244548815086744810656765529876284622829884409590596114090872889522887052772791407131880103961
-dq = 3570695757580148093370242608506191464756425954703930236924583065811730548932270595568088372441809535917032142349986828862994856575730078580414026791444659
-</code></pre></div><p>Lets take &ldquo;PicoCTF - Weird RSA flag&rdquo;
-Now had these primes been sufficiently small, we could do the decryption of the cipher text manually. But having Prime numbers that are 150+ chars long will make it (at least for me rather difficult).<br>
-The Python script can be found at my Github-Repo <a href=http://https://github.com/Securitybits-io/RSA-Primes---Chinese-Remainder-Theorem>Securitybits-io</a>.<br>
-Using it is fairly simple, as it has a help section, try it with the above primes to verify the results.
-I did not invent the Chinese Theorem or the RSA Algorithm. But merely implemented them, if you are further interested in the algorithm and techniques behind. Then i recommend to spend an hour reading the wiki page as well as the other two links i put under &ldquo;References&rdquo;.</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@Kali:~# python rsa-prime-decryption.py --help
-usage: rsa-prime-decryption.py <span style=color:#f92672>[</span>-h<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--p P<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--q Q<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--dp DP<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--dq DQ<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--c C<span style=color:#f92672>]</span>
-
-Decryption tool <span style=color:#66d9ef>for</span> RSA Primes using the Chinese Remainder Theorem
-
-optional arguments:
-  -h, --help  show this help message and exit
-  --p P       Input prime p used <span style=color:#66d9ef>for</span> RSA decryption
-  --q Q       Input prime q used <span style=color:#66d9ef>for</span> RSA Decryption
-  --dp DP     Input Chinese Remainder dp used <span style=color:#66d9ef>for</span> RSA decryption
-  --dq DQ     Input Chinese Remainder dq used <span style=color:#66d9ef>for</span> RSA Decryption
-  --c C       Input Cipher text to decrypt
-</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# python rsa-prime-decryption.py <span style=color:#ae81ff>\
-</span><span style=color:#ae81ff></span>--p <span style=color:#ae81ff>11387480584909854985125335848240384226653929942757756384489381242206157197986555243995335158328781970310603060671486688856263776452654268043936036556215243</span> <span style=color:#ae81ff>\
-</span><span style=color:#ae81ff></span>--q <span style=color:#ae81ff>12972222875218086547425818961477257915105515705982283726851833508079600460542479267972050216838604649742870515200462359007315431848784163790312424462439629</span> <span style=color:#ae81ff>\
-</span><span style=color:#ae81ff></span>--dp <span style=color:#ae81ff>8191957726161111880866028229950166742224147653136894248088678244548815086744810656765529876284622829884409590596114090872889522887052772791407131880103961</span> <span style=color:#ae81ff>\
-</span><span style=color:#ae81ff></span>--dq <span style=color:#ae81ff>3570695757580148093370242608506191464756425954703930236924583065811730548932270595568088372441809535917032142349986828862994856575730078580414026791444659</span> <span style=color:#ae81ff>\
-</span><span style=color:#ae81ff></span>--c <span style=color:#ae81ff>95272795986475189505518980251137003509292621140166383887854853863720692420204142448424074834657149326853553097626486371206617513769930277580823116437975487148956107509247564965652417450550680181691869432067892028368985007229633943149091684419834136214793476910417359537696632874045272326665036717324623992885</span>
-Theres_more_than_one_way_to_RSA
-</code></pre></div><p><strong>References</strong>:<br>
-RSA Cryptosystem<br>
-<a href=https://en.wikipedia.org/wiki/RSA_(cryptosystem)>https://en.wikipedia.org/wiki/RSA_(cryptosystem)</a><br>
-Decrypting RSA using CRT<br>
-<a href=http://www.cscjournals.org/manuscript/Journals/IJCSS/Volume10/Issue5/IJCSS-1289.pdf>http://www.cscjournals.org/manuscript/Journals/IJCSS/Volume10/Issue5/IJCSS-1289.pdf</a><br>
-Modular inverse example<br>
-<a href=https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python>https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python</a></p>
-</div>
-</div>
-<div id=post-footer class="post-footer main-content-wrap">
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/06/chatterbox-writeup/ data-tooltip="Chatterbox Writeup">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/03/nibbles-writeup/ data-tooltip="Nibbles Writeup">
-<span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2018/04/rsa-prime-decryption/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2018/04/rsa-prime-decryption/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2018/04/rsa-prime-decryption/">
-<i class="fa fa-google-plus"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-</article>
-<footer id=footer class=main-content-wrap>
-<span class=copyrights>
-&copy; 2022 Christoffer Claesson. All Rights Reserved
-</span>
-</footer>
-</div>
-<div id=bottom-bar class=post-bottom-bar data-behavior=5>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/06/chatterbox-writeup/ data-tooltip="Chatterbox Writeup">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/03/nibbles-writeup/ data-tooltip="Nibbles Writeup">
-<span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2018/04/rsa-prime-decryption/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2018/04/rsa-prime-decryption/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2018/04/rsa-prime-decryption/">
-<i class="fa fa-google-plus"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-<div id=share-options-bar class=share-options-bar data-behavior=5>
-<i id=btn-close-shareoptions class="fa fa-close"></i>
-<ul class=share-options>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.securitybits.io%2F2018%2F04%2Frsa-prime-decryption%2F">
-<i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fblog.securitybits.io%2F2018%2F04%2Frsa-prime-decryption%2F">
-<i class="fa fa-twitter"></i><span>Share on Twitter</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fblog.securitybits.io%2F2018%2F04%2Frsa-prime-decryption%2F">
-<i class="fa fa-google-plus"></i><span>Share on Google+</span>
-</a>
-</li>
-</ul>
-</div>
-<div id=share-options-mask class=share-options-mask></div>
-</div>
-<div id=about>
-<div id=about-card>
-<div id=about-btn-close>
-<i class="fa fa-remove"></i>
-</div>
-<img id=about-card-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
-<h4 id=about-card-name>Christoffer Claesson</h4>
-<div id=about-card-bio>Security ramblings from a viking</div>
-<div id=about-card-job>
-<i class="fa fa-briefcase"></i>
-<br>
-Senior Penetration Tester
-</div>
-<div id=about-card-location>
-<i class="fa fa-map-marker"></i>
-<br>
-Sweden
-</div>
-</div>
-</div>
-<div id=cover style=background-image:url(https://blog.securitybits.io/img/side-banner.jpg)></div>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+<a class=category-link href=https://blog.securitybits.io/categories/development>Development</a></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><p>So I&rsquo;ve encountered this problem in a couple Capture the Flag Challenges, where you are given the Primes, as well as a ciphertext in decimal number form.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text><span style=display:flex><span>c = 95272795986475189505518980251137003509292621140166383887854853863720692420204142448424074834657149326853553097626486371206617513769930277580823116437975487148956107509247564965652417450550680181691869432067892028368985007229633943149091684419834136214793476910417359537696632874045272326665036717324623992885
+</span></span><span style=display:flex><span>p = 11387480584909854985125335848240384226653929942757756384489381242206157197986555243995335158328781970310603060671486688856263776452654268043936036556215243
+</span></span><span style=display:flex><span>q = 12972222875218086547425818961477257915105515705982283726851833508079600460542479267972050216838604649742870515200462359007315431848784163790312424462439629
+</span></span><span style=display:flex><span>dp = 8191957726161111880866028229950166742224147653136894248088678244548815086744810656765529876284622829884409590596114090872889522887052772791407131880103961
+</span></span><span style=display:flex><span>dq = 3570695757580148093370242608506191464756425954703930236924583065811730548932270595568088372441809535917032142349986828862994856575730078580414026791444659
+</span></span></code></pre></div><p>Lets take &ldquo;PicoCTF - Weird RSA flag&rdquo;
+Now had these primes been sufficiently small, we could do the decryption of the cipher text manually. But having Prime numbers that are 150+ chars long will make it (at least for me rather difficult).<br>The Python script can be found at my Github-Repo <a href=http://https://github.com/Securitybits-io/RSA-Primes---Chinese-Remainder-Theorem>Securitybits-io</a>.<br>Using it is fairly simple, as it has a help section, try it with the above primes to verify the results.
+I did not invent the Chinese Theorem or the RSA Algorithm. But merely implemented them, if you are further interested in the algorithm and techniques behind. Then i recommend to spend an hour reading the wiki page as well as the other two links i put under &ldquo;References&rdquo;.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>root@Kali:~# python rsa-prime-decryption.py --help
+</span></span><span style=display:flex><span>usage: rsa-prime-decryption.py <span style=color:#f92672>[</span>-h<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--p P<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--q Q<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--dp DP<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--dq DQ<span style=color:#f92672>]</span> <span style=color:#f92672>[</span>--c C<span style=color:#f92672>]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Decryption tool <span style=color:#66d9ef>for</span> RSA Primes using the Chinese Remainder Theorem
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>optional arguments:
+</span></span><span style=display:flex><span>  -h, --help  show this help message and exit
+</span></span><span style=display:flex><span>  --p P       Input prime p used <span style=color:#66d9ef>for</span> RSA decryption
+</span></span><span style=display:flex><span>  --q Q       Input prime q used <span style=color:#66d9ef>for</span> RSA Decryption
+</span></span><span style=display:flex><span>  --dp DP     Input Chinese Remainder dp used <span style=color:#66d9ef>for</span> RSA decryption
+</span></span><span style=display:flex><span>  --dq DQ     Input Chinese Remainder dq used <span style=color:#66d9ef>for</span> RSA Decryption
+</span></span><span style=display:flex><span>  --c C       Input Cipher text to decrypt
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>root@kali:~# python rsa-prime-decryption.py <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>--p <span style=color:#ae81ff>11387480584909854985125335848240384226653929942757756384489381242206157197986555243995335158328781970310603060671486688856263776452654268043936036556215243</span> <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>--q <span style=color:#ae81ff>12972222875218086547425818961477257915105515705982283726851833508079600460542479267972050216838604649742870515200462359007315431848784163790312424462439629</span> <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>--dp <span style=color:#ae81ff>8191957726161111880866028229950166742224147653136894248088678244548815086744810656765529876284622829884409590596114090872889522887052772791407131880103961</span> <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>--dq <span style=color:#ae81ff>3570695757580148093370242608506191464756425954703930236924583065811730548932270595568088372441809535917032142349986828862994856575730078580414026791444659</span> <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>--c <span style=color:#ae81ff>95272795986475189505518980251137003509292621140166383887854853863720692420204142448424074834657149326853553097626486371206617513769930277580823116437975487148956107509247564965652417450550680181691869432067892028368985007229633943149091684419834136214793476910417359537696632874045272326665036717324623992885</span>
+</span></span><span style=display:flex><span>Theres_more_than_one_way_to_RSA
+</span></span></code></pre></div><p><strong>References</strong>:<br>RSA Cryptosystem<br><a href=https://en.wikipedia.org/wiki/RSA_(cryptosystem)>https://en.wikipedia.org/wiki/RSA_(cryptosystem)</a><br>Decrypting RSA using CRT<br><a href=http://www.cscjournals.org/manuscript/Journals/IJCSS/Volume10/Issue5/IJCSS-1289.pdf>http://www.cscjournals.org/manuscript/Journals/IJCSS/Volume10/Issue5/IJCSS-1289.pdf</a><br>Modular inverse example<br><a href=https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python>https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python</a></p></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/06/chatterbox-writeup/ data-tooltip="Chatterbox Writeup"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/03/nibbles-writeup/ data-tooltip="Nibbles Writeup"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2018/04/rsa-prime-decryption/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2018/04/rsa-prime-decryption/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2018/04/rsa-prime-decryption/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2022 Christoffer Claesson. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/06/chatterbox-writeup/ data-tooltip="Chatterbox Writeup"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/03/nibbles-writeup/ data-tooltip="Nibbles Writeup"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2018/04/rsa-prime-decryption/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2018/04/rsa-prime-decryption/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2018/04/rsa-prime-decryption/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.securitybits.io%2F2018%2F04%2Frsa-prime-decryption%2F"><i class="fa fa-facebook-official"></i><span>Share on Facebook</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fblog.securitybits.io%2F2018%2F04%2Frsa-prime-decryption%2F"><i class="fa fa-twitter"></i><span>Share on Twitter</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fblog.securitybits.io%2F2018%2F04%2Frsa-prime-decryption%2F"><i class="fa fa-google-plus"></i><span>Share on Google+</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"><h4 id=about-card-name>Christoffer Claesson</h4><div id=about-card-bio>Security ramblings from a viking</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Senior Penetration Tester</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Sweden</div></div></div><div id=cover style=background-image:url(https://blog.securitybits.io/img/side-banner.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
 <script src=https://blog.securitybits.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
-<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
-<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
-</body>
-</html>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var t=document.getElementById("sidebar"),n,s,o,e=document.getElementById("main");e.style.minWidth="",n=getComputedStyle(e).getPropertyValue("min-width"),s=getComputedStyle(t).getPropertyValue("width"),o=getComputedStyle(t).getPropertyValue("left"),e.style.minWidth=`calc(${n} - ${s} - ${o})`}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$("pre.code-highlight > code, pre > code").each(function(t,e){$(this).hasClass("codeblock")||$(this).addClass("codeblock"),hljs.highlightBlock(e)})})</script></body></html>

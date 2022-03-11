@@ -1,199 +1,26 @@
-<!doctype html><html lang=en-us>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=generator content="Hugo 0.92.2 with theme Tranquilpeak 0.4.8-BETA">
-<meta name=author content="Christoffer Claesson">
-<meta name=keywords content>
-<meta name=description content="Stand back! We&rsquo;re doing science! voltage glitching on an Arduino">
-<meta property="og:description" content="Stand back! We&rsquo;re doing science! voltage glitching on an Arduino">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Voltage glitching on the cheap">
-<meta name=twitter:title content="Voltage glitching on the cheap">
-<meta property="og:url" content="https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/">
-<meta property="twitter:url" content="https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/">
-<meta property="og:site_name" content="Securitybits.io">
-<meta property="og:description" content="Stand back! We&rsquo;re doing science! voltage glitching on an Arduino">
-<meta name=twitter:description content="Stand back! We&rsquo;re doing science! voltage glitching on an Arduino">
-<meta property="og:locale" content="en-us">
-<meta property="article:published_time" content="2019-06-01T00:00:00">
-<meta property="article:modified_time" content="2019-06-01T00:00:00">
-<meta property="article:section" content="Hardware">
-<meta property="article:section" content="CTF">
-<meta property="article:tag" content="riscure">
-<meta property="article:tag" content="rhme2">
-<meta property="article:tag" content="hardware">
-<meta property="article:tag" content="ctf">
-<meta property="article:tag" content="security">
-<meta property="article:tag" content="pentest">
-<meta name=twitter:card content="summary">
-<meta name=twitter:site content="@Securitybits_io">
-<meta name=twitter:creator content="@Securitybits_io">
-<meta property="og:image" content="https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg">
-<meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg">
-<meta property="og:image" content="https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg">
-<meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg">
-<meta property="og:image" content="https://blog.securitybits.io/img/profile.jpg">
-<meta property="twitter:image" content="https://blog.securitybits.io/img/profile.jpg">
-<title>Voltage glitching on the cheap</title>
-<link rel=icon href=https://blog.securitybits.io/favicon.png>
-<link rel=canonical href=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous>
-<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous>
-<link rel=stylesheet href=https://blog.securitybits.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-115328400-1','auto'),ga('send','pageview'))</script>
-</head>
-<body>
-<div id=blog>
-<header id=header data-behavior=5>
-<i id=btn-open-sidebar class="fa fa-lg fa-bars"></i>
-<div class=header-title>
-<a class=header-title-link href=https://blog.securitybits.io/>Securitybits.io</a>
-</div>
-<a class=header-right-picture href=https://blog.securitybits.io/#about>
-<img class=header-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
-</a>
-</header>
-<nav id=sidebar data-behavior=5>
-<div class=sidebar-container>
-<div class=sidebar-profile>
-<a href=https://blog.securitybits.io/#about>
-<img class=sidebar-profile-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
-</a>
-<h4 class=sidebar-profile-name>Christoffer Claesson</h4>
-<h5 class=sidebar-profile-bio>Security ramblings from a viking</h5>
-</div>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/>
-<i class="sidebar-button-icon fa fa-lg fa-home"></i>
-<span class=sidebar-button-desc>Home</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/categories>
-<i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
-<span class=sidebar-button-desc>Categories</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/tags>
-<i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-<span class=sidebar-button-desc>Tags</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/archives>
-<i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-<span class=sidebar-button-desc>Archives</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/page/about-me>
-<i class="sidebar-button-icon fa fa-lg fa-question"></i>
-<span class=sidebar-button-desc>About Me</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-github"></i>
-<span class=sidebar-button-desc>GitHub</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
-<span class=sidebar-button-desc>Twitter</span>
-</a>
-</li>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener>
-<i class="sidebar-button-icon fa fa-lg fa-code-fork"></i>
-<span class=sidebar-button-desc>Keybase.io</span>
-</a>
-</li>
-</ul>
-<ul class=sidebar-buttons>
-<li class=sidebar-button>
-<a class=sidebar-button-link href=https://blog.securitybits.io/index.xml>
-<i class="sidebar-button-icon fa fa-lg fa-rss"></i>
-<span class=sidebar-button-desc>RSS</span>
-</a>
-</li>
-</ul>
-</div>
-</nav>
-<div class="post-header-cover
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Hugo 0.94.0 with theme Tranquilpeak 0.4.8-BETA"><meta name=author content="Christoffer Claesson"><meta name=keywords content><meta name=description content="Stand back! We&rsquo;re doing science! voltage glitching on an Arduino"><meta property="og:description" content="Stand back! We&rsquo;re doing science! voltage glitching on an Arduino"><meta property="og:type" content="article"><meta property="og:title" content="Voltage glitching on the cheap"><meta name=twitter:title content="Voltage glitching on the cheap"><meta property="og:url" content="https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/"><meta property="twitter:url" content="https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/"><meta property="og:site_name" content="Securitybits.io"><meta property="og:description" content="Stand back! We&rsquo;re doing science! voltage glitching on an Arduino"><meta name=twitter:description content="Stand back! We&rsquo;re doing science! voltage glitching on an Arduino"><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2019-06-01T00:00:00"><meta property="article:modified_time" content="2019-06-01T00:00:00"><meta property="article:section" content="Hardware"><meta property="article:section" content="CTF"><meta property="article:tag" content="riscure"><meta property="article:tag" content="rhme2"><meta property="article:tag" content="hardware"><meta property="article:tag" content="ctf"><meta property="article:tag" content="security"><meta property="article:tag" content="pentest"><meta name=twitter:card content="summary"><meta name=twitter:site content="@Securitybits_io"><meta name=twitter:creator content="@Securitybits_io"><meta property="og:image" content="https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg"><meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg"><meta property="og:image" content="https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg"><meta property="twitter:image" content="https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg"><meta property="og:image" content="https://blog.securitybits.io/img/profile.jpg"><meta property="twitter:image" content="https://blog.securitybits.io/img/profile.jpg"><title>Voltage glitching on the cheap</title><link rel=icon href=https://blog.securitybits.io/favicon.png><link rel=canonical href=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/jquery.fancybox.min.css integrity="sha256-vuXZ9LGmmwtjqFX1F+EKin1ThZMub58gKULUyf0qECk=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.4/helpers/jquery.fancybox-thumbs.min.css integrity="sha256-SEa4XYAHihTcEP1f5gARTB2K26Uk8PsndQYHQC1f4jU=" crossorigin=anonymous><link rel=stylesheet href=https://blog.securitybits.io/css/style-twzjdbqhmnnacqs0pwwdzcdbt8yhv8giawvjqjmyfoqnvazl0dalmnhdkvp7.min.css><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-115328400-1","auto"),ga("send","pageview"))</script></head><body><div id=blog><header id=header data-behavior=5><i id=btn-open-sidebar class="fa fa-lg fa-bars"></i><div class=header-title><a class=header-title-link href=https://blog.securitybits.io/>Securitybits.io</a></div><a class=header-right-picture href=https://blog.securitybits.io/#about><img class=header-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"></a></header><nav id=sidebar data-behavior=5><div class=sidebar-container><div class=sidebar-profile><a href=https://blog.securitybits.io/#about><img class=sidebar-profile-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"></a><h4 class=sidebar-profile-name>Christoffer Claesson</h4><h5 class=sidebar-profile-bio>Security ramblings from a viking</h5></div><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/><i class="sidebar-button-icon fa fa-lg fa-home"></i>
+<span class=sidebar-button-desc>Home</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/categories><i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+<span class=sidebar-button-desc>Categories</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/tags><i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+<span class=sidebar-button-desc>Tags</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/archives><i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+<span class=sidebar-button-desc>Archives</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/page/about-me><i class="sidebar-button-icon fa fa-lg fa-question"></i>
+<span class=sidebar-button-desc>About Me</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://github.com/Securitybits-io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-github"></i>
+<span class=sidebar-button-desc>GitHub</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://twitter.com/Securitybits_io target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-twitter"></i>
+<span class=sidebar-button-desc>Twitter</span></a></li><li class=sidebar-button><a class=sidebar-button-link href=https://keybase.io/securitybits target=_blank rel=noopener><i class="sidebar-button-icon fa fa-lg fa-code-fork"></i>
+<span class=sidebar-button-desc>Keybase.io</span></a></li></ul><ul class=sidebar-buttons><li class=sidebar-button><a class=sidebar-button-link href=https://blog.securitybits.io/index.xml><i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+<span class=sidebar-button-desc>RSS</span></a></li></ul></div></nav><div class="post-header-cover
 text-center
-post-header-cover--partial" style=background-image:url(/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg) data-behavior=5>
-</div>
-<div id=main data-behavior=5 class="hasCover
-hasCoverMetaOut">
-<article class=post itemscope itemtype=http://schema.org/BlogPosting>
-<div class="post-header main-content-wrap text-center">
-<h1 class=post-title itemprop=headline>
-Voltage glitching on the cheap
-</h1>
-<div class="postShorten-meta post-meta">
-<time itemprop=datePublished datetime=2019-06-01T00:00:00Z>
-June 1, 2019
-</time>
+post-header-cover--partial" style=background-image:url(/img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg) data-behavior=5></div><div id=main data-behavior=5 class="hasCover
+hasCoverMetaOut"><article class=post itemscope itemtype=http://schema.org/BlogPosting><div class="post-header main-content-wrap text-center"><h1 class=post-title itemprop=headline>Voltage glitching on the cheap</h1><div class="postShorten-meta post-meta"><time itemprop=datePublished datetime=2019-06-01T00:00:00Z>June 1, 2019</time>
 <span>in</span>
 <a class=category-link href=https://blog.securitybits.io/categories/hardware>Hardware</a>,
-<a class=category-link href=https://blog.securitybits.io/categories/ctf>CTF</a>
-</div>
-</div>
-<div class="post-content markdown" itemprop=articleBody>
-<div class=main-content-wrap>
-<p>So a couple a weeks ago I decided that I needed more hardware and electronics experience (also writing code and making lights go blink blink is awesome). The foremost purpose of this post is to actually document what I am doing. The base setup will be two arduinos, one Nano and a Uno, also the firmware for a CTF Challenge from Riscure called Fiesta (links further down). The end goal is to use the Nano to modify the voltage that the Unos atmega328p chip receives enough so that the code execution changes and displays the flag.</p>
-<h2 id=what-is-voltage-glitching>What is voltage glitching?</h2>
-<p>Doing voltage glitching is basically precisely controlling the power supply of a micro controller. This can either mean increasing or decreasing the power during a couple of clock cycles.</p>
-<div class="figure center fig-100">
-<a class=fancybox href=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/Vccglitch_working.png title="Working glitch" data-fancybox-group>
-<img class=fig-img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/Vccglitch_working.png alt="Working glitch">
-</a>
-<span class=caption>Working glitch</span>
-</div>
-<p>In the diagram above, the blue represents the power (V/DC), and red represents the micro controllers clock cycles. Manipulating the amount of power and the length can result in interesting thing, such like a instruction misbehaving in making an extra jump, or changing the value of an integer. And this power glitching must be done with some degree of accuracy, like using a FPGA card or even better a <a href=https://newae.com/tools/chipwhisperer/>Chipwhisperer</a>. Though dropping the power for too long will result in a chip reset, or a corrupted firmware. Which the latter can be quite expensive if one does not have the source code of the firmware.  </p>
-<p>But a good FPGA or Chipwhisperer can be expensive for a first time hardware hacker and i had a couple of arduinos laying around, so challenge accepted&mldr;</p>
-<h2 id=setup>Setup</h2>
-<p>Components needed:</p>
-<ul>
-<li>Arduino Uno</li>
-<li>Arduino Nano</li>
-<li>Breadboard</li>
-<li>2N7000 Transistor</li>
-<li>630Ω Resistor</li>
-<li>Various Breadboard Lab Cables</li>
-</ul>
-<p>Lets start by loading the target source code onto our victim (Uno) using avrdude.</p>
-<pre><code>root@linux:~# wget https://raw.githubusercontent.com/Riscure/Rhme-2016/master/challenges/binaries/fiesta/fiesta.hex
+<a class=category-link href=https://blog.securitybits.io/categories/ctf>CTF</a></div></div><div class="post-content markdown" itemprop=articleBody><div class=main-content-wrap><p>So a couple a weeks ago I decided that I needed more hardware and electronics experience (also writing code and making lights go blink blink is awesome). The foremost purpose of this post is to actually document what I am doing. The base setup will be two arduinos, one Nano and a Uno, also the firmware for a CTF Challenge from Riscure called Fiesta (links further down). The end goal is to use the Nano to modify the voltage that the Unos atmega328p chip receives enough so that the code execution changes and displays the flag.</p><h2 id=what-is-voltage-glitching>What is voltage glitching?</h2><p>Doing voltage glitching is basically precisely controlling the power supply of a micro controller. This can either mean increasing or decreasing the power during a couple of clock cycles.</p><div class="figure center fig-100"><a class=fancybox href=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/Vccglitch_working.png title="Working glitch" data-fancybox-group><img class=fig-img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/Vccglitch_working.png alt="Working glitch"></a>
+<span class=caption>Working glitch</span></div><p>In the diagram above, the blue represents the power (V/DC), and red represents the micro controllers clock cycles. Manipulating the amount of power and the length can result in interesting thing, such like a instruction misbehaving in making an extra jump, or changing the value of an integer. And this power glitching must be done with some degree of accuracy, like using a FPGA card or even better a <a href=https://newae.com/tools/chipwhisperer/>Chipwhisperer</a>. Though dropping the power for too long will result in a chip reset, or a corrupted firmware. Which the latter can be quite expensive if one does not have the source code of the firmware.  </p><p>But a good FPGA or Chipwhisperer can be expensive for a first time hardware hacker and i had a couple of arduinos laying around, so challenge accepted&mldr;</p><h2 id=setup>Setup</h2><p>Components needed:</p><ul><li>Arduino Uno</li><li>Arduino Nano</li><li>Breadboard</li><li>2N7000 Transistor</li><li>630Ω Resistor</li><li>Various Breadboard Lab Cables</li></ul><p>Lets start by loading the target source code onto our victim (Uno) using avrdude.</p><pre><code>root@linux:~# wget https://raw.githubusercontent.com/Riscure/Rhme-2016/master/challenges/binaries/fiesta/fiesta.hex
 root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&lt;UNO Device&gt; -b115200 -u -V -U flash:w:fiesta.hex
-</code></pre>
-<p>Powering on the Arduino Uno, and connecting over serial displays an eternal loop that we are to break out of, which is saying &ldquo;Lock&rdquo;.</p>
-<pre><code>root@linux:~# screen /dev/ttyACM1 19200
+</code></pre><p>Powering on the Arduino Uno, and connecting over serial displays an eternal loop that we are to break out of, which is saying &ldquo;Lock&rdquo;.</p><pre><code>root@linux:~# screen /dev/ttyACM1 19200
 18:12:58.044 -&gt; RHME2 FI level 1.
 18:12:58.044 -&gt;
 18:12:58.076 -&gt; Chip status: LockLockLockLockLockLockLockLockLockLockLockLockLockLock[...]
-</code></pre>
-<p>Cool, so step one works, loading the victim firmware onto the board.</p>
-<h2 id=connecting-glitching-source>Connecting glitching source</h2>
-<p>Step two, connecting the cables from the glitch source (Nano) to the Uno. On a high level picture it would look something like this:</p>
-<p><img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/diagram-2.JPG alt="Connection Diagram"></p>
-<p>But the immediate problem is that the Uno contains capacitors in order to store and filter electricity to the micro controller, in case of&mldr; glitches. Which means, in order to power glitch the Atmega328p, the micro controller has to be put onto a breadboard, and connect the relevant cables for it to send and receive data. That way it is fairly trivial to control the micro controllers ground, without any interfering capacitors. This can also be achieved on other hardware (like a Nano which does not have a removable micro controller) by looking up the specification and with a steady hand, desolder the ground pin.</p>
-<p>Carefully removing the micro controller and placing it on the breadboard, the next step would be to reconnect it back to the arduino board itself on the corresponding terminals.</p>
-<p><img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/Arduino-Uno-ATmega328P-Pin-Mapping1.png alt="Arduino Uno ATmega328P Pin Mapping"></p>
-<p>The pins that should be connected back are at least Pin 1, 2, 3, 7,9,10 and 20. Which will handle basic power and operations, as well as Serial send/receive/reset to the micro controller. From the Uno board we also want to have the Uno serial send its data to the Nanos Serial Rx port, so Connect Uno (Tx) to Nano (Rx). Next step is actually wiring up the Glitching logic to control the Uno Micro controllers ground, on the Nano using the Transistor (2N7000) according to the high level scheme above.</p>
-<p>The final assembly should be something like the image below. In this case I&rsquo;ve connected the Nano Ground to Uno micro controller ground pin 8.</p>
-<p><img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/IMG_6324-1.JPG alt="Arduino Setup"></p>
-<p>The 2N7000 Transistor is what is actually going to control the ground to the micro controller. By connecting Nano D2 to the transistors middle pin though the resistor, the circuit is open as long as the pin has a HIGH state, thus providing the controller with power. As soon as D2 goes into a LOW state, the transistor will close and therefor the controller will loose power. The trick is to do it long enough so that the CPU Instruction glitches, but not so long so that it&rsquo;ll reset or corrupt he device&mldr;</p>
-<h2 id=glitching-time>Glitching time</h2>
-<p>Time to actually write and load the source code onto the Nano that will perform the glitching steps. The code that I wrote for this challenge is fairly simple, but still go through a couple key points.</p>
-<pre><code>void loop() {
+</code></pre><p>Cool, so step one works, loading the victim firmware onto the board.</p><h2 id=connecting-glitching-source>Connecting glitching source</h2><p>Step two, connecting the cables from the glitch source (Nano) to the Uno. On a high level picture it would look something like this:</p><p><img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/diagram-2.JPG alt="Connection Diagram"></p><p>But the immediate problem is that the Uno contains capacitors in order to store and filter electricity to the micro controller, in case of&mldr; glitches. Which means, in order to power glitch the Atmega328p, the micro controller has to be put onto a breadboard, and connect the relevant cables for it to send and receive data. That way it is fairly trivial to control the micro controllers ground, without any interfering capacitors. This can also be achieved on other hardware (like a Nano which does not have a removable micro controller) by looking up the specification and with a steady hand, desolder the ground pin.</p><p>Carefully removing the micro controller and placing it on the breadboard, the next step would be to reconnect it back to the arduino board itself on the corresponding terminals.</p><p><img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/Arduino-Uno-ATmega328P-Pin-Mapping1.png alt="Arduino Uno ATmega328P Pin Mapping"></p><p>The pins that should be connected back are at least Pin 1, 2, 3, 7,9,10 and 20. Which will handle basic power and operations, as well as Serial send/receive/reset to the micro controller. From the Uno board we also want to have the Uno serial send its data to the Nanos Serial Rx port, so Connect Uno (Tx) to Nano (Rx). Next step is actually wiring up the Glitching logic to control the Uno Micro controllers ground, on the Nano using the Transistor (2N7000) according to the high level scheme above.</p><p>The final assembly should be something like the image below. In this case I&rsquo;ve connected the Nano Ground to Uno micro controller ground pin 8.</p><p><img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/IMG_6324-1.JPG alt="Arduino Setup"></p><p>The 2N7000 Transistor is what is actually going to control the ground to the micro controller. By connecting Nano D2 to the transistors middle pin though the resistor, the circuit is open as long as the pin has a HIGH state, thus providing the controller with power. As soon as D2 goes into a LOW state, the transistor will close and therefor the controller will loose power. The trick is to do it long enough so that the CPU Instruction glitches, but not so long so that it&rsquo;ll reset or corrupt he device&mldr;</p><h2 id=glitching-time>Glitching time</h2><p>Time to actually write and load the source code onto the Nano that will perform the glitching steps. The code that I wrote for this challenge is fairly simple, but still go through a couple key points.</p><pre><code>void loop() {
   // put your main code here, to run repeatedly:
 
   for (int i = 0; i&lt;200;i++){
@@ -206,9 +33,7 @@ root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&lt;UNO Device&gt; -b1152
     delay(1000);
     glitch();
 }
-</code></pre>
-<p>The for loop is intended to read 200 bytes on serial Rx, in order to if the glitch is successful, read the flag. then create a delay of 1 second for the power to normalize before calling the function glitch(), this is important as if the target chip is not in a normal state the glitch can have some interesting (read corrupting) results.</p>
-<pre><code>void glitch(){
+</code></pre><p>The for loop is intended to read 200 bytes on serial Rx, in order to if the glitch is successful, read the flag. then create a delay of 1 second for the power to normalize before calling the function glitch(), this is important as if the target chip is not in a normal state the glitch can have some interesting (read corrupting) results.</p><pre><code>void glitch(){
   int waste = 0;
   digitalWrite(powerPin, LOW); //Powerpin = D2
 
@@ -222,11 +47,7 @@ root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&lt;UNO Device&gt; -b1152
   Serial.print(glitchDelay);
   Serial.println();
 }
-</code></pre>
-<p>The glitch function have a couple things going on. First of all, it sets the powerPin to LOW, in reference to earlier it simply cuts off the Unos Micro controllers ground. Having the D2 Pin to LOW, enter the for loop. Now you might as why a for loop, and not the <code>delay()</code> function. Simply because even setting a <code>delay(1)</code> for a millisecond, is too slow. Therefor i defined a for loop that will do a simple <code>waste++;</code> so that it does a couple instructions each loop.</p>
-<p>After the for loop setting the D2 pin to HIGH again in order supply the micro controller with power again, completing one <code>glitch()</code> function call. Now since this is a loop, the code also increases the <code>glitchDelay</code>  with 10 each loop, in order to extend the length of the glitch automatically.</p>
-<p>Putting all the code together it should look something like:</p>
-<pre><code>int incomingByte = 0;
+</code></pre><p>The glitch function have a couple things going on. First of all, it sets the powerPin to LOW, in reference to earlier it simply cuts off the Unos Micro controllers ground. Having the D2 Pin to LOW, enter the for loop. Now you might as why a for loop, and not the <code>delay()</code> function. Simply because even setting a <code>delay(1)</code> for a millisecond, is too slow. Therefor i defined a for loop that will do a simple <code>waste++;</code> so that it does a couple instructions each loop.</p><p>After the for loop setting the D2 pin to HIGH again in order supply the micro controller with power again, completing one <code>glitch()</code> function call. Now since this is a loop, the code also increases the <code>glitchDelay</code>  with 10 each loop, in order to extend the length of the glitch automatically.</p><p>Putting all the code together it should look something like:</p><pre><code>int incomingByte = 0;
 char b[5];
 
 int powerPin = 2;
@@ -272,161 +93,12 @@ void loop() {
     delay(1000);
     glitch();
 }
-</code></pre>
-<p>Running the code it should eventually display the flag from the Arduino Uno!</p>
-<p><img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/Screenshot-from-2019-05-17-22-05-43.png alt="Successful glitch"></p>
-<p>While this might seem like a trivial implementation, there are accounts where ex. the Xbox360 was unlocked using this method, <a href=https://github.com/Free60Project/wiki>link to wiki</a>.</p>
-</div>
-</div>
-<div id=post-footer class="post-footer main-content-wrap">
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2019/08/ropemporium-0-ret2win-64-bit/ data-tooltip="ROPEmporium: 0-Ret2Win (64-bit)">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/07/valentine-writeup/ data-tooltip="Valentine Writeup">
-<span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/">
-<i class="fa fa-google-plus"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-</article>
-<footer id=footer class=main-content-wrap>
-<span class=copyrights>
-&copy; 2022 Christoffer Claesson. All Rights Reserved
-</span>
-</footer>
-</div>
-<div id=bottom-bar class=post-bottom-bar data-behavior=5>
-<div class=post-actions-wrap>
-<nav>
-<ul class="post-actions post-action-nav">
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2019/08/ropemporium-0-ret2win-64-bit/ data-tooltip="ROPEmporium: 0-Ret2Win (64-bit)">
-<i class="fa fa-angle-left"></i>
-<span class="hide-xs hide-sm text-small icon-ml">NEXT</span>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/07/valentine-writeup/ data-tooltip="Valentine Writeup">
-<span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
-<i class="fa fa-angle-right"></i>
-</a>
-</li>
-</ul>
-</nav>
-<ul class="post-actions post-action-share">
-<li class="post-action hide-lg hide-md hide-sm">
-<a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions>
-<i class="fa fa-share-alt"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/">
-<i class="fa fa-facebook-official"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/">
-<i class="fa fa-twitter"></i>
-</a>
-</li>
-<li class="post-action hide-xs">
-<a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/">
-<i class="fa fa-google-plus"></i>
-</a>
-</li>
-<li class=post-action>
-<a class="post-action-btn btn btn--default" href=#>
-<i class="fa fa-list"></i>
-</a>
-</li>
-</ul>
-</div>
-</div>
-<div id=share-options-bar class=share-options-bar data-behavior=5>
-<i id=btn-close-shareoptions class="fa fa-close"></i>
-<ul class=share-options>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.securitybits.io%2F2019%2F06%2Fvoltage-glitching-on-the-cheap%2F">
-<i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fblog.securitybits.io%2F2019%2F06%2Fvoltage-glitching-on-the-cheap%2F">
-<i class="fa fa-twitter"></i><span>Share on Twitter</span>
-</a>
-</li>
-<li class=share-option>
-<a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fblog.securitybits.io%2F2019%2F06%2Fvoltage-glitching-on-the-cheap%2F">
-<i class="fa fa-google-plus"></i><span>Share on Google+</span>
-</a>
-</li>
-</ul>
-</div>
-<div id=share-options-mask class=share-options-mask></div>
-</div>
-<div id=about>
-<div id=about-card>
-<div id=about-btn-close>
-<i class="fa fa-remove"></i>
-</div>
-<img id=about-card-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture">
-<h4 id=about-card-name>Christoffer Claesson</h4>
-<div id=about-card-bio>Security ramblings from a viking</div>
-<div id=about-card-job>
-<i class="fa fa-briefcase"></i>
-<br>
-Senior Penetration Tester
-</div>
-<div id=about-card-location>
-<i class="fa fa-map-marker"></i>
-<br>
-Sweden
-</div>
-</div>
-</div>
-<div id=cover style=background-image:url(https://blog.securitybits.io/img/side-banner.jpg)></div>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
+</code></pre><p>Running the code it should eventually display the flag from the Arduino Uno!</p><p><img src=https://blog.securitybits.io/img/posts/2019/06/voltage-glitching-on-the-cheap/Screenshot-from-2019-05-17-22-05-43.png alt="Successful glitch"></p><p>While this might seem like a trivial implementation, there are accounts where ex. the Xbox360 was unlocked using this method, <a href=https://github.com/Free60Project/wiki>link to wiki</a>.</p></div></div><div id=post-footer class="post-footer main-content-wrap"><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2019/08/ropemporium-0-ret2win-64-bit/ data-tooltip="ROPEmporium: 0-Ret2Win (64-bit)"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/07/valentine-writeup/ data-tooltip="Valentine Writeup"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div></article><footer id=footer class=main-content-wrap><span class=copyrights>&copy; 2022 Christoffer Claesson. All Rights Reserved</span></footer></div><div id=bottom-bar class=post-bottom-bar data-behavior=5><div class=post-actions-wrap><nav><ul class="post-actions post-action-nav"><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2019/08/ropemporium-0-ret2win-64-bit/ data-tooltip="ROPEmporium: 0-Ret2Win (64-bit)"><i class="fa fa-angle-left"></i>
+<span class="hide-xs hide-sm text-small icon-ml">NEXT</span></a></li><li class=post-action><a class="post-action-btn btn btn--default tooltip--top" href=https://blog.securitybits.io/2018/07/valentine-writeup/ data-tooltip="Valentine Writeup"><span class="hide-xs hide-sm text-small icon-mr">PREVIOUS</span>
+<i class="fa fa-angle-right"></i></a></li></ul></nav><ul class="post-actions post-action-share"><li class="post-action hide-lg hide-md hide-sm"><a class="post-action-btn btn btn--default btn-open-shareoptions" href=#btn-open-shareoptions><i class="fa fa-share-alt"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://www.facebook.com/sharer/sharer.php?u=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/"><i class="fa fa-facebook-official"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://twitter.com/intent/tweet?text=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/"><i class="fa fa-twitter"></i></a></li><li class="post-action hide-xs"><a class="post-action-btn btn btn--default" target=new href="https://plus.google.com/share?url=https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/"><i class="fa fa-google-plus"></i></a></li><li class=post-action><a class="post-action-btn btn btn--default" href=#><i class="fa fa-list"></i></a></li></ul></div></div><div id=share-options-bar class=share-options-bar data-behavior=5><i id=btn-close-shareoptions class="fa fa-close"></i><ul class=share-options><li class=share-option><a class=share-option-btn target=new href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fblog.securitybits.io%2F2019%2F06%2Fvoltage-glitching-on-the-cheap%2F"><i class="fa fa-facebook-official"></i><span>Share on Facebook</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://twitter.com/intent/tweet?text=https%3A%2F%2Fblog.securitybits.io%2F2019%2F06%2Fvoltage-glitching-on-the-cheap%2F"><i class="fa fa-twitter"></i><span>Share on Twitter</span></a></li><li class=share-option><a class=share-option-btn target=new href="https://plus.google.com/share?url=https%3A%2F%2Fblog.securitybits.io%2F2019%2F06%2Fvoltage-glitching-on-the-cheap%2F"><i class="fa fa-google-plus"></i><span>Share on Google+</span></a></li></ul></div><div id=share-options-mask class=share-options-mask></div></div><div id=about><div id=about-card><div id=about-btn-close><i class="fa fa-remove"></i></div><img id=about-card-picture src=https://blog.securitybits.io/img/profile.jpg alt="Author's picture"><h4 id=about-card-name>Christoffer Claesson</h4><div id=about-card-bio>Security ramblings from a viking</div><div id=about-card-job><i class="fa fa-briefcase"></i><br>Senior Penetration Tester</div><div id=about-card-location><i class="fa fa-map-marker"></i><br>Sweden</div></div></div><div id=cover style=background-image:url(https://blog.securitybits.io/img/side-banner.jpg)></div><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin=anonymous></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js integrity="sha256-GEAnjcTqVP+vBp3SSc8bEDQqvWAZMiHyUSIorrWwH50=" crossorigin=anonymous></script>
 <script src=https://blog.securitybits.io/js/script-pcw6v3xilnxydl1vddzazdverrnn9ctynvnxgwho987mfyqkuylcb1nlt.min.js></script>
-<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var b=document.getElementById("sidebar"),a=document.getElementById("main"),c,d,e;a.style.minWidth="",c=getComputedStyle(a).getPropertyValue("min-width"),d=getComputedStyle(b).getPropertyValue("width"),e=getComputedStyle(b).getPropertyValue("left"),a.style.minWidth=`calc(${c} - ${d} - ${e})`}</script>
-<script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$('pre.code-highlight > code, pre > code').each(function(b,a){$(this).hasClass('codeblock')||$(this).addClass('codeblock'),hljs.highlightBlock(a)})})</script>
-</body>
-</html>
+<script lang=javascript>window.onload=updateMinWidth,window.onresize=updateMinWidth,document.getElementById("sidebar").addEventListener("transitionend",updateMinWidth);function updateMinWidth(){var t=document.getElementById("sidebar"),n,s,o,e=document.getElementById("main");e.style.minWidth="",n=getComputedStyle(e).getPropertyValue("min-width"),s=getComputedStyle(t).getPropertyValue("width"),o=getComputedStyle(t).getPropertyValue("left"),e.style.minWidth=`calc(${n} - ${s} - ${o})`}</script><script>$(document).ready(function(){hljs.configure({classPrefix:'',useBR:!1}),$("pre.code-highlight > code, pre > code").each(function(t,e){$(this).hasClass("codeblock")||$(this).addClass("codeblock"),hljs.highlightBlock(e)})})</script></body></html>
