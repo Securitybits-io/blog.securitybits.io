@@ -55,7 +55,7 @@ A list of the following vulnerabilities was discovered:
 
 Lets begin!
 
-### Hardcoded Flask Secrets Key
+### \[CVE-2022-25510\] Hardcoded Flask Secrets Key
 
 Let's start of with something easy. Flask signs all their client sessions with a secret key, usually defined in an _Environment Variable_. In this case though there's three places that these are hardcoded into. 
 {{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/Github_Flask_Secret-key.jpg" title="Flask secret keys" >}}
@@ -64,7 +64,7 @@ This gives a malicious user the ability to sign their own cookies (using for exa
 
 Another interessting issue that you run into aswell is that having two Flask servers with the same _secret key_ makes it possible for a user to reuse a UID 1 cookie from Server A, and apply that cookie to Server B logging in to the same UID 1. (Lateral movement/Authentication bypass)
 
-### API and Websocket Keys galore
+### \[CVE-2022-25512\] API and Websocket Keys galore
 
 With FreeTAKServer comes also a REST API, and Websockets to programatically manage the server and fetch/post data. These API keys and Tokens should be guarded in the same way as username and password for any application. The issue arise when the API keys are fetching data into the webapplication and are reflected in the javascript of the response on each request in the web application. Both are easily extraced using built-in DevTools or through an XSS attack.
 
@@ -78,7 +78,7 @@ With FreeTAKServer comes also a REST API, and Websockets to programatically mana
 
 > Remember to always check the source code!
 
-### Unauthenticated Public RestAPI Endpoint
+### \[CVE-2022-25508\] Unauthenticated Public RestAPI Endpoint
 
 In the RestAPI there is also the Endpoint _/ManageRoute/postRoute_ which is unauthenticated. While this might not seem interesting at first, it is possible to broadcast new routes (suggested tracks to take) to every End User Device (EUD) connected to the server. This can create two issues, either create a Denial of Service situation where a malicious user can fill the entire map with routes, making it impossible to use the map in the EUD. The second scenario might be to create a route on which possible users might take and therefor control some of the paths and direct users into bad situations.
 
@@ -101,7 +101,7 @@ Host: FreeTAKServer:19023
 }
 ```
 
-### XSS through Emergency Alert
+### \[CVE-2022-25507\] XSS through Emergency Alert
 
 In the FreeTAKServer-UI there is a function to create and view Emergency Alerts that are originating from either the End User Device or from the UI itself. Both Avenues are susceptible to a Stored Cross Site scripting vulnerability in the Callsign parameter.
 
@@ -124,7 +124,7 @@ This can be chained together with the API keys in the reponse in order to obtain
 
 {{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_alert.jpg" title="XSS End User Device WebUI Alert" >}}  
 
-### SQL Injection on AuthenticateUser
+### \[CVE-2022-25506\] SQL Injection on AuthenticateUser
 
 The API endpoint AuthenticateUser contains a SQL Injection into the SQLite3 Database that is handling the authentication process of the SystemUsers. In order to exploit this vulnerability the attacker need to possess a valid API key, which can either be leaked through the XSS to a End User Device, or given as a part of the UAV Operator ability which broadcasts the GPS and Video feed of a UAV-Drone.  
 From the SQL Injection it is possible to list all the Username, UsedID and Clear-Text passwords in the database.
@@ -156,7 +156,7 @@ In the TAK EcoSystem there exists a file sharing function for mission essential 
 
 During the analysis we encountered two specific endpoints in the FreeTAKServer software that can be abused as a Arbitrary File Write, which inturn can be leveraged into Remote Code Execution through either a Cron job (depending on the accesslevel for the user running FTS) or through the Flask Templating functions.
 
-##### User Interface Datapackage
+##### \[CVE-2022-25511\] User Interface Datapackage
 
 From the WebUI it is possible to (once logged in) upload DataPackages directly to the server so that it is possible to download the zipped files on the EUD in the field.
 The route `/DataPackageTable` takes an argument `?filename=` which is not sanitized for either the Path or the Filename outside of the UI, which creates the issues that you can place any file, anywhere on the system. Albeit going this route will add some junk XML data into the end of the file, this making it extremely hard to achieve code execution through Python or Flask Templating.
