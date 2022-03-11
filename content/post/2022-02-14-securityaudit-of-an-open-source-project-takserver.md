@@ -43,14 +43,14 @@ The vulnerabilities that will be discussed below affects currently the:
 - Werkzeug 2.0.3
 
 A list of the following vulnerabilities was discovered:
-1. Hardcoded Flask Secrets Key - CVE-2022-25510
-2. API and Websocket key leakage - CVE-2022-25512
-3. Unauthenticated RestAPI Endpoints - CVE-2022-25508
-4. XSS through Emergency Broadcast System from WebUI - CVE-2022-25507
-5. XSS through Emergency Broadcast System from End User Device - CVE-2022-25507
-6. SQL Injection leaking User Database - CVE-2022-25506
-7. Arbitrary File Write Leading to Remote Code Execution
-   1. Through WebUI (Authenticated) - CVE-2022-25511
+1. \[CVE-2022-25510\] Hardcoded Flask Secrets Key
+2. \[CVE-2022-25512\] API and Websocket key leakage
+3. \[CVE-2022-25508\] Unauthenticated RestAPI Endpoints
+4. \[CVE-2022-25507\] XSS through Emergency Broadcast System from WebUI
+5. \[CVE-2022-25507\] XSS through Emergency Broadcast System from End User Device
+6. \[CVE-2022-25506\] SQL Injection leaking User Database
+7. \[CVE-2022-25511\] Arbitrary File Write Leading to Remote Code Execution
+   1. Through WebUI (Authenticated) 
    2. Through End User Device (Unauthenticated)
 
 Lets begin!
