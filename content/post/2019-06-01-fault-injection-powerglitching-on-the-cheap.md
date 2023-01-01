@@ -159,7 +159,6 @@ Putting all the code together it should look something like:
     }
 
     void loop() {
-      // put your main code here, to run repeatedly:
 
       for (int i = 0; i<200;i++){
           if (Serial.available() > 0) {
