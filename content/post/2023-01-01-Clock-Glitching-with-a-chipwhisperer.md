@@ -218,7 +218,7 @@ Putting it all together should look something like this:
 
     cw.glitch_logger.setLevel(logging.ERROR)
 
-    print("[+] Reset target chip and Start the Gltich cycle")
+    print("[+] Reset target chip and Start the Glitch cycle")
 
     reboot_flush()
 
