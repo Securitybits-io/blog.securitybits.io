@@ -36,7 +36,7 @@ All Microcontrollers are bound by operating out of a clock cycle, where one cycl
 
 As with the Voltage Glitching in the post "[Voltage glitching on the Cheap](https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/)", we defined that within a given set of parameters the hardware operates normally. But introducing faults into the voltage line corrupted the instructions enough to break out of the "Lock" loop. The same assumption is made with the clock line, that within a given set of parameters the hardware will operate normally.
 
-In order to create the "glitch" for our clock glitch to work, we must introduce an additional clock cycle to the microcontroller. By doing so we can make the microcontroller to essentially "skip" a step in the execution.
+In order to create the "glitch" for our clock glitch to work, we must introduce an additional clock cycle to the microcontroller. By doing so, we can make the microcontroller to essentially "skip" a step in the execution.
 
 {{< image classes="fancybox center" src="/img/posts/2023/01/clock-glitching-with-a-chipwhisperer/clock-glitch.jpg" title="Glitched Clock Cycle" >}}
 
@@ -47,7 +47,9 @@ Components needed:
 - Arduino UNO
 - Chipwhisperer-Lite (or Pro)
 - Breadboard
-- Dupont Wires
+- DuPont Wires
+
+(And some basic knowledge in Python and the Chipwhisperer API will not hurt)
 
 Again, lets start by loading the source code onto our victim Uno using avrdude:
 
@@ -94,11 +96,11 @@ Heres a complete picture of the setup:
 
 ## Glitching Time
 
-So we will be using a Chipwhisperer (If it wasnt obvious already), the CW-Lite API and Python3 in order to create our Glitch loop. While it might look confusing at first, we'll go through a couple key points in the code.
+So we will be using a Chipwhisperer (If it wasn't obvious already), the CW-Lite API and Python3 in order to create our Glitch loop. While it might look confusing at first, we'll go through a couple key points in the code.
 
 ### Scope Setup
 
-The first thing we'll do after connecting to the deove is to run a `scope.default_setup` so that we do not have any lingering configurations laying around. Then we move on to defining some of the GPIO pins, which is the same as the connection scheme before:
+The first thing we'll do after connecting to the deove is to run a `scope.default_setup` so that we do not have any lingering configurations lying around. We then move on to defining some of the GPIO pins, which is the same as the connection scheme before:
 
 #### GPIO
 
@@ -139,7 +141,7 @@ The following lines of code are responsible for the timing of the glitch, and th
     scope.glitch.repeat = 10
     ```
 
-These are the settings that worked for me, but your mileage may vary. Recommend to tweak `ext_offset` and increase te span of `offset` in order to vary the place of the glitch.
+These are the settings that worked for me, but your mileage may vary. Recommend tweaking `ext_offset` and increase the span of `offset` in order to vary the place of the glitch.
 
 #### Reset Function
 
@@ -239,13 +241,13 @@ Putting it all together should look something like this:
             break
 ```
 
-If everything is setup properly, running the code will eventually result in:
+If everything is set up properly, running the code will eventually result in:
 
 {{< image classes="fancybox center" src="/img/posts/2023/01/clock-glitching-with-a-chipwhisperer/glitch_result.png" >}}
 
 ## sys.exit()
 
-I hope that you enjoyed reading some of this or that it atleast was a bit useful, i can recommend that if you'd like to dive deeper into glitching to purchase a chipwhisperer at your [Newae Mouser Store](https://eu.mouser.com/manufacturer/newae-technology/featured-products/) as the free course dives really deep into the glitch.
+I hope that you enjoyed reading some of this or that it at least was a bit useful, i can recommend that if you'd like to dive deeper into glitching to purchase a chipwhisperer at your [Newae Mouser Store](https://eu.mouser.com/manufacturer/newae-technology/featured-products/) as the free course dives really deep into the glitch.
 
 And here are some cool links:
 
