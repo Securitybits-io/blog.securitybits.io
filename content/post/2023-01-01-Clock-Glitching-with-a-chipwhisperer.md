@@ -115,7 +115,7 @@ The next part is actually defining how the glitch will look like, and where the 
 
 The complete scope setup should look something like:
 
-    ```python
+```python
     scope.adc.timeout = 0.1
     scope.io.nrst = "high"
     scope.io.tio1 = "serial_tx"
@@ -127,19 +127,19 @@ The complete scope setup should look something like:
     scope.glitch.repeat      = 1
     scope.glitch.output      = "clock_xor"
     scope.clock.clkgen_freq  = 16E6
-    ```
+```
 
 #### Glitch Time and Shape
 
 The following lines of code are responsible for the timing of the glitch, and the shape of it.
 
-    ```python
+```python
     gc.set_range("width", 40, 40)
     gc.set_range("offset", -35, -25)
     gc.set_range("ext_offset", 5, 10)
     gc.set_global_step(1)
     scope.glitch.repeat = 10
-    ```
+```
 
 These are the settings that worked for me, but your mileage may vary. Recommend tweaking `ext_offset` and increase the span of `offset` in order to vary the place of the glitch.
 
@@ -147,7 +147,7 @@ These are the settings that worked for me, but your mileage may vary. Recommend 
 
 The `reboot_flush()` function is defined according to the Atmega328p datasheet, where a chip reset occurs when the RST pin is set to `low` for more than a clock cycle and brought to `high_z`. The function is nice to have so that each execution of the glitch script works of a fresh slate for the microcontroller. But the function can also be used if the glitch cycle would be corrupting anything in the program memory which is not beneficial to us.
 
-    ```python
+```python
     def reboot_flush():
         scope.io.nrst = "low"
         time.sleep(0.05)
@@ -155,7 +155,7 @@ The `reboot_flush()` function is defined according to the Atmega328p datasheet, 
         time.sleep(0.05)
         target.flush()
         return
-    ```
+```
 
 ### Creating the glitch
 
