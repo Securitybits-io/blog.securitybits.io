@@ -241,6 +241,8 @@ Putting it all together should look something like this:
             break
 ```
 
+Full script is avalible at: [Github Link](https://github.com/Securitybits-io/blog.securitybits.io/blob/master/misc/2023/01/clock-glitching-with-a-chipwhisperer/glitch.py)
+
 If everything is set up properly, running the code will eventually result in:
 
 {{< image classes="fancybox center" src="/img/posts/2023/01/clock-glitching-with-a-chipwhisperer/glitch_result.png" >}}
