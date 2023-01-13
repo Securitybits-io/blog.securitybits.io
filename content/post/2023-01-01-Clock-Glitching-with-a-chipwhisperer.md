@@ -100,7 +100,7 @@ So we will be using a Chipwhisperer (If it wasn't obvious already), the CW-Lite 
 
 ### Scope Setup
 
-The first thing we'll do after connecting to the deove is to run a `scope.default_setup` so that we do not have any lingering configurations lying around. We then move on to defining some of the GPIO pins, which is the same as the connection scheme before:
+The first thing we'll do after connecting to the device is to run a `scope.default_setup` so that we do not have any lingering configurations lying around. We then move on to defining some of the GPIO pins, which is the same as the connection scheme before:
 
 #### GPIO
 
