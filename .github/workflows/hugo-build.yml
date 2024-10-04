@@ -25,8 +25,8 @@ jobs:
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v4
       env:
-        ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         PUBLISH_BRANCH: master
         PUBLISH_DIR: ./public
     # - uses: 8398a7/action-slack@v2
