@@ -18,7 +18,7 @@ defaultContentLanguage = "en-us"
 title = "Securitybits.io"
 theme = "hugo-tranquilpeak-theme"
 disqusShortname = "hugo-tranquilpeak-theme"
-googleAnalytics = "UA-115328400-1"
+#googleAnalytics = "UA-115328400-1"
 paginate = 7
 canonifyurls = true
 
