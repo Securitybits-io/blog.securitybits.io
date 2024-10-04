@@ -24,7 +24,7 @@ jobs:
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v4
-      env:
+      with:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
         PUBLISH_BRANCH: master
@@ -36,4 +36,4 @@ jobs:
     #   env:
     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-      if: always()
+    #   if: always()
