@@ -22,7 +22,7 @@ showPagination: true
 showSocial: true
 showDate: true
 comments: false
-summary: "Its HiDIYous, but it works!...."
+summary: "Its HiDIYous, but it works!..."
 ---
 
 HiDIYous was an internal project, that came about when we needed a USB implant that acted like a Human Interface Device (keyboard). The only issue was that the organization we where testing had a security posture that made it impossible to use any over the counter devices (Hak5 Rubberducky, OMG Cable etc.). This spawned the idea that I should design my own, that should be robust, easy and have a really small footprint so that it can be implanted into a lot of different host devices.
