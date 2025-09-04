@@ -10,11 +10,13 @@
           {{ end }}
         {{ end }}
       {{ else }}
-        {{ if .Params.coverImage }}
-          {{ if (findRE "^/" .Params.coverImage 1) }}
-            {{ .Scratch.Set "thumbnailImage" (.Params.coverImage | absURL) }}
+        {{ if .Params.coverimage }}
+          {{ if (findRE "^https?://" .Params.coverimage 1) }}
+            {{ .Scratch.Set "thumbnailImage" .Params.coverimage }}
+          {{ else if (findRE "^/" .Params.coverimage 1) }}
+            {{ .Scratch.Set "thumbnailImage" (.Params.coverimage | absURL) }}
           {{ else }}
-            {{ .Scratch.Set "thumbnailImage" (path.Join .RelPermalink .Params.coverImage) }}
+            {{ .Scratch.Set "thumbnailImage" (path.Join .RelPermalink .Params.coverimage) }}
           {{ end }}
         {{ end }}
       {{ end }}

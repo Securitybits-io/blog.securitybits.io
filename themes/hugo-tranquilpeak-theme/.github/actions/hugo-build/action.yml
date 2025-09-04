@@ -1,0 +1,78 @@
+name: 'Build Hugo Site'
+description: 'Build the Hugo site with common options'
+
+inputs:
+  working-directory:
+    description: 'Working directory for Hugo build'
+    required: false
+    default: 'exampleSite'
+  build-drafts:
+    description: 'Build draft content'
+    required: false
+    default: 'true'
+  build-future:
+    description: 'Build future content'
+    required: false
+    default: 'true'
+  minify:
+    description: 'Minify output'
+    required: false
+    default: 'true'
+  gc:
+    description: 'Run garbage collection'
+    required: false
+    default: 'true'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate Hugo environment
+      shell: bash
+      run: |
+        hugo version
+        echo "Working directory: ${{ inputs.working-directory }}"
+        ls -la ${{ inputs.working-directory }}/
+
+    - name: Build with Hugo
+      shell: bash
+      run: |
+        cd ${{ inputs.working-directory }}
+        
+        # Build Hugo command with conditional flags
+        hugo_cmd="hugo"
+        
+        if [ "${{ inputs.minify }}" = "true" ]; then
+          hugo_cmd="$hugo_cmd --minify"
+        fi
+        
+        if [ "${{ inputs.gc }}" = "true" ]; then
+          hugo_cmd="$hugo_cmd --gc"
+        fi
+        
+        if [ "${{ inputs.build-drafts }}" = "true" ]; then
+          hugo_cmd="$hugo_cmd --buildDrafts"
+        fi
+        
+        if [ "${{ inputs.build-future }}" = "true" ]; then
+          hugo_cmd="$hugo_cmd --buildFuture"
+        fi
+        
+        echo "Running: $hugo_cmd"
+        eval $hugo_cmd
+    
+    - name: Validate build output
+      shell: bash
+      run: |
+        cd ${{ inputs.working-directory }}
+        if [ ! -d "public" ]; then
+          echo "❌ Hugo build failed - no public directory created"
+          exit 1
+        fi
+        
+        html_count=$(find public -name "*.html" | wc -l)
+        if [ "$html_count" -eq 0 ]; then
+          echo "❌ Hugo build failed - no HTML files generated"
+          exit 1
+        fi
+        
+        echo "✅ Hugo build successful - generated $html_count HTML files" 

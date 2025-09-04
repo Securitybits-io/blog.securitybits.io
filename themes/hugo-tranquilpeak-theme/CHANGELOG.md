@@ -1,4 +1,42 @@
-# Change Log
+# CHANGELOG
+
+## [0.5.4-MODERN] - 2025-01-28
+
+### Modern Fork Release
+
+This release represents a comprehensive modernization of the hugo-tranquilpeak-theme to support the latest Hugo version and fix various compatibility issues.
+
+### Added
+- **Hugo v0.148.0+ Support** - Full compatibility with the latest Hugo version
+- **Modern Build System** - Updated npm dependencies and build process
+- **Security Updates** - Fixed npm security vulnerabilities
+
+### Changed
+- **Minimum Hugo Version** - Updated from v0.53 to v0.148.0
+- **Google Analytics Template** - Replaced deprecated `_internal/google_analytics_async.html` with modern `_internal/google_analytics.html`
+- **Pagination Configuration** - Updated deprecated `paginate` setting to modern `pagination.pagerSize`
+
+### Fixed
+- **Deprecated Hugo Features** - Removed usage of deprecated Hugo template functions
+- **Build Errors** - Fixed various template compilation issues with modern Hugo
+- **Front-end Compatibility** - Resolved JavaScript and CSS compatibility issues
+- **Asset Pipeline** - Updated Grunt build process to work with current dependencies
+
+### Security
+- **npm Dependencies** - Updated all npm packages to latest secure versions
+- **Vulnerability Fixes** - Resolved multiple security warnings in dependencies
+
+### Migration Notes
+- **Hugo Version Requirement**: Sites using this theme must upgrade to Hugo v0.148.0 or later
+- **Configuration Changes**: Update `paginate = X` to `[pagination] pagerSize = X` in config files
+- **Build Process**: Run `npm install && npm run prod` to rebuild assets after upgrading
+
+### Breaking Changes
+- Minimum Hugo version increased from v0.53 to v0.148.0
+- Configuration syntax changes for pagination settings
+- Some deprecated template functions no longer supported
+
+---
 
 All notable changes to this project will be documented in this file.
 

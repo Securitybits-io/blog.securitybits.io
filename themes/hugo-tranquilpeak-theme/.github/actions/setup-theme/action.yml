@@ -1,0 +1,24 @@
+name: "Setup Hugo Theme"
+description: "Setup the Hugo theme for exampleSite using the setup-examplesite.sh script"
+
+inputs:
+  skip-asset-build:
+    description: "Skip building assets (useful if already built)"
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup theme for exampleSite
+      shell: bash
+      run: |
+        echo "🎨 Setting up Hugo theme using setup-examplesite.sh..."
+
+        # Make sure the script is executable
+        chmod +x setup-examplesite.sh
+
+        # Run the existing setup script
+        ./setup-examplesite.sh
+
+        echo "✅ Theme setup completed successfully using setup-examplesite.sh"

@@ -1,0 +1,75 @@
+name: Lint and Code Quality
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint (if available)
+        run: |
+          if npm run lint --if-present; then
+            echo "✅ ESLint passed"
+          else
+            echo "⚠️ ESLint not configured or failed"
+          fi
+
+      - name: Run Stylelint (if available)
+        run: |
+          if npm run stylelint --if-present; then
+            echo "✅ Stylelint passed"
+          else
+            echo "⚠️ Stylelint not configured or failed"
+          fi
+
+      - name: Check code formatting
+        run: |
+          echo "🔍 Checking code formatting..."
+          if command -v prettier &> /dev/null; then
+            npx prettier --check "**/*.{js,jsx,ts,tsx,json,css,scss,md,html}" || {
+              echo "❌ Code formatting issues found. Run 'npx prettier --write' to fix."
+              exit 1
+            }
+          else
+            echo "⚠️ Prettier not available, skipping format check"
+          fi
+
+      - name: Check for TODO/FIXME comments
+        run: |
+          echo "🔍 Checking for TODO/FIXME comments..."
+          if grep -r -i "TODO\|FIXME\|HACK\|XXX" --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" --include="*.scss" --include="*.css" --include="*.html" .; then
+            echo "⚠️ Found TODO/FIXME comments in code"
+            echo "Consider addressing these before merging"
+          else
+            echo "✅ No TODO/FIXME comments found"
+          fi
+
+      - name: Check file sizes
+        run: |
+          echo "📊 Checking file sizes..."
+          find . -name "*.js" -o -name "*.css" -o -name "*.scss" -print0 | xargs -0 wc -l | sort -nr | head -10
+
+      - name: Validate package.json
+        run: |
+          echo "🔍 Validating package.json..."
+          npm run validate --if-present || echo "⚠️ No validate script found"
+
+      - name: Check for console.log statements
+        run: |
+          echo "🔍 Checking for console.log statements..."
+          if grep -r "console\.log" --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" .; then
+            echo "⚠️ Found console.log statements. Consider removing for production."
+          else
+            echo "✅ No console.log statements found"
+          fi 

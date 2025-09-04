@@ -1,280 +1,183 @@
 ---
 title: "Tags plugins showcase"
-date: 2014-10-29
-tags:
-- tag plugins
-- test
-thumbnailImagePosition: left
-thumbnailImage: //d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-6-140.jpg
+date: 2014-10-24T22:40:32.169Z
+description: "This article demonstrates the various tags and plugins available in the Tranquilpeak theme"
+thumbnail: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop"
+categories: ["showcase"]
+tags: ["tag-plugins", "shortcodes", "features"]
+photos:
+  - "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop"
+  - "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop"
 ---
 
-This post is used to show how tag plugins are displayed. See [docs](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md#tags) for more info.
-<!--more-->
+This article demonstrates the various tags and plugins available in the Tranquilpeak theme. These shortcodes make it easy to add rich content to your blog posts.
 
-{{< toc >}}
+## Alerts
 
-# Alert
+Alerts are useful for highlighting important information:
 
-Read documentation to know how to use [Alert tag](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md#alert)
+{{% alert info %}}
+This is an **info alert** with a [link](https://github.com/kakawait/hugo-tranquilpeak-theme).
+{{% /alert %}}
 
-{{< alert info >}}
-Praesent diam elit, interdum ut pulvinar placerat, imperdiet at magna.
-{{< /alert >}}
+{{% alert success %}}
+This is a **success alert** indicating that something went well.
+{{% /alert %}}
 
-{{< alert success >}}
-Praesent diam elit, interdum ut pulvinar placerat, imperdiet at magna.
-{{< /alert >}}
+{{% alert warning %}}
+This is a **warning alert** to draw attention to potential issues.
+{{% /alert %}}
 
-{{< alert warning >}}
-Praesent diam elit, interdum ut pulvinar placerat, imperdiet at magna.
-{{< /alert >}}
+{{% alert danger %}}
+This is a **danger alert** for critical information or errors.
+{{% /alert %}}
 
-{{< alert danger >}}
-Praesent diam elit, interdum ut pulvinar placerat, imperdiet at magna.
-{{< /alert >}}
+## Blockquotes
 
-# Block Quote
+Blockquotes are great for highlighting quotes or important text:
 
-Read documentation to know how to use [Block Quote tag](https://hexo.io/docs/tag-plugins.html#Block_Quote)
+{{% blockquote author="Albert Einstein" url="https://en.wikipedia.org/wiki/Albert_Einstein" %}}
+Imagination is more important than knowledge. For knowledge is limited, whereas imagination embraces the entire world, stimulating progress, giving birth to evolution.
+{{% /blockquote %}}
 
-**Normal blockquote**
+{{% blockquote author="Steve Jobs" url="https://en.wikipedia.org/wiki/Steve_Jobs" %}}
+Stay hungry, stay foolish.
+{{% /blockquote %}}
 
-> Praesent diam elit, interdum ut pulvinar placerat, imperdiet at magna.
+## Code blocks
 
-**Quote from a book**
+Code blocks with syntax highlighting:
 
-{{< blockquote "David Levithan" "Wide Awake" >}}
-Do not just seek happiness for yourself. Seek happiness for all. Through kindness. Through mercy.
-{{< /blockquote >}}
+{{% codeblock "JavaScript Example" javascript %}}
+// JavaScript example
+function greet(name) {
+    return `Hello, ${name}!`;
+}
 
-**Quote from Twitter**
+console.log(greet('World'));
+{{% /codeblock %}}
 
-{{< blockquote "@DevDocs" "https://twitter.com/devdocs/status/356095192085962752" >}}
-NEW: DevDocs now comes with syntax highlighting. //devdocs.io
-{{< /blockquote >}}
+{{% codeblock "Python Example" python %}}
+# Python example
+def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
 
-**Quote from an article on the web**
+print(fibonacci(10))
+{{% /codeblock %}}
 
-{{< blockquote "Seth Godin" "//sethgodin.typepad.com/seths_blog/2009/07/welcome-to-island-marketing.html" "Welcome to Island Marketing" >}}
-Every interaction is both precious and an opportunity to delight.
-{{< /blockquote >}}
+## YouTube videos
 
-# Code Block
+Embed YouTube videos easily:
 
-Read documentation to know how to use [Code Block tag](https://hexo.io/docs/tag-plugins.html#Code_Block)
+{{% youtube "dQw4w9WgXcQ" %}}
 
-<p></p>
+## Vimeo videos
 
-**Normal code block**
+Embed Vimeo videos:
 
-```js
-alert('Hello World!');
-alert('Hello World!');
+{{% vimeo "148751763" %}}
+
+## Dailymotion videos
+
+Embed Dailymotion videos:
+
+{{% dailymotion "x3c1ihj" %}}
+
+## Images with captions
+
+Add images with captions:
+
+{{% image src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=600&fit=crop" caption="Beautiful code on a screen" %}}
+
+{{% image src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop" caption="Mountain landscape" %}}
+
+## Tabs
+
+Organize content with tabs:
+
+{{% tabs %}}
+{{% tab "JavaScript" %}}
+```javascript
+// JavaScript code here
+function hello() {
+    console.log("Hello from JavaScript!");
+}
 ```
-
-**With caption**
-
-{{< codeblock "Array.map" >}}
-array.map(callback[, thisArg])
-{{< /codeblock >}}
-
-**With caption and URL**
-
-{{< codeblock "apache.conf" "apacheConf" "http://underscorejs.org/#compact" "apache.conf" >}}
-# rewrite`s rules for wordpress pretty url
-LoadModule rewrite_module  modules/mod_rewrite.so
-RewriteCond %{REQUEST_FILENAME} !-f
-
-<Location /maps/>
-  RewriteMap map txt:map.txt
-  RewriteMap lower int:tolower
-  RewriteCond %{REQUEST_URI} ^/([^/.]+)\.html$ [NC]
-  RewriteCond ${map:${lower:%1}|NOT_FOUND} !NOT_FOUND
-  RewriteRule .? /index.php?q=${map:${lower:%1}} [NC,L]
-</Location>
-{{< /codeblock >}}
-
-# Gist
-
-Read documentation to know how to use [Gist tag](https://hexo.io/docs/tag-plugins.html#Gist)
-
-<p></p>
-
-{{< gist imathis 996818 >}}
-
-# Image
-
-Read documentation to know how to use [Image tag](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md#image)
-
-<p></p>
-
-{{< image classes="fancybox fig-100" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-15.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-15-750.jpg" >}}
-{{< image classes="fancybox nocaption fig-50" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-4.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-4-375.jpg" title="Ferrari" >}}
-{{< image classes="fancybox nocaption fig-50" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-12.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-12-375.jpg" title="BMW i8 Concept" >}}
-{{< image classes="fancybox nocaption fig-33" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-14.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-14-250.jpg" >}}
-{{< image classes="fancybox nocaption fig-33" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-9.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-9-250.jpg" >}}
-{{< image classes="fancybox nocaption fig-33" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-2.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-2-250.jpg" >}}
-{{< image classes="right fancybox fig-75" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-11.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-11-560.jpg" >}}
-{{< image classes="right fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-8.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-8-185.jpg" >}}
-{{< image classes="right fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-10.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-10-185.jpg" >}}
-{{< image classes="right fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-5.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-5-185.jpg" >}}
-{{< image classes="fancybox fig-50" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-13.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-13-375.jpg" >}}
-{{< image classes="fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-17.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-17-185.jpg" >}}
-{{< image classes="fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-18.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-18-185.jpg" >}}
-{{< image classes="fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-19.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-19-185.jpg" >}}
-{{< image classes="clear fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-20.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-20-185.jpg" >}}
-{{< image classes="fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-21.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-21-185.jpg" >}}
-{{< image classes="fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-22.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-22-185.jpg" >}}
-{{< image classes="fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-23.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-23-185.jpg" >}}
-{{< image classes="clear fancybox fig-25" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-24.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-24-185.jpg" >}}
-{{< image classes="fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-25.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-25-150.jpg" >}}
-{{< image classes="fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-26.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-26-150.jpg" >}}
-{{< image classes="fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-27.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-27-150.jpg" >}}
-{{< image classes="fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-28.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-28-150.jpg" >}}
-{{< image classes="clear fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-29.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-29-150.jpg" >}}
-{{< image classes="fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-35.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-35-150.jpg" >}}
-{{< image classes="fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-30.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-30-150.jpg" >}}
-{{< image classes="fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-31.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-31-150.jpg" >}}
-{{< image classes="fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-32.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-32-150.jpg" >}}
-{{< image classes="clear fig-20" src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-34.jpg" thumbnail="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-34-150.jpg" >}}
-
-# jsFiddle
-
-Read documentation to know how to use [jsFiddle tag](https://hexo.io/docs/tag-plugins.html#jsFiddle)
-
-<p></p>
-
-{{< jsfiddle ccWP7 >}}
-
-# Pull Quote
-
-Read documentation to know how to use [Pull Quote tag](https://hexo.io/docs/tag-plugins.html#Pull_Quote)
-
-Donec non tempus arcu.
-Phasellus adipiscing, mauris nec mollis egestas, ipsum nunc auctor velit, et rhoncus lorem ipsum at ante. Duis vel mauris nulla. Maecenas mattis interdum ante, quis sagittis.
-{{< pullquote left >}}
-Here is a pullquote left. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-{{< /pullquote >}}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tempus molestie arcu, et
-fringilla mauris placerat ac. Nullam luctus bibendum risus. Ut cursus sed ipsum feugiat egestas. Suspendisse elementum, velit eu consequat consequat, augue lorem dapibus libero, eget pulvinar dolor est sit amet nulla. Suspendisse a porta tortor, et posuere mi. Pellentesque ultricies, mi quis volutpat malesuada, erat felis vulputate nisl, ac congue ante tortor ut ante. Proin aliquam sem vel mauris tincidunt, elementum ullamcorper nisl pretium, ultrices cursus justo. Mauris porttitor commodo eros, ac ornare orci interdum in. Cras fermentum cursus leo sed mattis. In dignissim lorem sem, sit amet elementum mauris venenatis ac.
-{{< pullquote right >}}
-Here is a pullquote right. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-{{< /pullquote >}}
-Donec non tempus arcu. Phasellus adipiscing, mauris nec mollis egestas, ipsum nunc auctor velit, et rhoncus lorem ipsum at ante. Duis vel mauris nulla.
-Maecenas mattis interdum ante, quis sagittis nibh cursus et. Nulla facilisi. Morbi convallis gravida tortor, ut fermentum enim gravida et. Nunc vel dictum nisl, non ultrices libero.
-Proin vestibulum felis eget orci consectetur lobortis. Vestibulum augue nulla, iaculis vitae augue vehicula,
-dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.
-
-# Highlight text
-
-Read documentation to know how to use [Highlight text tag](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md#highlight-text)
-
-<p>{{< hl-text red >}}highlight red{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text green >}}highlight green{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text blue >}}highlight blue{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text purple >}}highlight purple{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text orange >}}highlight orange{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text yellow >}}highlight yellow{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text cyan >}}highlight cyan{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text primary >}}highlight primary{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text success >}}highlight success{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text warning >}}highlight warning{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.{{< hl-text danger >}}highlight danger{{< /hl-text >}} dignissim ultrices libero. Sed imperdiet urna et quam ultrices tincidunt nec ac magna. Etiam vel pharetra elit.</p>
-
-# Tabbed code block
-
-Read documentation to know how to use [Tabbed code block](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md#tabbed-code-block)
-
-<p></p>
-
-{{< tabbed-codeblock tabbed_codeblock >}}
-<!-- tab js -->
-function $initHighlight(block, flags) {
-  try {
-    if (block.className.search(/\bno\-highlight\b/) != -1)
-      return processBlock(block.function, true, 0x0F) + ' class=""';
-  } catch (e) {
-    /* handle exception */
-    var e4x =
-        <div>Example
-            <p>1234</p></div>;
-  }
-  for (var i = 0 / 2; i < classes.length; i++) { // "0 / 2" should not be parsed as regexp
-    if (checkCondition(classes[i]) === undefined)
-      return /\d+[\s/]/g;
-  }
-  console.log(Array.every(classes, Boolean));
+{{% /tab %}}
+{{% tab "Python" %}}
+```python
+# Python code here
+def hello():
+    print("Hello from Python!")
+```
+{{% /tab %}}
+{{% tab "CSS" %}}
+```css
+/* CSS code here */
+.hello {
+    color: blue;
+    font-weight: bold;
 }
-<!-- endtab -->
-<!-- tab css -->
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-  body:first-of-type pre::after {
-    content: 'highlight: ' attr(class);
-  }
-  body {
-    background: linear-gradient(45deg, blue, red);
-  }
-}
+```
+{{% /tab %}}
+{{% /tabs %}}
 
-@import url('print.css');
-@page:right {
- margin: 1cm 2cm 1.3cm 4cm;
-}
+## GitHub Gists
 
-@font-face {
-  font-family: Chunkfive; src: url('Chunkfive.otf');
-}
+Embed GitHub Gists:
 
-div.text,
-#content,
-li[lang=ru] {
-  font: Tahoma, Chunkfive, sans-serif;
-  background: url('hatch.png') /* wtf? */;  color: #F0F0F0 !important;
-  width: 100%;
-}
-<!-- endtab -->
-<!-- tab html -->
-<?xml version="1.0"?>
-<response value="ok" xml:lang="en">
-  <text>Ok</text>
-  <comment html_allowed="true"/>
-  <ns1:description><![CDATA[
-  CDATA is <not> magical.
-  ]]></ns1:description>
-  <a></a> <a/>
-</response>
+{{% gist "kakawait" "eaa6584e15357f6a93f0" %}}
 
+## JSFiddle
 
-<!DOCTYPE html>
-<title>Title</title>
+Embed JSFiddle examples:
 
-<style>body {width: 500px;}</style>
+{{% jsfiddle "tutorial" "html,result" %}}
 
-<script type="application/javascript">
-  function $init() {return true;}
-</script>
+## CodePen
 
-<body>
-  <p checked class="title" id='title'>Title</p>
-  <!-- here goes the rest of the page -->
-</body>
-<!-- endtab -->
-{{< /tabbed-codeblock >}}
+Embed CodePen examples:
 
-# Youtube
+{{% codepen "example" "html,result" %}}
 
-Read documentation to know how to use [Youtube tag](https://hexo.io/docs/tag-plugins.html#YouTube)
+## Slideshare
 
-<p></p>
+Embed Slideshare presentations:
 
-{{< youtube BSVkI3Ds8E >}}
+{{% slideshare "example" %}}
 
-# Vimeo
+## Speaker Deck
 
-Read documentation to know how to use [Vimeo tag](https://hexo.io/docs/tag-plugins.html#Vimeo)
+Embed Speaker Deck presentations:
 
-<p></p>
+{{% speakerdeck "example" %}}
 
-{{< vimeo 147585091 >}}
+## Vimeo
 
-# Wide image
+Another Vimeo example:
 
-Read documentation to know how to use [Wide image tag](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md#wide-image)
+{{% vimeo "148751763" "Mountain" %}}
 
-At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
+## YouTube
 
-<p></p>
+Another YouTube example:
 
-{{< wide-image src="//d1u9biwaxjngwg.cloudfront.net/tag-plugins-showcase/car-1.jpg" title="Mercedes SLS" >}}
+{{% youtube "dQw4w9WgXcQ" "Rick Astley - Never Gonna Give You Up" %}}
 
-At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.
+## Conclusion
+
+The Tranquilpeak theme provides many useful shortcodes and plugins that make it easy to create rich, engaging content. These features help you focus on writing great content while the theme handles the presentation.
+
+## Usage tips
+
+1. **Alerts**: Use alerts to highlight important information
+2. **Blockquotes**: Perfect for quotes and testimonials
+3. **Code blocks**: Great for sharing code examples
+4. **Videos**: Embed videos from various platforms
+5. **Images**: Add images with captions
+6. **Tabs**: Organize related content
+7. **External content**: Embed content from GitHub, JSFiddle, and more
+
+These shortcodes make your blog posts more interactive and visually appealing while maintaining consistency across your site. 

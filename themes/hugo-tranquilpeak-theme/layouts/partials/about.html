@@ -7,10 +7,10 @@
       <img id="about-card-picture" src="{{ . }}{{ if in . "//www.gravatar.com/avatar/" }}?s=110{{ end }}" alt="{{ i18n "global.author_picture" }}" />
     {{ end }}
     <h4 id="about-card-name">{{ .Site.Params.Author.name }}</h4>
-    {{ with .Site.Params.Author.bio }}
-      <div id="about-card-bio">{{ . | markdownify }}</div>
-    {{ end }}
-    {{ with .Site.Params.Author.job }}
+{{ with .Site.Params.Author.bio }}
+  <div id="about-card-bio">{{ . | markdownify }}</div>
+{{ end }}
+{{ with .Site.Params.Author.job }}
       <div id="about-card-job">
         <i class="fa fa-briefcase"></i>
         <br/>

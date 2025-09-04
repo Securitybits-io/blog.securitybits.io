@@ -9,7 +9,7 @@
 {{- else -}}
   {{- .Scratch.Set "sidebarBehavior" .Site.Params.sidebarBehavior -}}
 {{- end -}}
-<!-- Fix hugo 0.17 expects ".Site.Params.Author.gravatarEmail" whereas hugo 0.18 expects ".Site.Params.Author.gravataremail" -->
+<!-- Fix hugo 0.17 expects ".Site.Author.gravatarEmail" whereas hugo 0.18 expects ".Site.Author.gravataremail" -->
 {{- if .Site.Params.Author.gravatarEmail -}}
   {{- .Scratch.Set "gravatarEmail" .Site.Params.Author.gravatarEmail -}}
 {{- end -}}
@@ -48,13 +48,37 @@
     {{ end }}
     <!--EXTERNAL STYLES END-->
     <!--STYLES-->
-    <link rel="stylesheet" href="{{ "css/style-h6ccsoet3mzkbb0wngshlfbaweimexgqcxj0h5hu4h82olsdzz6wmqdkajm.min.css" | absURL }}" />
+    <link rel="stylesheet" href="{{ "css/tranquilpeak.css" | absURL }}" />
     <!--STYLES END-->
     {{ range .Site.Params.customCSS }}
       {{ if isset . "href" }}
         <link {{ if not (isset . "rel") }}rel="stylesheet" {{ end }}{{ range $key, $value := . }} {{ if eq $key "href" }}{{ (printf "%s=\"%s\"" $key ($value | absURL)) | safeHTMLAttr }}{{ else }}{{ (printf "%s=\"%s\"" $key (string $value)) | safeHTMLAttr }}{{ end }}{{ end }}>
       {{ else }}
         <link rel="stylesheet" href="{{ . | absURL }}">
+      {{ end }}
+    {{ end }}
+
+    {{ if .Site.Params.googleAnalytics }}
+      {{ template "_internal/google_analytics.html" . }}
+    {{ end }}
+
+    {{ if .Site.Params.math.enable }}
+      {{ if .Site.Params.math.mathjax.enable }}
+        <script>
+          window.MathJax = {
+            tex: {
+              inlineMath: [['$', '$'], ['\\(', '\\)']],
+              displayMath: [['$$', '$$'], ['\\[', '\\]']],
+              processEscapes: true,
+              processEnvironments: true
+            },
+            options: {
+              ignoreHtmlClass: 'tex2jax_ignore',
+              processHtmlClass: 'tex2jax_process'
+            }
+          };
+        </script>
+        <script id="MathJax-script" async src="{{ .Site.Params.math.mathjax.cdn }}"></script>
       {{ end }}
     {{ end }}
 

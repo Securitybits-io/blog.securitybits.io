@@ -2,7 +2,6 @@
 *~
 .DS_Store
 .sass-cache
-assets
 node_modules
 src/_bower_components
 static/js/*
@@ -10,3 +9,36 @@ static/js/*
 static/css/*
 !static/css/style-*.min.css
 
+pr-body.md
+
+# DevContainer
+.devcontainer/cache/
+.devcontainer/.env
+
+# Test artifacts
+playwright-report/
+test-results/
+e2e/*.spec.js-snapshots/
+allure-results/
+
+# Generated Hugo site files
+exampleSite/public/
+
+# Build artifacts
+*.min.css
+*.min.js
+!static/css/style-*.min.css
+!static/js/script-*.min.js
+
+# Temporary files
+*.tmp
+*.temp
+/exampleSite/themes/Tranquilpeak4000/layouts
+/exampleSite/themes/Tranquilpeak4000/static/css
+/exampleSite/themes/Tranquilpeak4000/static/js
+exampleSite/themes/Tranquilpeak4000/layouts/partials/head.html
+exampleSite/themes/Tranquilpeak4000/layouts/partials/script.html
+/static/css
+/static/css
+/static/js
+/static/js

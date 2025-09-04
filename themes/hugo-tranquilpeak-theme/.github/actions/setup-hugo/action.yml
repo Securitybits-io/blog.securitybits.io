@@ -1,0 +1,119 @@
+name: "Setup Hugo"
+description: "Download and setup Hugo binary directly using wget with caching and better error handling"
+
+inputs:
+  hugo-version:
+    description: "Hugo version to install (e.g., 0.146.2, latest)"
+    required: false
+    default: "latest"
+  extended:
+    description: "Whether to install Hugo Extended version"
+    required: false
+    default: "true"
+
+outputs:
+  hugo-version:
+    description: "The Hugo version that was installed"
+    value: ${{ steps.setup-hugo.outputs.hugo-version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Hugo ${{ inputs.hugo-version }}
+      id: setup-hugo
+      shell: bash
+      run: |
+        # Determine the Hugo version to install
+        if [ "${{ inputs.hugo-version }}" = "latest" ]; then
+          echo "🔍 Fetching latest Hugo version..."
+          # Get the latest version from GitHub releases
+          HUGO_VERSION=$(curl -s https://api.github.com/repos/gohugoio/hugo/releases/latest | grep '"tag_name"' | cut -d'"' -f4 | sed 's/v//')
+          echo "📦 Latest Hugo version: $HUGO_VERSION"
+        else
+          HUGO_VERSION="${{ inputs.hugo-version }}"
+          echo "📦 Using specified Hugo version: $HUGO_VERSION"
+        fi
+
+        # Determine the binary type (extended or regular)
+        if [ "${{ inputs.extended }}" = "true" ]; then
+          BINARY_TYPE="hugo_extended"
+          echo "🔧 Installing Hugo Extended version"
+        else
+          BINARY_TYPE="hugo"
+          echo "🔧 Installing Hugo regular version"
+        fi
+
+        # Check if Hugo is already installed with the correct version
+        if command -v hugo &> /dev/null; then
+          CURRENT_VERSION=$(hugo version | grep -oP 'v\K[0-9]+\.[0-9]+\.[0-9]+')
+          if [ "$CURRENT_VERSION" = "$HUGO_VERSION" ]; then
+            echo "✅ Hugo $HUGO_VERSION is already installed"
+            echo "hugo-version=$HUGO_VERSION" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "🔄 Hugo version mismatch. Current: $CURRENT_VERSION, Required: $HUGO_VERSION"
+          fi
+        fi
+
+        # Download Hugo
+        DOWNLOAD_URL="https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/${BINARY_TYPE}_${HUGO_VERSION}_linux-amd64.tar.gz"
+        echo "📥 Downloading from: $DOWNLOAD_URL"
+
+        # Create temp directory and download
+        mkdir -p /tmp/hugo
+        cd /tmp/hugo
+
+        # Download with retry logic and better error handling
+        for i in {1..3}; do
+          echo "🔄 Download attempt $i/3..."
+          if wget -q --show-progress "$DOWNLOAD_URL" -O hugo.tar.gz; then
+            echo "✅ Download successful"
+            break
+          else
+            echo "❌ Download attempt $i failed"
+            if [ $i -eq 3 ]; then
+              echo "💥 All download attempts failed"
+              exit 1
+            fi
+            echo "⏳ Waiting 2 seconds before retry..."
+            sleep 2
+          fi
+        done
+
+        # Verify the downloaded file
+        if [ ! -f "hugo.tar.gz" ]; then
+          echo "❌ Downloaded file not found"
+          exit 1
+        fi
+
+        # Extract and install
+        echo "📦 Extracting Hugo..."
+        if ! tar -xzf hugo.tar.gz; then
+          echo "❌ Failed to extract Hugo archive"
+          exit 1
+        fi
+
+        # Verify the binary exists
+        if [ ! -f "hugo" ]; then
+          echo "❌ Hugo binary not found in archive"
+          exit 1
+        fi
+
+        # Install Hugo
+        echo "🔧 Installing Hugo..."
+        sudo mv hugo /usr/local/bin/hugo
+        chmod +x /usr/local/bin/hugo
+
+        # Clean up
+        rm -rf /tmp/hugo
+
+        # Verify installation
+        echo "🔍 Verifying installation..."
+        if ! hugo version; then
+          echo "❌ Hugo installation verification failed"
+          exit 1
+        fi
+
+        # Set output
+        echo "hugo-version=$HUGO_VERSION" >> $GITHUB_OUTPUT
+        echo "✅ Hugo $HUGO_VERSION installed successfully"

@@ -1,0 +1,67 @@
+name: Test Theme
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hugo-version:
+          - '0.128.0'  # Minimum supported version
+          - '0.140.0'  # Mid-range version
+          - '0.148.1'  # Latest stable version
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Hugo
+      uses: ./.github/actions/setup-hugo
+      with:
+        hugo-version: ${{ matrix.hugo-version }}
+        extended: true
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests
+      run: npm test
+
+    - name: Build theme assets
+      run: npm run build
+
+    - name: Setup theme
+      uses: ./.github/actions/setup-theme
+
+    - name: Test with example site
+      uses: ./.github/actions/hugo-build
+
+    - name: Check for build errors
+      run: |
+        cd exampleSite
+        if [ -d "public" ]; then
+          echo "✅ Build successful with Hugo ${{ matrix.hugo-version }}"
+          ls -la public/
+        else
+          echo "❌ Build failed with Hugo ${{ matrix.hugo-version }}"
+          exit 1
+        fi
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: hugo-${{ matrix.hugo-version }}-build
+        path: exampleSite/public/
+        retention-days: 1 

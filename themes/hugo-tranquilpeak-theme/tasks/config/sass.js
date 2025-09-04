@@ -9,7 +9,7 @@ module.exports = function(grunt) {
         sourceMap: false
       },
       files: {
-        'static/css/tranquilpeak.css': 'src/scss/tranquilpeak.scss'
+        'static/css/tranquilpeak.css': 'assets/scss/tranquilpeak.scss'
       }
     }
   });

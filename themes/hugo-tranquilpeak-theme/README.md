@@ -1,146 +1,190 @@
-# Tranquilpeak
-
-[![Twitter Follow](https://img.shields.io/twitter/follow/thibaudlepretre.svg?style=social&label=%40thibaudlepretre)](https://twitter.com/intent/follow?screen_name=thibaudlepretre)
+# Hugo Tranquilpeak 4000
 
 A gorgeous responsive theme for Hugo blog framework.
 
-![Tranquilpeak](https://raw.githubusercontent.com/kakawait/hugo-tranquilpeak-theme/master/showcase.png)
+[![Tests](https://github.com/petems/hugo-tranquilpeak-4000/workflows/E2E%20Tests%20with%20Playwright/badge.svg)](https://github.com/petems/hugo-tranquilpeak-4000/actions?query=workflow%3A%22E2E+Tests+with+Playwright%22)
 
-## Alpha/Beta versions
+## 🎨 Features
 
-**ATTENTION** during *alpha* or *beta* [versions](https://github.com/kakawait/hugo-tranquilpeak-theme/milestones) breaking changes are possible on config file.
+- **Responsive Design**: Mobile-first approach with beautiful layouts
+- **Modern UI**: Clean and elegant design with smooth animations
+- **Customizable**: Extensive configuration options
+- **Fast**: Optimized for performance and SEO
+- **Accessible**: WCAG compliant with proper semantic markup
+- **Multilingual**: Built-in internationalization support
+- **Rich Content**: Support for images, videos, code highlighting, and more
 
-You can track [breaking changes label](https://github.com/kakawait/hugo-tranquilpeak-theme/issues?q=is%3Aissue+is%3Aopen+label%3A%22breaking+changes%22).
+## 🚀 Quick Start
 
-How can I migrate my current version? Please read [CHANGELOG.md](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/CHANGELOG.md).
+### Prerequisites
 
-## Summary
+- Hugo Extended 0.128+
+- Node.js 20+ (for development and testing)
 
-- [General](#general)
-- [Features](#features)
-- [Quick start](#quick-start)
-- [Demo](#demo)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [Showcase](#showcase)
-- [License](#license)
+### Installation
 
-## General
+1. **Clone the repository**:
 
-- **Authors**: [Thibaud Leprêtre (kakawait)](https://github.com/kakawait) and [Louis Barranqueiro (LouisBarranqueiro)](https://github.com/LouisBarranqueiro)
-- **Version**: 0.5.3-BETA (based on Hexo version 3.1.0)
-- **Compatibility**: Hugo v0.53
+   ```bash
+   git clone https://github.com/petems/hugo-tranquilpeak-4000.git
+   cd hugo-tranquilpeak-4000
+   ```
 
-## Features
+2. **Install dependencies**:
 
-**General features:**
+   ```bash
+   npm install
+   ```
 
-- Fully responsive
-- Optimized for tablets & mobiles
-- Configurable menu of the sidebar
-- Pages to filter tags, categories and archives
-- Background cover image
-- Beautiful about page
-- Support Open Graph protocol
-- Easily customizable (fonts, colors, layout elements, code coloration, etc..)
-- Support internationalization (i18)
+3. **Build assets**:
 
-**Posts features:**
+   ```bash
+   npm run build
+   ```
 
-- Thumbnail image
-- Cover image
-- Responsive videos & images
-- Sharing options
-- Navigation menu
-- GitHub theme for code highlighting (customizable)
-- Image gallery
-- Tags for images (FancyBox), wide images, tabbed code blocks, highlighted text, alerts
-- Table of contents
+4. **Setup example site**:
 
-**Integrated services:**
+   ```bash
+   ./setup-examplesite.sh
+   ```
 
-- Disqus
-- Gitlak
-- Google analytics
-- Gravatar
-- Facebook Insights
+5. **Start development server**:
+   ```bash
+   cd exampleSite
+   hugo server --buildDrafts --buildFuture --disableFastRender
+   ```
 
-### Missing features from original *Hexo* version
+Visit `http://localhost:1313` to see your site!
 
-- [ ] Algolia (https://github.com/kakawait/hugo-tranquilpeak-theme/issues/8)
-- [ ] Pagination customization `tagPagination`, `categoryPagination` and `archivePagination` (https://github.com/kakawait/hugo-tranquilpeak-theme/issues/17)
+## 🧪 Testing
 
-**ATTENTION** following features will not be possible due to *Hugo* limitations
+This theme includes comprehensive end-to-end testing using Playwright.
 
-- Archives pages by years `/archives/2015`
-- Archives pages by month `/archives/2015/01`
+### Setup Testing Environment
 
-## Quick start
+```bash
+# Install Playwright browsers
+npx playwright install --with-deps
 
-**Please read [user documentation](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md), it's short and useful to discover all features and possibilities of the theme, especially the  [writing posts](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md#writing-posts) section**
-
-### For people who want to use the original version of Tranquilpeak without modifications (users)
-
-Go to the directory where you have your Hugo site and run:
-
-```shell
-mkdir themes
-cd themes
-git clone https://github.com/kakawait/hugo-tranquilpeak-theme.git
+# Build assets and setup exampleSite
+npm run build
+./setup-examplesite.sh
 ```
 
-After installing the Tranquilpeak theme successfully, we recommend you to take a look at the [exampleSite](exampleSite) directory. You will find a working Hugo site configured with the Tranquilpeak theme that you can use as a starting point for your site.
+### Running Tests
 
-First, let's take a look at the [config.toml](exampleSite/config.toml). It will be useful to learn how to customize your site. Feel free to play around with the settings.
+```bash
+# Run all E2E tests
+npm run test:e2e
 
-More information on [user documentation](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md) to install and configure the theme
+# Run visual regression tests
+npm run test:visual
 
-### For people who want to create their own version of tranquilpeak (developers)
+# Run tests with UI (for debugging)
+npm run test:e2e:ui
 
-1. Run `git clone https://github.com/kakawait/hugo-tranquilpeak-theme.git`
-2. Follow [developer documentation](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/developer.md) to edit and build the theme
+# Run tests in headed mode
+npm run test:e2e:headed
 
-## Demo
+# Generate baseline screenshots for visual tests
+npm run test:visual:baselines:all
 
-Check out Tranquilpeak theme in live : [hugo-tranquilpeak-theme demo](https://tranquilpeak.kakawait.com)
+# Update visual test snapshots
+npm run test:visual:update
+```
 
-## Showcase
+### CI/CD
 
-Checkout showcase https://tranquilpeak.kakawait.com/2015/06/who-is-using-tranquilpeak-hugo-theme/
+The project includes GitHub Actions workflows for automated testing:
 
-### How can I add my site to the showcase
+- **E2E Tests**: Runs comprehensive end-to-end tests on multiple browsers
+- **Visual Regression**: Ensures UI consistency across changes
+- **Test Summary**: Provides detailed test results and artifacts
 
-**Click [here](https://github.com/kakawait/hugo-tranquilpeak-theme/issues/new?title=Add%20my%20blog%20into%20the%20showcase&body=Hey,%20add%20my%20blog%20into%20the%20showcase:) to add your blog into the showcase.**
+### Test Structure
 
-Please fill the following information:
+- `e2e/theme-validation.spec.js` - Core theme functionality tests
+- `e2e/content-validation.spec.js` - Content and page structure tests
+- `e2e/visual-regression.spec.js` - Visual consistency tests
 
-1. public url
-2. name (optional)
-3. description (optional)
+### Configuration
 
-## Documentation
+- `playwright.config.js` - Local development configuration
+- `playwright.config.js` - Main configuration with CI/CD optimizations built-in
 
-If it's your first time using Hugo, please check [Hugo official documentation](https://gohugo.io/overview/introduction/)
+## 📁 Project Structure
 
-### For users
+```
+hugo-tranquilpeak-4000/
+├── assets/              # Source assets (SCSS, JS)
+├── layouts/             # Hugo templates
+├── static/              # Static files (images, fonts, etc.)
+├── archetypes/          # Content templates
+├── i18n/                # Internationalization files
+├── exampleSite/         # Example Hugo site
+├── e2e/                 # Playwright test files
+├── tasks/               # Grunt build tasks
+├── docs/                # Documentation
+└── tests/               # Unit tests
+```
 
-To install and configure the theme, consult the following documentation : [user documentation](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/user.md)
+## 🛠️ Development
 
-### For developers
+### Build Commands
 
-To understand the code, the workflow and edit the theme, consult the following documentation : [developer documentation](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/docs/developer.md)
+```bash
+# Development build (with source maps)
+npm start
 
-## Contributing
+# Production build
+npm run build
 
-All kinds of contributions (enhancements, features, documentation & code improvements, bugs reporting) are welcome.
+# Watch for changes
+npm run grunt -- watch
+```
 
-Read [guidelines for contributing](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/.github/CONTRIBUTING.md) for more information.
+### Available Scripts
 
-## Credits
+- `npm start` - Start development server with file watching
+- `npm run build` - Build production assets
+- `npm run test` - Run unit tests
+- `npm run test:e2e` - Run end-to-end tests
+- `npm run lint` - Run ESLint
+- `npm run test:visual` - Run visual regression tests
 
-*Hugo* version of Tranquilpeak is a based on original *Hexo* version https://github.com/LouisBarranqueiro/hexo-theme-tranquilpeak. This version is simply a port to *Hugo* static site generator.
+## 📖 Documentation
 
-## License
+- [Theme Configuration](docs/configuration.md)
+- [Content Types](docs/content-types.md)
+- [Customization](docs/customization.md)
+- [Deployment](docs/deployment.md)
 
-hugo-tranquilpeak-theme is released under the terms of the [GNU General Public License v3.0](https://github.com/kakawait/hugo-tranquilpeak-theme/blob/master/LICENSE).
+## 🤝 Contributing
 
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Setup
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `npm run test:all`
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+This theme is based on the original [Tranquilpeak theme](https://github.com/kakawait/hugo-tranquilpeak-theme) by [Thibaud Leprêtre](https://github.com/kakawait).
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/petems/hugo-tranquilpeak-4000/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/petems/hugo-tranquilpeak-4000/discussions)
+- **Documentation**: [Wiki](https://github.com/petems/hugo-tranquilpeak-4000/wiki)
+
+---
+
+Made with ❤️ by the Hugo community

@@ -1,0 +1,57 @@
+name: 'Install Dependencies'
+description: 'Install npm dependencies'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      shell: bash
+      run: |
+        echo "📦 Installing dependencies with npm ci..."
+        echo "🔍 Debug: Current working directory: $(pwd)"
+        echo "🔍 Debug: Contents of current directory:"
+        ls -la
+        
+        echo "🔍 Debug: Checking package.json and package-lock.json..."
+        if [ ! -f "package.json" ]; then
+          echo "❌ package.json not found!"
+          exit 1
+        fi
+        
+        if [ ! -f "package-lock.json" ]; then
+          echo "❌ package-lock.json not found!"
+          echo "🔍 Debug: Creating package-lock.json with npm install..."
+          npm install
+        fi
+        
+        echo "🔍 Debug: Node.js version: $(node --version)"
+        echo "🔍 Debug: npm version: $(npm --version)"
+        
+        echo "🚀 Running npm ci with verbose output..."
+        npm ci --include=dev --verbose || {
+          echo "❌ npm ci failed with exit code $?"
+          echo "🔍 Debug: npm logs:"
+          npm config get cache
+          ls -la ~/.npm/_logs/ 2>/dev/null || echo "No npm log files found"
+          exit 1
+        }
+        
+        echo "✅ npm ci completed. Verifying node_modules exists..."
+        if [ ! -d "node_modules" ]; then
+          echo "❌ node_modules directory was not created!"
+          exit 1
+        fi
+        
+        echo "✅ Dependencies installed. Verifying grunt-cli..."
+        if [ -f "node_modules/grunt-cli/bin/grunt" ]; then
+          echo "✅ grunt-cli found at node_modules/grunt-cli/bin/grunt"
+        else
+          echo "❌ grunt-cli not found!"
+          echo "📋 Contents of node_modules (first 10 entries):"
+          ls -la node_modules/ | head -10
+          echo "📋 Looking for grunt-cli specifically:"
+          find node_modules -name "*grunt*" -type d 2>/dev/null || echo "No grunt directories found"
+          exit 1
+        fi
+        
+        echo "🎉 All dependencies installed successfully!" 

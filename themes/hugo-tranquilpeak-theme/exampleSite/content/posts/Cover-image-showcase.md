@@ -1,26 +1,75 @@
 ---
 title: "Cover image showcase"
-thumbnailImagePosition: left
-thumbnailImage: //d1u9biwaxjngwg.cloudfront.net/cover-image-showcase/city-750.jpg
-coverImage: //d1u9biwaxjngwg.cloudfront.net/cover-image-showcase/city.jpg
-metaAlignment: center
-coverMeta: out
-date: 2015-05-13
-categories:
-- tranquilpeak
-- features
-tags:
-- cover image
+date: 2015-05-28T22:40:32.169Z
+description: "This article shows how to use cover images in the Tranquilpeak theme"
+coverimage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop"
+categories: ["showcase"]
+tags: ["cover-image", "images", "featured"]
+photos:
+  - "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop"
+  - "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop"
+  - "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop"
 ---
 
-Tranquilpeak integrate a unique "cover image" feature. Open this post to see how this feature sublimate your article.
+This article demonstrates how to use cover images in the Tranquilpeak theme. Cover images are displayed prominently at the top of blog posts and can create a beautiful visual impact.
 
-<!--more-->
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eget urna vitae velit eleifend interdum at ac nisi. In nec ligula lacus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed eu cursus erat, ut dapibus quam. Aliquam eleifend dolor vitae libero pharetra adipiscing. Etiam adipiscing dolor a quam tempor, eu convallis nulla varius. Aliquam sollicitudin risus a porta aliquam. Ut nec velit dolor. Proin eget leo lobortis, aliquam est sed, mollis mauris. Fusce vitae leo pretium massa accumsan condimentum. Fusce malesuada gravida lectus vel vulputate. Donec bibendum porta nibh ut aliquam.
-Sed lorem felis, congue non fringilla eu, aliquam eu eros. Curabitur orci libero, mollis sed semper vitae, adipiscing in lectus. Aenean non egestas odio. Donec sollicitudin nisi quis lorem gravida, in pharetra mauris fringilla. Duis sit amet faucibus dolor, id aliquam neque. In egestas, odio gravida tempor dictum, mauris felis faucibus purus, sit amet commodo lacus diam vitae est. Ut ut quam eget massa semper sodales. Aenean non ipsum cursus, blandit lectus in, ornare odio. Curabitur ultrices porttitor vulputate.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eget urna vitae velit eleifend interdum at ac nisi. In nec ligula lacus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed eu cursus erat, ut dapibus quam. Aliquam eleifend dolor vitae libero pharetra adipiscing. Etiam adipiscing dolor a quam tempor, eu convallis nulla varius. Aliquam sollicitudin risus a porta aliquam. Ut nec velit dolor. Proin eget leo lobortis, aliquam est sed, mollis mauris. Fusce vitae leo pretium massa accumsan condimentum. Fusce malesuada gravida lectus vel vulputate. Donec bibendum porta nibh ut aliquam.
+## What are cover images?
 
-Sed lorem felis, congue non fringilla eu, aliquam eu eros. Curabitur orci libero, mollis sed semper vitae, adipiscing in lectus. Aenean non egestas odio. Donec sollicitudin nisi quis lorem gravida, in pharetra mauris fringilla. Duis sit amet faucibus dolor, id aliquam neque. In egestas, odio gravida tempor dictum, mauris felis faucibus purus, sit amet commodo lacus diam vitae est. Ut ut quam eget massa semper sodales. Aenean non ipsum cursus, blandit lectus in, ornare odio. Curabitur ultrices porttitor vulputate.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce eget urna vitae velit eleifend interdum at ac nisi. In nec ligula lacus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed eu cursus erat, ut dapibus quam. Aliquam eleifend dolor vitae libero pharetra adipiscing. Etiam adipiscing dolor a quam tempor, eu convallis nulla varius. Aliquam sollicitudin risus a porta aliquam. Ut nec velit dolor. Proin eget leo lobortis, aliquam est sed, mollis mauris. Fusce vitae leo pretium massa accumsan condimentum. Fusce malesuada gravida lectus vel vulputate. Donec bibendum porta nibh ut aliquam.
+Cover images are featured images that appear at the top of your blog posts. They can be set using the `coverimage` parameter in your post's front matter, or by using the `photos` array for image galleries.
 
-Sed lorem felis, congue non fringilla eu, aliquam eu eros. Curabitur orci libero, mollis sed semper vitae, adipiscing in lectus. Aenean non egestas odio. Donec sollicitudin nisi quis lorem gravida, in pharetra mauris fringilla. Duis sit amet faucibus dolor, id aliquam neque. In egestas, odio gravida tempor dictum, mauris felis faucibus purus, sit amet commodo lacus diam vitae est. Ut ut quam eget massa semper sodales. Aenean non ipsum cursus, blandit lectus in, ornare odio. Curabitur ultrices porttitor vulputate.
+## Setting a cover image
+
+To set a cover image for your post, add the `coverimage` parameter to your front matter:
+
+```yaml
+---
+title: "My Post"
+coverimage: "https://example.com/image.jpg"
+---
+```
+
+## Image galleries
+
+You can also create image galleries by using the `photos` array:
+
+```yaml
+---
+title: "My Post"
+photos:
+  - "https://example.com/image1.jpg"
+  - "https://example.com/image2.jpg"
+  - "https://example.com/image3.jpg"
+---
+```
+
+## Best practices
+
+1. **Use high-quality images**: Choose images that are at least 800x600 pixels
+2. **Optimize for web**: Compress images to reduce loading times
+3. **Choose relevant images**: Select images that relate to your content
+4. **Consider aspect ratios**: The theme works best with landscape-oriented images
+
+## Responsive behavior
+
+The cover images are fully responsive and will look great on all devices:
+
+- **Desktop**: Full-width display with optimal quality
+- **Tablet**: Scaled appropriately for medium screens
+- **Mobile**: Optimized for small screens with touch-friendly interactions
+
+## Examples
+
+Here are some examples of beautiful cover images you can use:
+
+### Nature photography
+![Nature](https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop)
+
+### Technology
+![Technology](https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop)
+
+### Code
+![Code](https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop)
+
+## Conclusion
+
+Cover images are a great way to make your blog posts more visually appealing and engaging. The Tranquilpeak theme makes it easy to add beautiful cover images to your content. 

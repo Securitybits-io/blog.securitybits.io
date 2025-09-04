@@ -1,0 +1,11 @@
+{{ $presentationId := .Get 0 }}
+{{ $title := .Get 1 | default "Slideshare presentation" }}
+
+<div class="slideshare-container">
+  <iframe 
+    src="https://www.slideshare.net/slideshow/embed_code/{{ $presentationId }}"
+    title="{{ $title }}"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div> 

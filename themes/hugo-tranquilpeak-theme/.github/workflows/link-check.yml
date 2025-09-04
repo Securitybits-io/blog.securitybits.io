@@ -1,0 +1,111 @@
+name: Check Links
+on: [push, pull_request]
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Hugo
+        uses: ./.github/actions/setup-hugo
+        with:
+          hugo-version: 'latest'
+          extended: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build theme assets
+        run: npm run build
+
+      - name: Setup theme
+        uses: ./.github/actions/setup-theme
+
+      - name: Build site
+        uses: ./.github/actions/hugo-build
+
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2.5.0
+        with:
+          args: |
+            --format markdown
+            --exclude mailto:
+            --exclude tel:
+            --exclude file:
+            exampleSite/public/
+          fail: false
+        continue-on-error: true
+
+      - name: Upload link check results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: link-check-results
+          path: lychee.md
+          retention-days: 7
+
+      - name: Check for broken image links
+        continue-on-error: true
+        run: |
+          echo "🔍 Checking for broken image links..."
+          cd exampleSite/public
+          
+          # Find all HTML files
+          find . -name "*.html" -type f | while read -r file; do
+            echo "Checking $file..."
+            
+            # Extract image src attributes
+            grep -h 'src=' "$file" | grep -o 'src="[^"]*"' | cut -d'"' -f2 | while read -r img_src; do
+              if [[ "$img_src" != http* ]]; then
+                # Local image
+                img_path="$(dirname "$file")/$img_src"
+                if [[ ! -f "$img_path" ]]; then
+                  echo "❌ Broken image link in $file: $img_src"
+                  exit 1
+                fi
+              fi
+            done
+          done
+
+      - name: Validate sitemap
+        continue-on-error: true
+        run: |
+          echo "🔍 Validating sitemap..."
+          cd exampleSite/public
+          
+          if [ -f "sitemap.xml" ]; then
+            echo "✅ sitemap.xml found"
+            # Basic XML validation
+            if xmllint --noout sitemap.xml 2>/dev/null; then
+              echo "✅ sitemap.xml is valid XML"
+            else
+              echo "❌ sitemap.xml is not valid XML"
+              exit 1
+            fi
+          else
+            echo "⚠️ sitemap.xml not found"
+          fi
+
+      - name: Check for orphaned files
+        continue-on-error: true
+        run: |
+          echo "🔍 Checking for orphaned files..."
+          cd exampleSite/public
+          
+          # Find files that might be orphaned (not linked from any HTML)
+          find . -type f \( -name "*.css" -o -name "*.js" -o -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.gif" -o -name "*.svg" \) | while read -r file; do
+            filename=$(basename "$file")
+            if ! grep -r "$filename" --include="*.html" . > /dev/null; then
+              echo "⚠️ Potentially orphaned file: $file"
+            fi
+          done 

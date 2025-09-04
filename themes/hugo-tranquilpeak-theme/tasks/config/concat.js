@@ -2,7 +2,7 @@ module.exports = function(grunt) {
   grunt.config.set('concat', {
     // Concat all javascript file into `tranquilpeak.js`
     devJs: {
-      src: ['src/js/**/*.js'],
+      src: ['assets/js/**/*.js'],
       dest: 'static/js/tranquilpeak.js',
       options: {
         separator: ';'

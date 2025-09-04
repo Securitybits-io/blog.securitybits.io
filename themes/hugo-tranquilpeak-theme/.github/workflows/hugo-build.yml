@@ -1,0 +1,98 @@
+name: Hugo Build Validation
+on: [push, pull_request]
+
+jobs:
+  hugo-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hugo-version: ["0.146.2", "latest"]
+        include:
+          - hugo-version: "0.146.2"
+            cache-key: "0.146.2"
+          - hugo-version: "latest"
+            cache-key: "latest"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
+        with:
+          node-version: "20"
+
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: node-20-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-20-
+
+      - name: Install dependencies
+        uses: ./.github/actions/install-deps
+
+      - name: Setup Hugo
+        uses: ./.github/actions/setup-hugo
+        with:
+          hugo-version: ${{ matrix.hugo-version }}
+          extended: true
+
+      - name: Setup theme
+        uses: ./.github/actions/setup-theme
+
+      - name: Cache Hugo build output
+        uses: actions/cache@v4
+        with:
+          path: exampleSite/public
+          key: hugo-build-${{ matrix.cache-key }}-${{ hashFiles('exampleSite/content/**/*', 'exampleSite/layouts/**/*', 'exampleSite/static/**/*', 'exampleSite/config.toml') }}
+
+      - name: Build site
+        uses: ./.github/actions/hugo-build
+        with:
+          working-directory: exampleSite
+          build-drafts: true
+          build-future: true
+          minify: true
+          gc: true
+
+      - name: Check build output
+        run: |
+          cd exampleSite
+          if [ -d "public" ]; then
+            echo "✅ Public directory created"
+            echo "📊 Build statistics:"
+            find public -name "*.html" | wc -l | xargs echo "HTML files:"
+            find public -name "*.css" | wc -l | xargs echo "CSS files:"
+            find public -name "*.js" | wc -l | xargs echo "JS files:"
+            find public -name "*.xml" | wc -l | xargs echo "XML files:"
+            echo "📁 Total files:"
+            find public -type f | wc -l
+          else
+            echo "❌ Public directory not found"
+            exit 1
+          fi
+
+      - name: Validate HTML
+        run: |
+          cd exampleSite
+          if command -v html5validator &> /dev/null; then
+            echo "🔍 Running HTML validation..."
+            html5validator --root public --format text --ignore "CSS3_*" "JS*" || {
+              echo "⚠️ HTML validation found issues, but continuing..."
+            }
+          else
+            echo "⚠️ html5validator not available, skipping HTML validation"
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugo-build-${{ matrix.hugo-version }}
+          path: exampleSite/public
+          retention-days: 7

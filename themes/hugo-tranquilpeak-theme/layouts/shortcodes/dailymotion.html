@@ -1,0 +1,12 @@
+{{ $videoId := .Get 0 }}
+{{ $title := .Get 1 | default "Dailymotion video" }}
+
+<div class="video-container">
+  <iframe 
+    src="https://www.dailymotion.com/embed/video/{{ $videoId }}"
+    title="{{ $title }}"
+    frameborder="0"
+    allow="fullscreen"
+    allowfullscreen>
+  </iframe>
+</div> 

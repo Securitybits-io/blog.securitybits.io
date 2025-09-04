@@ -1,0 +1,9 @@
+name: 'Build Theme Assets'
+description: 'Build theme assets using npm'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build theme assets
+      shell: bash
+      run: npm run build 
