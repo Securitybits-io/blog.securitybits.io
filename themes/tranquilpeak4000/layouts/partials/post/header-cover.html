@@ -1,0 +1,11 @@
+{{ if .Params.coverimage }}
+  <div class="post-header-cover
+              {{ if .Params.metaalignment }}text-{{ .Params.metaalignment }}{{ else }}text-left{{ end }}
+              {{ with .Params.coversize }}post-header-cover--{{ . }}{{ end }}"
+       style="background-image:url('{{ if (findRE "^https?://" .Params.coverimage 1) }}{{ .Params.coverimage }}{{ else }}{{ .Params.coverimage | relURL }}{{ end }}')"
+       data-behavior="{{ $.Scratch.Get "sidebarBehavior" }}">
+    {{ if or (eq .Params.covermeta "in") (not .Params.covermeta) }}
+      {{ partial "post/header.html" . }}
+    {{ end }}
+  </div>
+{{ end }}

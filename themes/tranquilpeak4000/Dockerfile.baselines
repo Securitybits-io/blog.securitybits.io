@@ -1,0 +1,81 @@
+# Dockerfile for generating baseline snapshots in a consistent Linux environment
+# This ensures snapshots are created in the same environment as CI tests
+
+FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:20
+
+# Define build argument for Hugo version
+ARG HUGO_VERSION=0.146.2
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    git \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Hugo
+RUN wget -O /tmp/hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz \
+    && tar -xzf /tmp/hugo.tar.gz -C /tmp \
+    && mv /tmp/hugo /usr/local/bin/hugo \
+    && rm /tmp/hugo.tar.gz \
+    && hugo version
+
+# Install Playwright browsers
+RUN npx playwright install --with-deps chromium firefox webkit
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Make scripts executable
+RUN chmod +x setup-examplesite.sh
+RUN chmod +x generate-all-baselines.js
+
+# Set environment variable to indicate we're running in Docker
+ENV DOCKER_CONTAINER=true
+
+# Create a script to run the baseline generation (without cleanup)
+RUN echo '#!/bin/bash\n\
+echo "🚀 Starting baseline snapshot generation in Docker..."\n\
+echo "📋 Environment: $(uname -a)"\n\
+echo "🐳 Node version: $(node --version)"\n\
+echo "📦 Hugo version: $(hugo version)"\n\
+echo ""\n\
+\n\
+# Create snapshots directory if it doesn\'t exist\n\
+mkdir -p e2e/visual-regression.spec.js-snapshots\n\
+\n\
+# Generate snapshots for CI environment\n\
+echo "📸 Generating snapshots for CI environment..."\n\
+CI=true npm run test:visual:baselines:ci\n\
+\n\
+# List generated snapshots\n\
+echo ""\n\
+echo "📁 Generated snapshots:"\n\
+if [ -d "e2e/visual-regression.spec.js-snapshots" ]; then\n\
+    ls -la e2e/visual-regression.spec.js-snapshots/\n\
+    echo ""\n\
+    echo "📊 Snapshot count: $(ls e2e/visual-regression.spec.js-snapshots/*.png 2>/dev/null | wc -l)"\n\
+else\n\
+    echo "❌ No snapshots directory found"\n\
+fi\n\
+\n\
+echo ""\n\
+echo "🎉 Baseline generation completed!"\n\
+' > /app/generate-baselines-docker.sh
+
+RUN chmod +x /app/generate-baselines-docker.sh
+
+# Expose port for Hugo server
+EXPOSE 1313
+
+# Default command
+CMD ["/app/generate-baselines-docker.sh"] 

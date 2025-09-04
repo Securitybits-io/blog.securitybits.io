@@ -1,0 +1,17 @@
+name = "Tranquilpeak4000"
+license = "GNU General Public License v3.0"
+licenselink = "https://github.com/petems/hugo-tranquilpeak-4000/blob/master/LICENSE"
+description = "A gorgeous responsive theme for Hugo blog framework"
+homepage = "https://github.com/petems/hugo-tranquilpeak-4000"
+tags = ["blog", "minimal", "responsive", "personal", "customizable", "creative", "fontawesome", "highlight.js"]
+features = ["blog", "themes", "disqus", "minimal", "responsive", "font awesome", "highlight.js"]
+min_version = "0.128"
+
+[author]
+  name = "Peter Souter"
+  homepage = "https://github.com/petems"
+
+[original]
+  name = "Tranquilpeak"
+  homepage = "https://github.com/kakawait/hugo-tranquilpeak-theme"
+  repo = "https://github.com/kakawait/hugo-tranquilpeak-theme.git"

@@ -1,0 +1,12 @@
+{{ $videoId := .Get 0 }}
+{{ $title := .Get 1 | default "Vimeo video" }}
+
+<div class="video-container">
+  <iframe 
+    src="https://player.vimeo.com/video/{{ $videoId }}"
+    title="{{ $title }}"
+    frameborder="0"
+    allow="autoplay; fullscreen; picture-in-picture"
+    allowfullscreen>
+  </iframe>
+</div> 

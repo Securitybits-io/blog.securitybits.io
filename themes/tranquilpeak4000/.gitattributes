@@ -1,0 +1,35 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Explicitly declare text files you want to always be normalized and converted
+# to native line endings on checkout
+*.md text
+*.txt text
+*.js text
+*.json text
+*.css text
+*.scss text
+*.html text
+*.xml text
+*.yaml text
+*.yml text
+*.toml text
+*.sh text
+*.bash text
+*.zsh text
+*.fish text
+*.ps1 text
+*.bat text
+*.cmd text
+*.gitignore text
+*.gitattributes text
+*.editorconfig text
+*.eslintrc text
+*.eslintignore text
+*.prettierrc text
+*.prettierignore text
+*.babelrc text
+*.browserslistrc text
+*.npmrc text
+*.yarnrc text
+*.lock text

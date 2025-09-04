@@ -1,0 +1,83 @@
+/* CSS to stabilize screenshots by hiding volatile elements */
+
+/* Disable all animations and transitions */
+* {
+  animation: none !important;
+  transition: none !important;
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+
+/* Hide blinking cursors and carets */
+* {
+  caret-color: transparent !important;
+}
+
+/* Hide any elements with dynamic content that might change */
+[data-dynamic], 
+[data-timestamp],
+[data-time],
+.time,
+.timestamp,
+.date {
+  visibility: hidden !important;
+}
+
+/* Hide any loading spinners or progress indicators */
+.spinner,
+.loading,
+.progress,
+[class*="loading"],
+[class*="spinner"] {
+  display: none !important;
+}
+
+/* Hide any ads or third-party content that might be dynamic */
+iframe,
+[class*="ad"],
+[class*="ads"],
+[id*="ad"],
+[id*="ads"] {
+  display: none !important;
+}
+
+/* Hide any social media widgets that might be dynamic */
+[class*="social"],
+[class*="share"],
+[id*="social"],
+[id*="share"] {
+  display: none !important;
+}
+
+/* Hide any notification badges or counters that might change */
+.badge,
+.notification,
+.counter,
+[class*="badge"],
+[class*="notification"],
+[class*="counter"] {
+  display: none !important;
+}
+
+/* Ensure consistent font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Hide any elements with random IDs or classes that might change */
+[id*="random"],
+[class*="random"],
+[id*="temp"],
+[class*="temp"] {
+  display: none !important;
+}
+
+/* Hide any elements that might have different content based on time/date */
+[data-time],
+[data-date],
+.time-ago,
+.date-ago {
+  visibility: hidden !important;
+} 

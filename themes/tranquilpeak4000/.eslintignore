@@ -1,0 +1,22 @@
+node_modules/
+src/_bower_components/
+static
+src/js/smartresize.js
+**/*.min.js
+exampleSite/public/
+
+# Playwright test files use modern ES6+ syntax
+e2e/
+playwright.config.js
+
+# Generated and build files
+dist/
+
+# Test results and reports
+test-results/
+playwright-report/
+coverage/
+
+# Temporary files
+*.tmp
+*.log
