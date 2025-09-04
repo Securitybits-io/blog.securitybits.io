@@ -17,7 +17,7 @@ languageCode = "en-us"
 defaultContentLanguage = "en-us"
 title = "Securitybits.io"
 theme = "Tranquilpeak4000"
-disqusShortname = "tranquilpeak4000"
+disqusShortname = "Tranquilpeak4000"
 #googleAnalytics = "UA-115328400-1"
 [pagination]
   pagerSize = 7
