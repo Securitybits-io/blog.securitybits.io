@@ -1,0 +1,11 @@
+{{ $presentationId := .Get 0 }}
+{{ $title := .Get 1 | default "Speaker Deck presentation" }}
+
+<div class="speakerdeck-container">
+  <iframe 
+    src="https://speakerdeck.com/player/{{ $presentationId }}"
+    title="{{ $title }}"
+    frameborder="0"
+    allowfullscreen>
+  </iframe>
+</div> 

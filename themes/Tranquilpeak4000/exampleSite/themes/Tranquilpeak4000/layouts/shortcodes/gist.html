@@ -1,0 +1,7 @@
+{{ $username := .Get 0 }}
+{{ $gistId := .Get 1 }}
+{{ $file := .Get 2 | default "" }}
+
+<div class="gist-container">
+  <script src="https://gist.github.com/{{ $username }}/{{ $gistId }}{{ if $file }}.js?file={{ $file }}{{ end }}"></script>
+</div> 

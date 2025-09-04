@@ -1,0 +1,12 @@
+{{ $penId := .Get 0 }}
+{{ $tabs := .Get 1 | default "html,result" }}
+
+<div class="codepen-container">
+  <iframe 
+    src="https://codepen.io/{{ $penId }}?default-tab={{ $tabs }}"
+    title="CodePen"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen>
+  </iframe>
+</div> 
