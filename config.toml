@@ -19,7 +19,7 @@ title = "Securitybits.io"
 theme = "tranquilpeak4000"
 disqusShortname = "hugo-tranquilpeak-theme"
 #googleAnalytics = "UA-115328400-1"
-paginate = 7
+pagerSize = 7
 canonifyurls = true
 
 
