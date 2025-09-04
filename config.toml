@@ -16,8 +16,8 @@ baseURL = "https://blog.securitybits.io/"
 languageCode = "en-us"
 defaultContentLanguage = "en-us"
 title = "Securitybits.io"
-theme = "Tranquilpeak4000"
-disqusShortname = "Tranquilpeak4000"
+theme = "hugo-tranquilpeak-theme"
+disqusShortname = "hugo-tranquilpeak-theme"
 #googleAnalytics = "UA-115328400-1"
 [pagination]
   pagerSize = 7
