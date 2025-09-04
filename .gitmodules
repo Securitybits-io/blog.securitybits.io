@@ -1,0 +1,3 @@
+[submodule "themes/hugo-tranquilpeak-4000"]
+	path = themes/hugo-tranquilpeak-4000
+	url = https://github.com/petems/hugo-tranquilpeak-4000
