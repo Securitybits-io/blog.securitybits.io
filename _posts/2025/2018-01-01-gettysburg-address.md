@@ -3,11 +3,9 @@ layout: post
 current: post
 cover: assets/images/bus.jpg
 navigation: True
-title: Gettysburg Address
-date: 2018-01-01 10:18:00
-tags:
-- redteam
-- security
+title: Gettysburg Address 2
+date: 2025-01-01 00:00:00
+tags: redteam
 class: post-template
 subclass: 'post'
 author: christoffer
