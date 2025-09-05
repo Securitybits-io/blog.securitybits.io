@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title> - Articles</title>
+    <description>Security researching from the nordics</description>
+    <link>
+    </link>
+    
+      
+      <item>
+        <title>Its HiDIYous</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Its HiDIYous, but it works!…&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Thu, 03 Oct 2024 00:00:00 +0000</pubDate>
+        <link>
+        /its-hidiyous</link>
+        <guid isPermaLink="true">/its-hidiyous</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Password audits</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;This is be a brief overview on why and how to perform a password audit on a windows domain.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Tue, 02 Jun 2020 00:00:00 +0000</pubDate>
+        <link>
+        /password-audit</link>
+        <guid isPermaLink="true">/password-audit</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>ROPEmporium: 0-Ret2Win (64-bit)</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Doing a series on ROP and ROPEmporium, starting out with a simple ret2win&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Thu, 08 Aug 2019 00:00:00 +0000</pubDate>
+        <link>
+        /ropemporium-0-ret2win</link>
+        <guid isPermaLink="true">/ropemporium-0-ret2win</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Valentine Writeup</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Heartbleeds and dirty cows, i feel sorry for the creator!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Fri, 27 Jul 2018 00:00:00 +0000</pubDate>
+        <link>
+        /valentine-writeup</link>
+        <guid isPermaLink="true">/valentine-writeup</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Falafel Writeup</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;My writeup of the Hack the box Falafel.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Sat, 23 Jun 2018 00:00:00 +0000</pubDate>
+        <link>
+        /falafel-writeup</link>
+        <guid isPermaLink="true">/falafel-writeup</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Chatterbox Writeup</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;My writeup of the Hack the box Chatterbox.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Mon, 18 Jun 2018 00:00:00 +0000</pubDate>
+        <link>
+        /chatterbox-writeup</link>
+        <guid isPermaLink="true">/chatterbox-writeup</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>RSA Prime Decryption</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Description and usage of a decryption script that I wrote for CTF Challenges.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
+        <link>
+        /rsa-prime-decryption</link>
+        <guid isPermaLink="true">/rsa-prime-decryption</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Nibbles Writeup</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;“My writeup of the Hack the box Nibbles box… Nibble nibble!”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Thu, 08 Mar 2018 00:00:00 +0000</pubDate>
+        <link>
+        /nibbles-writeup</link>
+        <guid isPermaLink="true">/nibbles-writeup</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>SDL: Bolt on or Built in?</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Time is of the essence. Every day that a business is anything less then fully secure is a day exposed to hackers. It’s also another day that developers continue building applications without factoring security into their lifecycle.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;There’s two strategies when you are developing, either you bolt on security, or you build it in. Lets start with defining those!&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 03 Mar 2018 00:00:00 +0000</pubDate>
+        <link>
+        /sdl-bolt-on-or-buit-in</link>
+        <guid isPermaLink="true">/sdl-bolt-on-or-buit-in</guid>
+      </item>
+      
+    
+  </channel>
+</rss>
