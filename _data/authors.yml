@@ -9,9 +9,6 @@ christoffer:
   facebook: False
   twitter: Securitybits_io
   cover: assets/images/pages/profile/christoffer/cover.jpg
-
-
-
 ghost:
   username: ghost
   name: Ghost
