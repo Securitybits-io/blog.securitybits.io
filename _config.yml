@@ -1,3 +1,9 @@
+# gems and other configs
+plugins_dir: [_plugins]
+plugins: [jekyll-paginate, jekyll-feed, jekyll-remote-theme]
+
+remote_theme: https://github.com/jekyllt/jasper2
+
 # Jekyll configuration
 markdown: kramdown
 highlighter: rouge
@@ -11,10 +17,12 @@ baseurl: /
 # Website info
 title: Securityits.io
 description: Security researching from the nordics
+
 cover: assets/images/blog-cover.jpg
 logo: assets/images/blog-icon.png
 logo_dark: assets/images/favicon.png
 favicon: assets/images/favicon.png
+
 CNAME: https://blog.securitybits.io
 
 # Social info
@@ -40,11 +48,7 @@ permalink: /:title
 # Authors' info in `_data/authors.yml`
 # Tags' info in `_data/tags_info.yml`
 
-# gems and other configs
-plugins_dir: [_plugins]
-plugins: [jekyll-paginate, jekyll-feed, jekyll-remote-theme]
 
-remote_theme: https://github.com/jekyllt/jasper2
 
 feed:
   path: feed.xml
