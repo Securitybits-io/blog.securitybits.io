@@ -34,7 +34,7 @@ Nmap done: 1 IP address (1 host up) scanned in 51.78 seconds
 So we are dealing with some kind of webserver.
 The root directory of the address is only displaying an image on both webports (80/443), next step would be trying to enumerate directories!  
  
-![Valentine root image](assets/posts/2018/07/valentine-writeup/omg-1.jpg)  
+![Valentine root image](assets/images/posts/2018/07/valentine-writeup/omg-1.jpg)  
 
 I usually use the tool "gobuster" to enumerate webdirectories with a wordlist, and point it to Burpsuite Proxy. That way, any link or directory that gobuster finds, will Burpsuite automatically spider as well as record in its console.  
 So lets point gobuster towards the webserver and let it run in the background. 
@@ -97,7 +97,9 @@ Gobuster v1.2                OJ Reeves (@TheColonial)
 ```
 
 So encode and decode just seems to be two php functions that does what they say to base64 strings. They didn't seems that vulnerable to command injections either. But /dev looks interesting , browsing to that reveals two files.  
-![Valentine_Slash_dev](assets/posts/2018/07/valentine-writeup/Valentine_Slash_dev.png)  
+
+![Valentine_Slash_dev](assets/images/posts/2018/07/valentine-writeup/Valentine_Slash_dev.png)  
+
 Taking a peek at notes.txt shows a checklist.
 
 ```
