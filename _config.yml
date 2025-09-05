@@ -23,7 +23,7 @@ logo: assets/images/blog-icon.png
 logo_dark: assets/images/favicon.png
 favicon: assets/images/favicon.png
 
-CNAME: https://blog.securitybits.io
+CNAME: #
 
 # Social info
 navigation: True # show the navbar links
