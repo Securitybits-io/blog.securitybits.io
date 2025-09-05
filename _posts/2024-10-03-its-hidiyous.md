@@ -1,7 +1,6 @@
 ---
 layout: post
 current: post
-logo:
 cover: assets/images/posts/2024/10/its-hidiyous/banner.jpg
 navigation: True
 title: 'Its HiDIYous'
