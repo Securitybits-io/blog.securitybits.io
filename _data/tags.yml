@@ -14,3 +14,38 @@ getting-started:
   name: getting-started
   description: False
   cover: False
+
+security:
+  name: Security
+  description: Notes, tools, and thoughts from my work in keeping systems safe (and breaking them to learn).
+  cover: False
+
+homelab:
+  name: Homelab
+  description: Experiments, setups, and misadventures from running a lab that never stops growing.
+  cover: False
+
+redteam:
+  name: Red Team
+  description: Stories and lessons from simulated intrusions and adversary tradecraft.
+  cover: False
+
+hardware:
+  name: Hardware
+  description: Building, breaking, and hacking on electronics, from custom creations to tearing devices apart to see how they tick.
+  cover: False
+
+programming:
+  name: Programming
+  description: Small scripts, side projects, and bits of code that made my life easier.
+  cover: False
+
+exploit-dev:
+  name: Exploit Development
+  description: Deep dives into vulnerabilities, payloads, and the craft of turning bugs into proof-of-concepts.
+  cover: False
+
+ctf:
+  name: Capture the Flag
+  description: Write-ups, tactics, and fun from CTF challenges and competitions.
+  cover: False

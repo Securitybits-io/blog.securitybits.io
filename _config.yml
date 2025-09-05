@@ -18,7 +18,7 @@ baseurl: /
 title: Securityits.io
 description: Security researching from the nordics
 
-cover: assets/images/blog-cover.jpg
+cover: assets/images/static/blog-cover.jpg
 logo: assets/images/blog-icon.png
 logo_dark: assets/images/favicon.png
 favicon: assets/images/favicon.png
@@ -47,8 +47,6 @@ permalink: /:title
 
 # Authors' info in `_data/authors.yml`
 # Tags' info in `_data/tags_info.yml`
-
-
 
 feed:
   path: feed.xml
