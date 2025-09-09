@@ -1,33 +1,19 @@
 ---
+layout: post
+current: post
+cover: assets/images/posts/2019/08/ropemporium-1-split/GTY_Hacker.jpg
+navigation: True
 title: 'ROPEmporium: 1-Split (64-bit)'
 date: 2019-08-10
-thumbnailImagePosition: left
-thumbnailImage: /img/posts/2019/08/ropemporium-1-split/GTY_Hacker.jpg
-coverImage: /img/posts/2019/08/ropemporium-1-split/GTY_Hacker.jpg
-coversize: partial
-coverMeta: out
-metaAlignment: center
-clearReading: true
-categories:
-- Exploit-Development
-- ROPEmporium
-- CTF
-tags:
-- ctf
-- dev
-- getting-started
-- ropemporium
-- rop
-- exploit
-showTags: false
-showPagination: true
-showSocial: true
-showDate: true
-comments: false
-summary: "Doing a ROPEmporium Series, time to switch it up with Split!"
+tags: 
+  - exploit-dev
+class: post-template
+subclass: 'post'
+author: christoffer
 ---
+> Doing a ROPEmporium Series, time to switch it up with Split!
 
-Before you read any further go back and have a look on my previous [ROPEmporium](https://blog.securitybits.io/2019/08/ropemporium-0-ret2win-64-bit/) post, as this post will build on that knowledge. But also have some familiarity of
+Before you read any further go back and have a look on my previous [ROPEmporium](https://blog.securitybits.io/ropemporium-0-ret2win) post, as this post will build on that knowledge. But also have some familiarity of
 
 - GDB
 - Radare2
@@ -128,15 +114,15 @@ va true
 ```
 So lets open the binary in Radare2 and look for our ROP Chain.
 
-{{< image classes="fancybox center" src="/img/posts/2019/08/ropemporium-1-split/image-8.png" title="Radare2 Reversing" >}}
+![Radare2 Reversing](assets/images/posts/2019/08/ropemporium-1-split/image-8.png)
 
 So in the challenge description we got the hint that there are still a useful function, but also a useful string which have been split apart! Investigating both the `sym.usefulFunction` and `obj.usefulString` we can slowly see the parts that we have to use in order to print the `flag.txt`.
 
-{{< image classes="fancybox center" src="/img/posts/2019/08/ropemporium-1-split/image-9.png" title="Radare2 Symbols and useful functions" >}}
+![Radare2 Symbols and useful functions](assets/images/posts/2019/08/ropemporium-1-split/image-9.png)
 
 Above is the function in 1-split that contains the gadget system, but it's also apparent that it wont print us the flag by simply calling the function. Since the edi will be filled with the pointer to the string `str.bin_ls` (/bin/ls) and will thus only print out the files in the current directory. While this proves code execution or command injection... doesn't help us getting that flag! What we really want is to call the obj.usefulString as an argument to system
 
-{{< image classes="fancybox center" src="/img/posts/2019/08/ropemporium-1-split/image-10.png" title="Radare2 Strings" >}}
+![Radare2 Strings](assets/images/posts/2019/08/ropemporium-1-split/image-10.png)
 
 That will certainly print us the flag. But the next question is.... how can we change the calling string to system if it is hard coded into the binary?
 
@@ -144,7 +130,7 @@ That will certainly print us the flag. But the next question is.... how can we c
 
 Now in order to dig a little into the calling convention of system calls in Linux we have to consult the ever exiting man page. Running `man system` in a terminal we are presented the manual for the library function `system()`. &nbsp;
 
-{{< image classes="fancybox center" src="/img/posts/2019/08/ropemporium-1-split/image-11.png" title="manpage of system()" >}}
+![manpage of system()](assets/images/posts/2019/08/ropemporium-1-split/image-11.png)
 
 If we have a brief look into the description of the system call, we can identify that the calling convention is `system(<string of what to be executed>)` , so the first parameter is the command to run. Which follows the principle in `sym.usefulFunction` as the string before system is `/bin/ls`. Which in turn is placed in the `edi` register just before the call to `system()`
 
@@ -193,7 +179,7 @@ Gadgets
 
 Ropper identified that on address `0x00400883` theres a `pop rdi; ret`, which is easily verified in radare2 with `pdi 2 @ 0x00400883`
 
-{{< image classes="fancybox center" src="/img/posts/2019/08/ropemporium-1-split/image-12.png" title="pop rdi instruction" >}}
+![pop rdi instruction](assets/images/posts/2019/08/ropemporium-1-split/image-12.png)
 
 ### Constructing the ROP Chain
 
@@ -276,6 +262,6 @@ io.sendline(payload)
 log.success('Flag: ' + io.recv(512))
 ```
 
-{{< image classes="fancybox center" src="/img/posts/2019/08/ropemporium-1-split/image-13.png" title="Flag" >}}
+![Flag](assets/images/posts/2019/08/ropemporium-1-split/image-13.png)
 
 GitHub: [https://github.com/Securitybits-io/ROPEmporium](https://github.com/Securitybits-io/ROPEmporium)
