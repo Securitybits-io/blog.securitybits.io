@@ -1,30 +1,19 @@
 ---
+layout: post
+current: post
+cover: assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/banner.jpg
+navigation: True
 title: 'Clock Glitching with a ChipWhisperer-Lite'
 date: 2023-01-01
-thumbnailImagePosition: left
-thumbnailImage: /img/posts/2023/01/clock-glitching-with-a-chipwhisperer/thumbnail.jpg
-coverImage: /img/posts/2023/01/clock-glitching-with-a-chipwhisperer/banner.jpg
-coversize: partial
-coverMeta: out
-metaAlignment: center
-clearReading: true
-categories:
-- Hardware
-- CTF
-tags:
-- riscure
-- rhme2
-- hardware
-- ctf
-- security
-- pentest
-showTags: false
-showPagination: true
-showSocial: true
-showDate: true
-comments: false
-summary: "What happens when things get out of sync?... SCIENCE!"
+tags: 
+  - hardware
+  - security
+class: post-template
+subclass: 'post'
+author: christoffer
 ---
+
+> What happens when things get out of sync?... SCIENCE!
 
 Purchasing a Chipwhisperer-lite and going through the Newae course is a really awesome experience. Though the course teach you alot obout each vulnerability and the Chipwhisperer API, I found it lacking alot in the "how to setup the hardware" department. So finishing up the course material, I've decided yet again to attack my favourite platform, the Arduino Uno and implement a bunch of the Riscure CTF challenges and yet again, attack the Fiesta challenge.
 
@@ -32,13 +21,13 @@ Purchasing a Chipwhisperer-lite and going through the Newae course is a really a
 
 All Microcontrollers are bound by operating out of a clock cycle, where one cycle is defined by a pulse. During the start of each pulse, the microcontroller is executing and fetching a new instruction. The start of a clock cycle is usually defined by a rising edge (binary 1) followed by a falling edge (binary 0), for the duration of a fixed time period. The amount of cycles per second defines the processors clock speed, for example the Atmega328p defaults to a 16MHz Clock speed, which means that it performs `16E6` instructions per second.
 
-{{< image classes="fancybox center" src="/img/posts/2023/01/clock-glitching-with-a-chipwhisperer/clock-cycle.jpg" title="Defined Clock Cycle" >}}
+![Defined Clock Cycle](assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/clock-cycle.jpg)
 
 As with the Voltage Glitching in the post "[Voltage glitching on the Cheap](https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/)", we defined that within a given set of parameters the hardware operates normally. But introducing faults into the voltage line corrupted the instructions enough to break out of the "Lock" loop. The same assumption is made with the clock line, that within a given set of parameters the hardware will operate normally.
 
 In order to create the "glitch" for our clock glitch to work, we must introduce an additional clock cycle to the microcontroller. By doing so, we can make the microcontroller to essentially "skip" a step in the execution.
 
-{{< image classes="fancybox center" src="/img/posts/2023/01/clock-glitching-with-a-chipwhisperer/clock-glitch.jpg" title="Glitched Clock Cycle" >}}
+![Glitched Clock Cycle](assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/clock-glitch.jpg)
 
 ## Setup
 
@@ -80,7 +69,7 @@ Connecting the CW-Lite and Uno according to the scheme below, will ensure that t
 
 According to the following diagram:
 
-{{< image classes="fancybox center" src="/img/posts/2023/01/clock-glitching-with-a-chipwhisperer/Arduino-Uno-ATmega328P-Pin-Mapping1_o.png" >}}
+![](assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/Arduino-Uno-ATmega328P-Pin-Mapping1_o.png)
 
 Just to go into some further detail before we jump into the code about why we connect the pins the way we do. First of all we would like the CW-Lite and the Atmega328p to share a common `2 GND <> 8 GND`, it makes life a bit simpler in this case.
 
@@ -92,7 +81,7 @@ The final pins `IO2 <> TXD` is used to capture the flag and Serial output of the
 
 Heres a complete picture of the setup:
 
-{{< image classes="fancybox center" src="/img/posts/2023/01/clock-glitching-with-a-chipwhisperer/physical_setup.jpg" >}}
+![](assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/physical_setup.jpg)
 
 ## Glitching Time
 
@@ -245,7 +234,7 @@ Full script is avalible at: [Github Link](https://github.com/Securitybits-io/blo
 
 If everything is set up properly, running the code will eventually result in:
 
-{{< image classes="fancybox center" src="/img/posts/2023/01/clock-glitching-with-a-chipwhisperer/glitch_result.png" >}}
+![](assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/glitch_result.png)
 
 ## sys.exit()
 
