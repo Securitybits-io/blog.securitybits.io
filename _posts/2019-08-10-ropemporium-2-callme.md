@@ -1,33 +1,20 @@
 ---
+layout: post
+current: post
+cover: assets/images/posts/2019/08/ropemporium-2-callme/pexels-photo.jpg
+navigation: True
 title: 'ROPEmporium: 2-Callme (64-bit)'
 date: 2019-08-17
-thumbnailImagePosition: left
-thumbnailImage: /img/posts/2019/08/ropemporium-2-callme/pexels-photo.jpg
-coverImage: /img/posts/2019/08/ropemporium-2-callme/pexels-photo.jpg
-coversize: partial
-coverMeta: out
-metaAlignment: center
-clearReading: true
-categories:
-- Exploit-Development
-- ROPEmporium
-- CTF
-tags:
-- ctf
-- dev
-- getting-started
-- ropemporium
-- rop
-- exploit
-showTags: false
-showPagination: true
-showSocial: true
-showDate: true
-comments: false
-summary: "Continuing the ROP Series with Callme, this time going through Calling conventions"
+tags: 
+  - exploit-dev
+class: post-template
+subclass: 'post'
+author: christoffer
 ---
 
-Now if you haven't caught on, this is a series! I went through a bit about calling parameters in the previous post [1-Split](https://blog.securitybits.io/2019/08/ropemporium-1-split-64-bit/), and in this post we'll dig into it a bit more and make 3 consecutive calls with 3 specific parameters.
+> Continuing the ROP Series with Callme, this time going through Calling conventions
+
+Now if you haven't caught on, this is a series! I went through a bit about calling parameters in the previous post [1-Split](https://blog.securitybits.io/ropemporium-1-split-64-bit/), and in this post we'll dig into it a bit more and make 3 consecutive calls with 3 specific parameters.
 
 ## Description
 
@@ -109,7 +96,7 @@ va true
 
 Opening the binary up in radare2 and looking for the callme functions confirms that they are there, and with the symbols intact.
 
-{{< image classes="fancybox center" src="/img/posts/2019/08/ropemporium-2-callme/image-14.png" title="Radare2 Reversing" >}}
+![Radare2 Reversing](assets/images/posts/2019/08/ropemporium-2-callme/image-14.png)
 
 That means we can use the pwntools symbols trick and in the exploit use _`exe.symbols.callme_one`_ instead of direct memory addresses, making it a bit more readable.
 
@@ -123,7 +110,7 @@ Going back onto the precious blogpost where we exploited _1-split_ and the _x64\
 
 So the first thing is to use ropper to list all the _pop_ gadgets, as the call _pop_ is used to put the address on top of the stack into the destination register
 
-{{< image classes="fancybox center" src="/img/posts/2019/08/ropemporium-2-callme/image-15.png" title="Finding ROP Gadgets" >}}
+![Finding ROP Gadgets](assets/images/posts/2019/08/ropemporium-2-callme/image-15.png)
 
 Conveniently on the address `0x00401ab0` there is a `pop rdi; pop rsi; pop rdx; ret;`.
 
@@ -192,6 +179,6 @@ io.sendline(payload)
 log.success('Flag: ' + io.recv(512))
 ```
 
-{{< image classes="fancybox center" src="/img/posts/2019/08/ropemporium-2-callme/image-16.png" title="Flag" >}}
+![Flag](assets/images/posts/2019/08/ropemporium-2-callme/image-16.png)
 
 GitHub: [https://github.com/Securitybits-io/ROPEmporium](https://github.com/Securitybits-io/ROPEmporium)
