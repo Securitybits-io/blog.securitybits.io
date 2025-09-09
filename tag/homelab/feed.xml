@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
+  <link href="/tag/homelab/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="/" rel="alternate" type="text/html" />
+  <updated>2025-09-09T13:46:37+00:00</updated>
+  <id>/tag/homelab/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">Securityits.io | </title>
+  
+
+  
+    <subtitle>Security researching from the nordics</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">What Virtual Machines Am I Running?</title>
+      <link href="/what-virtual-machines-am-i-running" rel="alternate" type="text/html" title="What Virtual Machines Am I Running?" />
+      <published>2020-05-17T00:00:00+00:00</published>
+      <updated>2020-05-17T00:00:00+00:00</updated>
+      <id>/what-virtual-machines-am-i-running</id>
+      <content type="html" xml:base="/what-virtual-machines-am-i-running">&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Disclaimer, this is subject to change… very often and very quickly!&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2020/05/what-virtual-machines-am-i-running/home_network-securitybits-v2.5.png&quot; alt=&quot;The 'current' network architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;To start off everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1.&lt;/p&gt;
+
+&lt;h2 id=&quot;hypervisor&quot;&gt;Hypervisor&lt;/h2&gt;
+&lt;h3 id=&quot;dell-vrtx-aegir&quot;&gt;Dell VRTX (Aegir)&lt;/h3&gt;
+&lt;p&gt;This is my main hypervisor server, basically a homelab in a box! the nifty thing about the VRTX is that you do have the storage as well as 4 blades in one 5u package! This makes it really convenient, although you kinda miss out on all the good homelab life, in regards to multiple rack servers and networking.&lt;/p&gt;
+
+&lt;h4 id=&quot;blades&quot;&gt;Blades&lt;/h4&gt;
+&lt;p&gt;Theres two sets of blades with identical hardware:&lt;br /&gt;
+&lt;strong&gt;Eldir-01 / 02&lt;/strong&gt;&lt;br /&gt;
+Dell M520&lt;br /&gt;
+Xeon E5-2420v2&lt;br /&gt;
+64GB DDR3 ECC-Dual&lt;br /&gt;
+2x Seagate 146GB 15k SAS&lt;br /&gt;
+&lt;strong&gt;Eldir-03 / 04&lt;/strong&gt;&lt;br /&gt;
+Dell M520&lt;br /&gt;
+2x Xeon E5-2407&lt;br /&gt;
+44GB DDR3 ECC Dual Rank&lt;/p&gt;
+&lt;h4 id=&quot;vm-storage&quot;&gt;VM Storage&lt;/h4&gt;
+&lt;p&gt;The VRTX comes with 25 2,5” SAS Disk shelf! which makes it possible to have up 48TB of storage shared between the 4 blades!&lt;br /&gt;
+Currently I have 9 drives, with 8 of them spanned in a Raid50 for 3,3TB and one in hot spare (in case one drive would break it would automatically re-silver).&lt;/p&gt;
+
+&lt;h2 id=&quot;fileserver&quot;&gt;Fileserver&lt;/h2&gt;
+&lt;h3 id=&quot;qnap-ts-832x&quot;&gt;QNAP TS-832X&lt;/h3&gt;
+&lt;p&gt;While the R510 was a pretty potent server, it was quite redundant as any kind of fast storage since the VRTX had its own internal diskshelf. So I began to look for replacement, and landed on the QNAP Ts-832X with dual 10Gbps SFP+, and dual 1GbE. Together with 8 disk slots it became a pretty good bulk storage for backups of clients and server configs.
+There’s currently 5 disks which are shucked WD Elements 10TB, so far they have been chugging along pretty well. And it also left me room for 3 additional drives before the next serious upgrade.&lt;/p&gt;
+
+&lt;h2 id=&quot;virtual-machines&quot;&gt;Virtual Machines&lt;/h2&gt;
+&lt;p&gt;Now that we got that out of the way, lets dive into the meat of this post.
+I’ve split my VMs into a few different subnets to keep them organized!&lt;/p&gt;
+
+&lt;h2 id=&quot;vmware&quot;&gt;VMWare&lt;/h2&gt;
+&lt;h3 id=&quot;vcenter&quot;&gt;vCenter&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2020/05/what-virtual-machines-am-i-running/vcenter_screenshot.png&quot; alt=&quot;vCenter Dashboard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;4 vCPU/16GB RAM/~200GB Disk&lt;br /&gt;
+My vCenter is the main control hub for my homelab and its VMs, where all the provisioning happens, as well as the internal vmware network. It’s chomping RAM like nobody’s business, but it is necessary as I do not want to switch to Proxmox or Xen server.&lt;/p&gt;
+
+&lt;h2 id=&quot;private&quot;&gt;Private&lt;/h2&gt;
+&lt;p&gt;My Private stack is where I put the VMs that I do not want to have direct internet access and mainly where I put internal services.&lt;/p&gt;
+
+&lt;h3 id=&quot;saltstack&quot;&gt;SaltStack&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2020/05/what-virtual-machines-am-i-running/SaltStack-logo.png&quot; alt=&quot;SaltSTack Logo&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;2 vCPU/2GB Ram/100GB Disk&lt;br /&gt;
+Many people have probably heard of puppet, chef and ansible… but maybe not &lt;a href=&quot;https://saltstack.com&quot;&gt;SaltStack&lt;/a&gt;. It works by a master-minion system, this is the master, and on each linux VM there is a minion process running. You can also use salt-ssh, which makes it login and run commands, which works, but you loose some of the functions such as the reactor-bus etc. which define actions/states that the minion will perform on changes. Now there’s a rather big debate on what orchestration tool that you should use. Granted there is a lot that’s already made for ansible, and it is popular and more heard of as well. The reason that I fell down into SaltStack is that I found it had all the features that I wanted from ansible, and then some. Suffice it to say that all the following virtual machines are provisioned to my vCenter using Salt-Cloud.&lt;/p&gt;
+
+&lt;h3 id=&quot;siem--network-logging-solution&quot;&gt;SIEM / Network logging solution&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2020/05/what-virtual-machines-am-i-running/Elastic-Stack.png&quot; alt=&quot;Elastic-Stack Architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Now this setup might warrant some comments about “overkill” (and probably its own post), but safe to say is that I am a huge elastic-stack fan. My cluster is a Hot-Warm architecture, with the addition of, if I ever need to, also do cold storage. Each of the nodes are properly secured, which isn’t the easiest task. All the log transfer, rotation etc. are being done by either syslog, or beats. I do run the whole suite of beats:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Filebeat, for every relevant file based log.&lt;/li&gt;
+  &lt;li&gt;Auditbeat, security events such as file changes, user logins or processes.&lt;/li&gt;
+  &lt;li&gt;Packetbeat, packets and netflow.&lt;/li&gt;
+  &lt;li&gt;Metricbeat, Well basically what it says, it gathers metrics from VMs and Docker containers.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;siem-elasticsearch-master&quot;&gt;SIEM Elasticsearch Master&lt;/h4&gt;
+&lt;p&gt;2 vCPU/4GB Ram/32GB Disk&lt;br /&gt;
+The Elastic-stack Master nodes are the glue that holds the cluster together, and if you didn’t know… they LOVE ram! Now why 3 you might ask? Split-brain syndrome! 3 is the recommended minimum number in order to not have a split-brain syndrome, which happens when you have an even number of masters and what might happen is a 2 sided argument where both sides are even. In order to tip the scale Elastic recommends that you have an uneven number of nodes. Luckily the master nodes are usually not the largest VMs that you have so it doesn’t hurt to have 3 or 5 depending on the use case. Also note that these are &lt;strong&gt;only&lt;/strong&gt; responsible for the Mastering of the other nodes, so they are not responsible for ingesting data, storing data or manipulating data.&lt;/p&gt;
+
+&lt;h4 id=&quot;siem-elasticsearch-hot&quot;&gt;SIEM Elasticsearch Hot&lt;/h4&gt;
+&lt;p&gt;4 vCPU/6GB Ram/250GB Disk&lt;br /&gt;
+The “Hot” nodes have two main functions, ingesting logs, and storing a couple days of logs, on several shards on the hot nodes. These usually reside on SSD storage and are the main nodes in the cluster that handles searching the most relevant data. Depending on your lograte you might want to have it on SSDs and on 10gig network. In my environment I have ~300events / second, and a daily index is around 10-25GB, and a daily index is held on a hot node for 14 days before its rotated to a warm node.&lt;/p&gt;
+
+&lt;h4 id=&quot;siem-elasticsearch-warm&quot;&gt;SIEM Elasticsearch Warm&lt;/h4&gt;
+&lt;p&gt;4 vCPU/6GB Ram/250GB Disk&lt;br /&gt;
+A warm node is only responsible for searching data, and storing data long term. These nodes are usually on a regular spinning disk as that kind of storage are cheaper, and a user does not generally hit the warm indexes as often as the hot ones. For my setup, depending on the index I keep for example my Filebeat (syslog) for 90days, which may seem long, but mangling data is kind of fun!&lt;/p&gt;
+
+&lt;h4 id=&quot;siem-logstash&quot;&gt;SIEM Logstash&lt;/h4&gt;
+&lt;p&gt;2 vCPU/2GB Ram/32GB Disk&lt;br /&gt;
+Now other Elastic-Stack purists might yell at me for running beats through logstash. But I have some reasons, mainly I like to have one interface for ingesting logs! I do run SNMP fetching, syslog mangling, ingesting iDRAC logs etc. to my logstash, which would just makes the firewall rules easier to manage as it only exposes the logstash ports externally from the cluster! Doing it this way also load balances the lograte rather nicely.&lt;/p&gt;
+
+&lt;h4 id=&quot;siem-kibana&quot;&gt;SIEM Kibana&lt;/h4&gt;
+&lt;p&gt;4 vCPU/4GB Ram/32GB Disk&lt;br /&gt;
+Every logging solution, wether it be influx, nagios etc. need a front end. Elastic-Stacks solution is Kibana, this also contains apps such as Development tools for API-calls, SIEM detection, Health metric visualization etc.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2020/05/what-virtual-machines-am-i-running/kibana_dashboard.png&quot; alt=&quot;Kibana Metricbeat Dashboard&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;breachsearch-elastic-cluster&quot;&gt;Breachsearch Elastic Cluster&lt;/h3&gt;
+&lt;p&gt;So this setup is not much more different then what the SIEM solution looks like, except its not in a Hot-Warm configuration as in this cluster there is only “hot” data. Though the purpose is a bit different, I do enjoy my fair share of data breaches. And I have a couple times referenced those breaches in engagements, and found working passwords (Credential stuffing). Which is always fun! But one dark secret of mine is that I like as with the SIEM Cluster to mangle and pivot data all manner of ways, and I love password statistics, so this was a extremely fun project. How I specifically did this setup, with code examples and the Goose.Lab database will be provided in an upcoming blogpost which will be linked &lt;a href=&quot;http://YouShouldNeverClickOnRandomLinks.com&quot;&gt;Placeholder&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&quot;breachsearch-master&quot;&gt;Breachsearch Master&lt;/h4&gt;
+&lt;p&gt;2 vCPU/4GB RAM/32GB Disk&lt;br /&gt;
+Again, these are the brains of the operation, and they are running a tight ship. I have 3 Masters in order to avoid the Split-brain syndrome,&lt;/p&gt;
+
+&lt;h4 id=&quot;breachsearch-hot&quot;&gt;Breachsearch Hot&lt;/h4&gt;
+&lt;p&gt;6 vCPU/6GB RAM/250GB Disk
+Need somewhere to hold the data. While I don’t have a Hot-Warm architecture for the Breachsearch cluster, it still acts as a hot node in regards to shard count. The data is also not indexed depending on the timestamp, but more like a straight database where you make searches on all data at the same time, hence these have a bit more resources then the SIEM cluster.&lt;/p&gt;
+
+&lt;h4 id=&quot;breachsearch-kibana&quot;&gt;Breachsearch Kibana&lt;/h4&gt;
+&lt;p&gt;4 vCPU/4GB RAM/32GB Disk
+The main function of this VM is only to visualize the data in a proper way.&lt;/p&gt;
+
+&lt;h4 id=&quot;breachsearch-ingest&quot;&gt;Breachsearch Ingest&lt;/h4&gt;
+&lt;p&gt;4 vCPU/4GB RAM/100GB Disk&lt;br /&gt;
+Now this is where it gets interesting, and where most of the data ingestion happens. The field inexation happens in a Logstash dissect filter which looks like:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;filter{
+  dissect {
+    mapping =&amp;gt; { &quot;message&quot; =&amp;gt; &quot;%{DumpName} %{Username} %{Password} %{Hash} %{Hashformat} %{Cracked} %{Domain}&quot; }
+  }
+  mutate{
+    remove_field =&amp;gt; [ &quot;host&quot;, &quot;port&quot; ]
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Which basically takes a netcat session, or a specific file and splits the message into different headers and indexes the data into the proper elastic-index. I’m also positive that this could be achieved with a Filebeat processor, but im lazy(-ish) and I know Logstash!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2020/05/what-virtual-machines-am-i-running/breachsearch_dashboard.png&quot; alt=&quot;Breachsearch Dashboard for Goose.Lab&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;tigv-stack&quot;&gt;TIG(V)-Stack&lt;/h3&gt;
+&lt;p&gt;So yeah, I broke and actually started using the TIG Stack again, not because my ELK stack is bad or anything but more because Telegraf and Varken are easier to integrate to more “esoteric” devices, such as BSD, Switches, UniFi etc.&lt;/p&gt;
+&lt;h4 id=&quot;telegraf&quot;&gt;Telegraf&lt;/h4&gt;
+&lt;p&gt;2 vCPU/2GB RAM/32GB Disk&lt;br /&gt;
+Telegraf is the TIG stacks application which pulls the data and metrics from devices, such as iDRAC, or switch port speeds from switches and routers, and seamlessly puts that data into InfluxDB so that it can be displayed with Grafana.&lt;/p&gt;
+
+&lt;h4 id=&quot;influxdb&quot;&gt;InfluxDB&lt;/h4&gt;
+&lt;p&gt;4 vCPU/4GB RAM/100GB Disk&lt;br /&gt;
+This is the “I” in the TIG stack, and InfluxDB is the de facto standard time series database for this kind of implementation. The VM currently holds two different databases:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Telegraf - A database which holds the direct output of the Telegraf VM, for example; VMWare Metrics, Switch and SNMP Metrics.&lt;/li&gt;
+  &lt;li&gt;Varken - The database for Varken, which collects metrics and items from Radarr, Sonarr, Tautulli, Ombi and UniFi.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;varken&quot;&gt;Varken&lt;/h4&gt;
+&lt;p&gt;2 vCPU/2GB RAM/32GB Disk&lt;br /&gt;
+&lt;a href=&quot;https://github.com/Boerderij/Varken&quot;&gt;Varken&lt;/a&gt; is a tool which pulls data and metrics from applications like, radarr, lidarr, sonarr Unifi etc. It is a cool project and currently a really effective way to see the requests which comes from Ombi and its users.&lt;/p&gt;
+
+&lt;h3 id=&quot;php-ipam&quot;&gt;PHP Ipam&lt;/h3&gt;
+&lt;p&gt;1 vCPU/1GB Ram/32GB Disk&lt;br /&gt;
+Since I like organization, this was one of the best VMs that I could create. As this allows me to have my IP address space organized also makes it easy to look up where I have free addresses for new projects.&lt;/p&gt;
+
+&lt;h3 id=&quot;gitlab-runner&quot;&gt;Gitlab runner&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB Ram/250GB Disk&lt;br /&gt;
+This is actually the only docker host that I have, and is a companion to my gitlab server. This is responsible to run the pipelines in docker containers that are defined in gitlab. wether it can be to build malware stubs or compile malicious binaries (Yeah I’m a pentester, what did you expect).&lt;/p&gt;
+
+&lt;h3 id=&quot;afl-master&quot;&gt;AFL-Master&lt;/h3&gt;
+&lt;p&gt;4 vCPU/4GB RAM/100GB Disk&lt;br /&gt;
+Since I do a bunch of work in Penetration Testing etc. I thought that having a dedicated, easily re-provisioned Fuzzing VM would be beneficial. This is a machine that automatically installs &lt;a href=&quot;https://lcamtuf.coredump.c/afl&quot;&gt;AFL&lt;/a&gt;, and is usually one of those that are just best left be to do its thing.&lt;br /&gt;
+&lt;img src=&quot;assets/images/posts/2020/05/what-virtual-machines-am-i-running/AmericanFuzzyLoop.png&quot; alt=&quot;AFL Currently fuzzing for De-serialization bugs in PHP-7.12&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;jotta-cloud-backup&quot;&gt;Jotta Cloud-Backup&lt;/h3&gt;
+&lt;p&gt;2 vCPU/4GB RAM/40GB Disk&lt;br /&gt;
+This is the only Non-Testing Windows VM that I run, because through my ISP and my contract I get a “Unlimited Cloud Backup solution” to JottaCloud… did I mention that I got it for free? You can probably also guess what drives are currently mounted to be backed up!&lt;/p&gt;
+
+&lt;h3 id=&quot;plex-server&quot;&gt;Plex server&lt;/h3&gt;
+&lt;p&gt;4 vCPU/4GB Ram/100GB Disk&lt;br /&gt;
+This is my only plex server for movies and tv-series. Since I travel 2-3 days sometimes, making hotel rooms boring! so this is accessible for me using my plex account. All the media is stored on Nidhoggr(NAS) and accessed over SMB.&lt;/p&gt;
+
+&lt;h3 id=&quot;transmission&quot;&gt;Transmission&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB Ram/250GB Disk&lt;br /&gt;
+A torrent client with a WebUI, which is running over a VPN…. for Linux ISOs…&lt;/p&gt;
+
+&lt;h3 id=&quot;tautulli&quot;&gt;Tautulli&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB Ram/32GB Disk&lt;br /&gt;
+This one provides me some monitoring and statistics on movies and series on the Plex media server. This is not being used so much, but graphs are fun!&lt;/p&gt;
+
+&lt;h3 id=&quot;radarr&quot;&gt;Radarr&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB Ram/100GB Disk&lt;br /&gt;
+A VM which will organize and keep track of all your Movies, and also hooks into the download client so that it gets the highest quality.&lt;/p&gt;
+
+&lt;h3 id=&quot;sonarr&quot;&gt;Sonarr&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB Ram/100GB Disk&lt;br /&gt;
+It’s a similar too as Radarr, but for TV Shows, keeping track of your episodes and series automatically.&lt;/p&gt;
+
+&lt;h3 id=&quot;bazarr&quot;&gt;Bazarr&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB Ram/100GB Disk&lt;br /&gt;
+Bazarr hooks up to your Radarr and Sonarr, and will download the correct subtitles for your specific languages and media!&lt;/p&gt;
+
+&lt;h3 id=&quot;jackett&quot;&gt;Jackett&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB Ram/100GB Disk&lt;br /&gt;
+Jackett hooks into the Radarr and Sonarr VMs and just adds different trackers, and more options for finding the correct media.&lt;/p&gt;
+
+&lt;h3 id=&quot;docker-01&quot;&gt;Docker 01&lt;/h3&gt;
+&lt;p&gt;4 vCPU/4GB RAM/100GB Disk&lt;br /&gt;
+So I finally caved and started messing with Docker a bit more for my network services, and I wont hide and say that I don’t like it! We’ll see how much of my running services that I actually will convert to containers, but its nice as some tooling likes to run on docker.&lt;br /&gt;
+This Docker host is mainly for general containers, that should be in the private network and is not really touching or osting anything for the public web.&lt;/p&gt;
+&lt;h4 id=&quot;portainerportainer&quot;&gt;Portainer/Portainer&lt;/h4&gt;
+&lt;p&gt;So this is the docker master, it’s connected to all the docker hosts with the Portainer/Agent. Basically it is my interface to deploy containers across all docker hosts, and manage my containers.&lt;/p&gt;
+&lt;h4 id=&quot;linuxserverheimdall&quot;&gt;Linuxserver/Heimdall&lt;/h4&gt;
+&lt;p&gt;Well, it was either this or organizr. And I liked the name Heimdall better! And its a dashboard for all my applications.&lt;/p&gt;
+
+&lt;h3 id=&quot;docker-02&quot;&gt;Docker 02&lt;/h3&gt;
+&lt;p&gt;4 vCPU/4GB RAM/100GB Disk&lt;br /&gt;
+So this Docker host is for those tools that I don’t really want to associate with my Home IP, therefor it is bound to the same VPN Connection as Transmission.&lt;/p&gt;
+&lt;h4 id=&quot;cobbrcovenant&quot;&gt;Cobbr/Covenant&lt;/h4&gt;
+&lt;p&gt;This is a development and testing suite for the Covenant C2 Framework, been mostly using Cobalt-strike as a C2 Framework. While it IS really potent, its still too much powershell based. So I am currently trying Covenant C2 as an alternative.&lt;/p&gt;
+&lt;h4 id=&quot;yogeshojharengine&quot;&gt;Yogeshojha/Rengine&lt;/h4&gt;
+&lt;p&gt;An Automated Recon Engine to do discovery on public accessible sites.&lt;br /&gt;
+Link: &lt;a href=&quot;https://github.com/yogeshojha/rengine&quot;&gt;Rengine&lt;/a&gt;&lt;/p&gt;
+&lt;h4 id=&quot;ctdcspiderfoot&quot;&gt;Ctdc/Spiderfoot&lt;/h4&gt;
+&lt;p&gt;An automated Open Source Intelligence Framework, which I use On and off of work!&lt;br /&gt;
+Link: &lt;a href=&quot;https://github.com/smicallef/spiderfoot&quot;&gt;Spiderfoot&lt;/a&gt;&lt;/p&gt;
+&lt;h4 id=&quot;mpeppingcyberchef&quot;&gt;Mpepping/CyberChef&lt;/h4&gt;
+&lt;p&gt;This is the Docker image of the British Intelligence GCHQ Web App that does simple and complex encoding/decoding operations. Mainly used as an internal tool for CTFs.&lt;br /&gt;
+Link: &lt;a href=&quot;https://github.com/gchq/CyberChef&quot;&gt;Github/CyberChef&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;public--dmz&quot;&gt;Public / DMZ&lt;/h2&gt;
+&lt;p&gt;This segment is where I put all my public facing applications, with rather strict firewall rule set which is based on host to host traffic.&lt;/p&gt;
+
+&lt;h3 id=&quot;ombi&quot;&gt;Ombi&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB Ram/250GB Disk&lt;br /&gt;
+This is a self hosted application where users can create requests for plex.&lt;/p&gt;
+
+&lt;h3 id=&quot;docker-03&quot;&gt;Docker 03&lt;/h3&gt;
+&lt;p&gt;4 vCPU/4GB RAM/100GB Disk&lt;br /&gt;
+This host is in my Public/DMZ Segment and is the main docker host where I’ll host all my public websites.&lt;/p&gt;
+&lt;h4 id=&quot;securitybitsjkk-webcalendar&quot;&gt;Securitybits/Jkk-Webcalendar&lt;/h4&gt;
+&lt;p&gt;I am a member of a local rock climbing community, and have been for the last couple years hosted a small php web application for smartphones, which displays the club activities the coming 2 weeks in a nice format.&lt;/p&gt;
+
+&lt;h3 id=&quot;gitlab&quot;&gt;Gitlab&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2020/05/what-virtual-machines-am-i-running/GitLab-Logo.jpg&quot; alt=&quot;GitLab Logo&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;2 vCPU/4GB Ram/250GB Disk&lt;br /&gt;
+Everyone needs somewhere to store their source code, this Gitlab instance is responsible to house my own projects which I do not want to have on any other SaaS solution (Github). I do a lot of security research, writing malware etc. for professional use. Working as a Pentester and Security Researcher I hate going out and compromising a client (on purpose and with authorization), and my malware is detected by signatures or even before execution time. Before I started hosting my own Gitlab, I did a test with creating a unseen custom backdoor, tested on a fully updated windows 10, upload it to a private repo, wait for a week and retest it on a &lt;strong&gt;fresh&lt;/strong&gt; windows 10 instance… detected, while yes it was not a ‘state of the art’ malware, but it was enough for me to question where I should store my research. Remember, the cloud is just someone else computer. I also store all the states and maps for SaltStack on my Gitlab, which makes it accessible even if my internet dies.&lt;/p&gt;
+
+&lt;h3 id=&quot;nginx-reverse-proxy&quot;&gt;Nginx Reverse Proxy&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB RAM/32GB Disk
+A simple reverse proxy for my different web services, nothing that’s out of the ordinary. This VM also handles Lets Encrypt TLS Certificates.&lt;/p&gt;
+
+&lt;h3 id=&quot;grafana&quot;&gt;Grafana&lt;/h3&gt;
+&lt;p&gt;So Grafana is the last component in the TIG(V)-Stack, an its the famous frontend that all homelabbers love to show off!&lt;/p&gt;
+
+&lt;h2 id=&quot;gameservers&quot;&gt;Gameservers&lt;/h2&gt;
+&lt;p&gt;So this is a network segment where I keep “Closed Public”-servers, as in those servers that people can access if they have access. And as the name implies this segment is mostly for gameservers that I’d like to share access to.&lt;/p&gt;
+
+&lt;h3 id=&quot;oda-arma3&quot;&gt;ODA-Arma3&lt;/h3&gt;
+&lt;p&gt;4 vCPU/6GB RAM/240GB Disk&lt;br /&gt;
+So this is one of the first gameservers that I put up, and is a always on server for me and my friends to have our standing game nights on, as we do enjoy that “Milsim” gameplay of a ODA/SF Unit.&lt;/p&gt;
+
+&lt;h3 id=&quot;dayz&quot;&gt;DayZ&lt;/h3&gt;
+&lt;p&gt;4 vCPU/6GB RAM/240GB Disk&lt;br /&gt;
+Same as the ODA-Arma3 server but this is for DayZ Standalone.&lt;/p&gt;
+
+&lt;h3 id=&quot;takserver&quot;&gt;TakServer&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2020/05/what-virtual-machines-am-i-running/TAK-CIV-Banner.png&quot; alt=&quot;TakServer Logo&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;2 vCPU/2GB RAM/100GB Disk&lt;br /&gt;
+So ATAK-Civ has been one of those applications that I really wanted to try out for a long time. What it is, a Blue Force Tracker and information sharing app for Android and Windows. FreeTAKServer is built on a python3 Implementation of TakServer, which is lightweight and easy to run on much of any hardware that has pip and python. (Stay Tuned for a SaltStack installation script)&lt;/p&gt;
+
+&lt;h3 id=&quot;wintak&quot;&gt;WinTAK&lt;/h3&gt;
+&lt;p&gt;2 vCPU/4GB RAM/42GB Disk&lt;br /&gt;
+Having the TakServer does nothing without also having clients to share the information with. The WinTAK server is a Windows based server where I can remote to using a VPN and have access to the TAK network wherever I go.&lt;/p&gt;
+
+&lt;h3 id=&quot;rtmp&quot;&gt;RTMP&lt;/h3&gt;
+&lt;p&gt;2 vCPU/4GB RAM/100GB Disk&lt;br /&gt;
+RTMP Is a “Real-Time Messaging Protocol” which I am currently using to collect and share media streams from various types of cameras and applications. This is a NGINX implementation as I found that was the easiest to implement and run.&lt;/p&gt;
+
+&lt;h3 id=&quot;mumble&quot;&gt;Mumble&lt;/h3&gt;
+&lt;p&gt;2 vCPU/2GB RAM/32GB Disk&lt;br /&gt;
+Mumble is one of those VoIP applications that are just simple and they work. This is for a project I’ve had in my head for a while and is dedicated to radio communication using hand held PMR Radios.&lt;/p&gt;
+
+&lt;h2 id=&quot;malware&quot;&gt;Malware&lt;/h2&gt;
+&lt;p&gt;Now for the fun stuff, my malware net is the most restrictive net that I have, basically only accessible from a VPN and only have a outbound monitored internet connection. This is also the Segment that have the VMs in highest rotation, for good reason. Its purpose is basically a safe place to detonate malware and reverse live samples.&lt;/p&gt;
+
+&lt;h3 id=&quot;gooseflare&quot;&gt;GooseFlare&lt;/h3&gt;
+&lt;p&gt;4 vCPU/8GB Ram/80GB Disk&lt;br /&gt;
+There’s always 1-3 instances of FireEYEs Flare VM available in this net for malware research. If you haven’t heard of &lt;a href=&quot;https://github.com/fireeye/flare-vm&quot;&gt;FlareVM&lt;/a&gt; it’s a simple setup script for a windows VMs that contains most of all tools you’ll need in order to reverse engineer a malware. The script is actively maintained by pull requests and FireEYE, highly recommended if you are interested in reverse engineering.&lt;/p&gt;
+
+&lt;h2 id=&quot;goosedev&quot;&gt;GooseDev&lt;/h2&gt;
+&lt;p&gt;Much like the Malware segment, I have a segment for developing malware. I will put up another blog post specifically on this network and its hosts but the general idea is to have a network with hosts that have different AVs installed  and block by GPO and in the network firewall malware submissions to the mother ship.&lt;/p&gt;
+&lt;h3 id=&quot;goosedev-1&quot;&gt;GooseDev&lt;/h3&gt;
+&lt;p&gt;4 vCPU/8GB Ram/150GB Disk&lt;br /&gt;
+A simple windows 10 Pro host, with Python and visual studio installed. Since a lot of malware and C2 framework have moved on from Powershell into a more unmonitored .NET and Powershell-Less execution, there was a need to have a development machine which was easily restored to an original state when a project was completed, so that there was no lingering artifacts. During Red-Team engagements this is also a Lab which goes through heavy modifications whenever we learn something new from the client, in order to mimic our target environment as good as can be to come out successful in the end. My current project is .NET DLL injections into memory for which I’m doing a small write up, stay tuned!&lt;/p&gt;
+&lt;h3 id=&quot;goosetarget&quot;&gt;GooseTarget&lt;/h3&gt;
+&lt;p&gt;2 vCPU/4GB Ram/60GB Disk&lt;br /&gt;
+A standard windows 7/8/10 VM which is usually as default as can be, with the only modification is that I turn off sample submissions in the Group Policy so that I don’t burn my applications pre-engagement.&lt;/p&gt;
+
+&lt;h2 id=&quot;gooselab&quot;&gt;GooseLab&lt;/h2&gt;
+&lt;p&gt;Much like GooseDev subnet there’s GooseLab, which is more of a static environment and a small domain playground to test new attacks and applications in a more controlled domain. Whats currently missing is actually a logging solution, which will probably be another Elastic-Stack and Winlogbeat.&lt;/p&gt;
+&lt;h3 id=&quot;goosesql&quot;&gt;GooseSQL&lt;/h3&gt;
+&lt;p&gt;2 vCPU/4GB Ram/40GB Disk&lt;br /&gt;
+Simple SQL Server with one database defined at the moment. Used for Authentication and some basic data storage for GooseWeb.&lt;/p&gt;
+&lt;h3 id=&quot;gooseweb&quot;&gt;GooseWEB&lt;/h3&gt;
+&lt;p&gt;2 vCPU/4GB Ram/40GB Disk&lt;br /&gt;
+IIS Server that runs a small inventory management application connected to the SQL Database for authentication and data storage.&lt;/p&gt;
+&lt;h3 id=&quot;goosedc&quot;&gt;GooseDC&lt;/h3&gt;
+&lt;p&gt;2 vCPU/4GB Ram/40GB Disk&lt;br /&gt;
+Domain controller for the domain “Goose.Lab” 20 users with different degrees of access. There’s also some small special case configurations in GPO, Groups and auth schemes which makes for an interesting Saturday evening of hacking.&lt;/p&gt;
+
+&lt;h2 id=&quot;finishing-up&quot;&gt;Finishing up&lt;/h2&gt;
+&lt;p&gt;So yeah, now I finally took the step and started using Docker to some extent. I can at least say that it is going to be a mainstay server in my VM stack, though I don’t know how much but at least for some toolings. But I’ll still use vCenter as the mainstay application to manage the VMs, and Portainer (or maybe take another step to Rancher) to manage my containers.&lt;br /&gt;
+One might also ask where this blog is hosted? Actually it is on Github-Pages together with a small actions script which runs every time I make a push to the blog branch. If you want you can clone and repurpose the repo for your own blog, you can find the repo here: &lt;a href=&quot;https://github.com/Securitybits-io/blog.securitybits.io&quot;&gt;Securitybits Github&lt;/a&gt;&lt;br /&gt;
+If you have read this far, Good job! and thank you, if you have any questions don’t hesitate to contact me!&lt;/p&gt;
+
+&lt;h3 id=&quot;changelog&quot;&gt;Changelog&lt;/h3&gt;
+&lt;h5 id=&quot;2021-02-19&quot;&gt;2021-02-19&lt;/h5&gt;
+&lt;p&gt;Virtual Machine Changes:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Added: ODA-Arma3&lt;/li&gt;
+  &lt;li&gt;Added: DayZ&lt;/li&gt;
+  &lt;li&gt;Added: WinTAK&lt;/li&gt;
+  &lt;li&gt;Added: Mumble&lt;/li&gt;
+  &lt;li&gt;Added: TakServer&lt;/li&gt;
+  &lt;li&gt;Added: RTMP Server&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h5 id=&quot;2020-10-20&quot;&gt;2020-10-20&lt;/h5&gt;
+&lt;p&gt;Hardware changes:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Removed Cisco C2960-48TS-S in favor to a Ubiquiti 48-Port Switch&lt;/li&gt;
+  &lt;li&gt;Added Raspberry Pi 4GB Unifi Controller&lt;/li&gt;
+  &lt;li&gt;Added Ubiquiti NanoHD Access Point&lt;/li&gt;
+  &lt;li&gt;Switched Dell R510 FreeNAS to a Qnap TS-832X&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Virtual Machine Changes:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Added: AFL-Master&lt;/li&gt;
+  &lt;li&gt;Added: BreachSearch cluster&lt;/li&gt;
+  &lt;li&gt;Added: Jotta Cloud-Backup (Windows VM)&lt;/li&gt;
+  &lt;li&gt;Added: InfluxDB&lt;/li&gt;
+  &lt;li&gt;Added: Varken&lt;/li&gt;
+  &lt;li&gt;Added: Telegraf&lt;/li&gt;
+  &lt;li&gt;Added: Grafana&lt;/li&gt;
+  &lt;li&gt;Added: Docker-host 01/02/03&lt;/li&gt;
+  &lt;li&gt;Added: Rancher-Master &amp;amp; Rancher-Worker 01/02&lt;/li&gt;
+  &lt;li&gt;Removed: WebCalendar&lt;/li&gt;
+  &lt;li&gt;Container: Portainer/Portainer&lt;/li&gt;
+  &lt;li&gt;Container: Linuxserver/Heimdall&lt;/li&gt;
+  &lt;li&gt;Container: Securitybits-io/jkk-WebCalendar&lt;/li&gt;
+  &lt;li&gt;Container: Covenant/Covenant&lt;/li&gt;
+  &lt;li&gt;Container: Yogeshojha/Rengine&lt;/li&gt;
+  &lt;li&gt;Container: Ctdc/Spiderfoot&lt;/li&gt;
+  &lt;li&gt;Container: Mpepping/CyberChef&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="homelab" />
+      
+        <category term="security" />
+      
+
+      
+        <summary type="html">Disclaimer, this is subject to change… very often and very quickly!</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">Beats 7.5.0 on PFsense 2.4.4</title>
+      <link href="/beats-7-5-0-on-pfsense" rel="alternate" type="text/html" title="Beats 7.5.0 on PFsense 2.4.4" />
+      <published>2019-12-11T00:00:00+00:00</published>
+      <updated>2019-12-11T00:00:00+00:00</updated>
+      <id>/beats-7-5-0-on-pfsense</id>
+      <content type="html" xml:base="/beats-7-5-0-on-pfsense">&lt;blockquote&gt;
+  &lt;p&gt;Long time wanting a beats client to PFSense which runs on FreeBSD, so lets compile it our self from source!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;There is always the option to send it via syslog, but it would be easier just using the beats to parse and send logs to a centralized logging platform. in this case a Hot-Warm elastic search cluster fronted by two Logstash machines (definitely overkill though).&lt;/p&gt;
+
+&lt;h2 id=&quot;initial-setup&quot;&gt;Initial Setup&lt;/h2&gt;
+
+&lt;p&gt;So for this task I’ll be using Vagrant in order to simple have a VM that I can build the beats from the git source.&lt;/p&gt;
+
+&lt;p&gt;Best way to install with current instructions is using the official &lt;a href=&quot;https://www.vagrantup.com/docs/installation/&quot;&gt;Vagrant Installation Guide&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I’ll be also using Virtual box as a provider.&lt;/p&gt;
+
+&lt;h3 id=&quot;vagrantfile&quot;&gt;Vagrantfile&lt;/h3&gt;
+
+&lt;p&gt;Vagrant deploys virtual machines by a Vagrant File specification. We are compiling to a FreeBSD 11.2 system which means that we’ll also specify for vagrant to spin up such a box.&lt;/p&gt;
+
+&lt;p&gt;My Vagrant file looks like following, now you can certainly put it somewhere else, but I just need the FreeBSD machine for this purpose, and will be destroyed after this compile hence putting it into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/tmp.&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@ubuntu:~# mkdir freebsd-compile
+root@ubuntu:~# cd freebsd-compile/^C
+root@ubuntu:~# mkdir -p /tmp/freebsd-compile
+root@ubuntu:~# cd /tmp/freebsd-compile/
+root@ubuntu:/tmp/freebsd-compile# cat &amp;lt;&amp;lt;EOF &amp;gt; Vagrantfile
+&amp;gt; Vagrant.configure(&quot;2&quot;) do |config|
+&amp;gt; config.vm.box = &quot;freebsd/FreeBSD-11.2-RELEASE&quot;
+&amp;gt; config.vm.box_version = &quot;2018.06.22&quot;
+&amp;gt; end
+&amp;gt; EOF
+root@Valkyrie:/tmp/freebsd-compile# cat Vagrantfile
+Vagrant.configure(&quot;2&quot;) do |config|
+  config.vm.box = &quot;freebsd/FreeBSD-11.2-RELEASE&quot;
+  config.vm.box_version = &quot;2018.06.22&quot;
+end
+root@Valkyrie:/tmp/freebsd-compile#
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Good now that’s all we need for our host system, lets start up the VM by using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vagrant up&lt;/code&gt; in the vagrant file directory and wait.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@ubuntu:/tmp/freebsd-compile# vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==&amp;gt; default: Importing base box 'freebsd/FreeBSD-11.2-RELEASE'...
+==&amp;gt; default: Generating MAC address for NAT networking...
+==&amp;gt; default: Checking if box 'freebsd/FreeBSD-11.2-RELEASE' version '2018.06.22' is up to date...
+[... snip ...]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now for me it did toss some errors trying to remote connect, but fear not. The machine is provisioned and started and we can now connect to it using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vagrant ssh&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@Valkyrie:/tmp/freebsd-compile# vagrant ssh
+FreeBSD 11.2-RELEASE-p14 (GENERIC) #0: Mon Aug 19 22:38:50 UTC 2019
+
+Welcome to FreeBSD!
+[... snip ...]
+vagrant@freebsd:~ % sudo su
+root@freebsd:/home/vagrant # cd
+root@freebsd:~ #
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now comes the compiling of beats. And for this chapter I actually want to give a very large kudos to &lt;a href=&quot;https://github.com/jakommo&quot;&gt;Jakommo&lt;/a&gt; who came up with it, but its too good not to have it drown in a &lt;a href=&quot;https://github.com/elastic/beats/issues/1034#issuecomment-557276051&quot;&gt;github issue.&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;package-installation-and-compilation&quot;&gt;Package installation and Compilation&lt;/h2&gt;
+
+&lt;p&gt;Now in order to succeed, we need a couple of packages installed into our VM.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@freebsd:~ # pkg install git gmake go bash
+Updating FreeBSD repository catalogue...
+FreeBSD repository is up to date.
+All repositories are up to date.
+The following 25 package(s) will be affected (of 0 checked):
+
+New packages to be INSTALLED:
+    git: 2.23.0
+    [... snip ...]
+    cvsps: 2.1_2
+
+Number of packages to be installed: 25
+Proceed with this action? [y/N]: y
+
+root@freebsd:~ #
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we have all the dependencies in order to compile, lets get the code and checkout the correct version. (I deliberately removed a lot of the output as that is of no importance if it throws no errors)&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@freebsd:~ # go get github.com/elastic/beats
+root@freebsd:~ # cd src/github.com/elastic/beats/
+root@freebsd:~/src/github.com/elastic/beats # git checkout v7.5.0
+Note: switching to 'v7.5.0'.
+root@freebsd:~/src/github.com/elastic/beats # cd /filebeat
+root@freebsd:~/src/github.com/elastic/beats/filebeat # gmake
+root@freebsd:~/src/github.com/elastic/beats/filebeat # file filebeat
+filebeat: ELF 64-bit LSB executable, x86-64, version 1 (FreeBSD)...
+root@freebsd:~/src/github.com/elastic/beats/filebeat # ./filebeat version
+filebeat version 7.5.0 (amd64), libbeat 7.5.0 ....
+root@freebsd:~/src/github.com/elastic/beats/metricbeat # ./metricbeat version
+metricbeat version 7.5.0 (amd64), libbeat 7.5.0 ....
+root@freebsd:~/src/github.com/elastic/beats/metricbeat #
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now its just a matter of copy the filebeat binary to your pfsense and configure it according to the beats documentation.&lt;/p&gt;
+
+&lt;p&gt;Note: This also work for auditbeat, packetbeat and metricbeat. but would be a redundant wall of text showing all 4 binaries.&lt;/p&gt;
+
+&lt;p&gt;Again all credit goes to &lt;a href=&quot;https://github.com/jakommo&quot;&gt;Jakommo&lt;/a&gt; for writing the comment on Github.&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="homelab" />
+      
+        <category term="security" />
+      
+
+      
+        <summary type="html">Long time wanting a beats client to PFSense which runs on FreeBSD, so lets compile it our self from source!</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>

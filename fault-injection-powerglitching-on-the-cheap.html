@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Voltage glitching on the cheap</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Security researching from the nordics" />
+    <link rel="shortcut icon" href="/assets/images/static/blog-icon.png" type="image/png" />
+    <link rel="canonical" href="/fault-injection-powerglitching-on-the-cheap" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Securityits.io" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Voltage glitching on the cheap" />
+    <meta property="og:description" content="Stand back! We’re doing science! voltage glitching on an Arduino So a couple a weeks ago I decided that I needed more hardware and electronics experience (also writing code and making lights go blink blink is awesome). The foremost purpose of this post is to actually document what I am" />
+    <meta property="og:url" content="/fault-injection-powerglitching-on-the-cheap" />
+    <meta property="og:image" content="/assets/images/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2019-06-01T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2019-06-01T00:00:00+00:00" />
+    <meta property="article:tag" content="Hardware" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Voltage glitching on the cheap" />
+    <meta name="twitter:description" content="Stand back! We’re doing science! voltage glitching on an Arduino So a couple a weeks ago I decided that I needed more hardware and electronics experience (also writing code and making lights go blink blink is awesome). The foremost purpose of this post is to actually document what I am" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:image" content="/assets/images/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Securityits.io" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Hardware" />
+    <meta name="twitter:site" content="@Securitybits_io" />
+    <meta name="twitter:creator" content="@Securitybits_io" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Securityits.io",
+        "logo": "/assets/images/static/blog-icon.png"
+    },
+    "url": "/fault-injection-powerglitching-on-the-cheap",
+    "image": {
+        "@type": "ImageObject",
+        "url": "/assets/images/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/fault-injection-powerglitching-on-the-cheap"
+    },
+    "description": "Stand back! We’re doing science! voltage glitching on an Arduino So a couple a weeks ago I decided that I needed more hardware and electronics experience (also writing code and making lights go blink blink is awesome). The foremost purpose of this post is to actually document what I am"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Voltage glitching on the cheap" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="/"><img src="/assets/images/static/blog-icon.png" alt="Securityits.io" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-github" role="menuitem"><a href="https://github.com/securitybits-io">Github</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-hardware tag-security post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime=" 1 June 2019"> 1 June 2019</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/hardware/'>HARDWARE</a>,
+                            
+                        
+                            
+                               <a href='/tag/security/'>SECURITY</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Voltage glitching on the cheap</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <blockquote>
+  <p>Stand back! We’re doing science! voltage glitching on an Arduino</p>
+</blockquote>
+
+<p>So a couple a weeks ago I decided that I needed more hardware and electronics experience (also writing code and making lights go blink blink is awesome). The foremost purpose of this post is to actually document what I am doing. The base setup will be two arduinos, one Nano and a Uno, also the firmware for a CTF Challenge from Riscure called Fiesta (links further down). The end goal is to use the Nano to modify the voltage that the Unos atmega328p chip receives enough so that the code execution changes and displays the flag.</p>
+
+<h2 id="what-is-voltage-glitching">What is voltage glitching?</h2>
+
+<p>Doing voltage glitching is basically precisely controlling the power supply of a micro controller. This can either mean increasing or decreasing the power during a couple of clock cycles.</p>
+
+<p><img src="assets/images/posts/2019/06/voltage-glitching-on-the-cheap/Vccglitch_working.png" alt="VCCGlitch Working" /></p>
+
+<p>In the diagram above, the blue represents the power (V/DC), and red represents the micro controllers clock cycles. Manipulating the amount of power and the length can result in interesting thing, such like a instruction misbehaving in making an extra jump, or changing the value of an integer. And this power glitching must be done with some degree of accuracy, like using a FPGA card or even better a <a href="https://newae.com/tools/chipwhisperer/">Chipwhisperer</a>. Though dropping the power for too long will result in a chip reset, or a corrupted firmware. Which the latter can be quite expensive if one does not have the source code of the firmware.  </p>
+
+<p>But a good FPGA or Chipwhisperer can be expensive for a first time hardware hacker and I had a couple of Arduinos laying around, so challenge accepted…</p>
+
+<h2 id="setup">Setup</h2>
+
+<p>Components needed:</p>
+
+<ul>
+  <li>Arduino Uno</li>
+  <li>Arduino Nano</li>
+  <li>Breadboard</li>
+  <li>2N7000 Transistor</li>
+  <li>630Ω Resistor</li>
+  <li>Various Breadboard Lab Cables</li>
+</ul>
+
+<p>Lets start by loading the target source code onto our victim (Uno) using avrdude.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~# wget https://raw.githubusercontent.com/Riscure/Rhme-2016/master/challenges/binaries/fiesta/fiesta.hex
+root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&lt;UNO Device&gt; -b115200 -u -V -U flash:w:fiesta.hex
+</code></pre></div></div>
+
+<p>Powering on the Arduino Uno, and connecting over serial displays an eternal loop that we are to break out of, which is saying “Lock”.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~# screen /dev/ttyACM1 19200
+18:12:58.044 -&gt; RHME2 FI level 1.
+18:12:58.044 -&gt;
+18:12:58.076 -&gt; Chip status: LockLockLockLockLockLockLockLockLockLockLockLockLockLock[...]
+</code></pre></div></div>
+
+<p>Cool, so step one works, loading the victim firmware onto the board.</p>
+
+<h2 id="connecting-glitching-source">Connecting glitching source</h2>
+
+<p>Step two, connecting the cables from the glitch source (Nano) to the Uno. On a high level picture it would look something like this:</p>
+
+<p><img src="assets/images/posts/2019/06/voltage-glitching-on-the-cheap/diagram-2.JPG" alt="Connection Diagram" /></p>
+
+<p>But the immediate problem is that the Uno contains capacitors in order to store and filter electricity to the micro controller, in case of… glitches. Which means, in order to power glitch the Atmega328p, the micro controller has to be put onto a breadboard, and connect the relevant cables for it to send and receive data. That way it is fairly trivial to control the micro controllers ground, without any interfering capacitors. This can also be achieved on other hardware (like a Nano which does not have a removable micro controller) by looking up the specification and with a steady hand, desolder the ground pin.</p>
+
+<p>Carefully removing the micro controller and placing it on the breadboard, the next step would be to reconnect it back to the arduino board itself on the corresponding terminals.</p>
+
+<p><img src="assets/images/posts/2019/06/voltage-glitching-on-the-cheap/Arduino-Uno-ATmega328P-Pin-Mapping1.png" alt="Arduino Uno ATmega328P Pin Mapping" /></p>
+
+<p>The pins that should be connected back are at least Pin 1, 2, 3, 7,9,10 and 20. Which will handle basic power and operations, as well as Serial send/receive/reset to the micro controller. From the Uno board we also want to have the Uno serial send its data to the Nanos Serial Rx port, so Connect Uno (Tx) to Nano (Rx). Next step is actually wiring up the Glitching logic to control the Uno Micro controllers ground, on the Nano using the Transistor (2N7000) according to the high level scheme above.</p>
+
+<p>The final assembly should be something like the image below. In this case I’ve connected the Nano Ground to Uno micro controller ground pin 8.</p>
+
+<p><img src="assets/images/posts/2019/06/voltage-glitching-on-the-cheapassets/IMG_6324-1.JPG" alt="Arduino Setup" /></p>
+
+<p>The 2N7000 Transistor is what is actually going to control the ground to the micro controller. By connecting Nano D2 to the transistors middle pin though the resistor, the circuit is open as long as the pin has a HIGH state, thus providing the controller with power. As soon as D2 goes into a LOW state, the transistor will close and therefor the controller will loose power. The trick is to do it long enough so that the CPU Instruction glitches, but not so long so that it’ll reset or corrupt he device…</p>
+
+<h2 id="glitching-time">Glitching time</h2>
+
+<p>Time to actually write and load the source code onto the Nano that will perform the glitching steps. The code that I wrote for this challenge is fairly simple, but still go through a couple key points.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>void loop() {
+  // put your main code here, to run repeatedly:
+
+  for (int i = 0; i&lt;200;i++){
+      if (Serial.available() &gt; 0) {
+        // read the incoming byte:
+        incomingByte = Serial.read();
+        Serial.print(char(incomingByte));
+      }
+    }
+    delay(1000);
+    glitch();
+}
+</code></pre></div></div>
+
+<p>The for loop is intended to read 200 bytes on serial Rx, in order to if the glitch is successful, read the flag. then create a delay of 1 second for the power to normalize before calling the function glitch(), this is important as if the target chip is not in a normal state the glitch can have some interesting (read corrupting) results.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>void glitch(){
+  int waste = 0;
+  digitalWrite(powerPin, LOW); //Powerpin = D2
+
+  for (int i = 0; i&lt;glitchDelay; i++){waste++;}
+
+  digitalWrite(powerPin, HIGH);
+  glitchDelay +=10;
+
+  Serial.println();
+  Serial.print("Glich Delay set to: ");
+  Serial.print(glitchDelay);
+  Serial.println();
+}
+</code></pre></div></div>
+
+<p>The glitch function have a couple things going on. First of all, it sets the powerPin to LOW, in reference to earlier it simply cuts off the Unos Micro controllers ground. Having the D2 Pin to LOW, enter the for loop. Now you might as why a for loop, and not the <code class="language-plaintext highlighter-rouge">delay()</code> function. Simply because even setting a <code class="language-plaintext highlighter-rouge">delay(1)</code> for a millisecond, is too slow. Therefor i defined a for loop that will do a simple <code class="language-plaintext highlighter-rouge">waste++;</code> so that it does a couple instructions each loop.</p>
+
+<p>After the for loop setting the D2 pin to HIGH again in order supply the micro controller with power again, completing one <code class="language-plaintext highlighter-rouge">glitch()</code> function call. Now since this is a loop, the code also increases the <code class="language-plaintext highlighter-rouge">glitchDelay</code>  with 10 each loop, in order to extend the length of the glitch automatically.</p>
+
+<p>Putting all the code together it should look something like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>int incomingByte = 0;
+char b[5];
+
+int powerPin = 2;
+int glitchDelay = 0;
+
+void setup() {
+  Serial.begin(19200);
+  Serial.println("Arduino is ready");
+
+  pinMode(powerPin, OUTPUT);
+
+  digitalWrite(powerPin, HIGH);
+  delay(5000);
+
+  Serial.println("Gliching is ready");
+}
+
+void glitch(){
+  int waste = 0;
+
+  digitalWrite(powerPin, LOW);
+  for (int i = 0; i&lt;glitchDelay; i++){ waste++; }                    
+  digitalWrite(powerPin, HIGH);
+
+  glitchDelay +=10;
+  Serial.println();
+  Serial.print("Glich Delay set to: ");
+  Serial.print(glitchDelay);
+  Serial.println();
+}
+
+void loop() {
+
+  for (int i = 0; i&lt;200;i++){
+      if (Serial.available() &gt; 0) {
+        // read the incoming byte:
+        incomingByte = Serial.read();
+        Serial.print(char(incomingByte));
+      }
+    }
+
+    delay(1000);
+    glitch();
+}
+</code></pre></div></div>
+
+<p>Running the code it should eventually display the flag from the Arduino Uno!</p>
+
+<p><img src="assets/images/posts/2019/06/voltage-glitching-on-the-cheap/Screenshot-from-2019-05-17-22-05-43.png" alt="Successful glitch" /></p>
+
+<p>While this might seem like a trivial implementation, there are accounts where ex. the Xbox360 was unlocked using this method, <a href="https://github.com/Free60Project/wiki">link to wiki</a>.</p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="christoffer" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/christoffer">Christoffer Claesson</a></h4>
+                                
+                                    <p>I am Christoffer Claesson, a professional security researcher from Sweden who spends his days (and many nights) on red teaming, security deep dives, and homelab experiments. This blog is my way of giving back to the community by sharing lessons, notes, and the occasional side project that grew bigger than planned.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/christoffer">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/static/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Securityits.io &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/hardware/">Hardware</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/its-hidiyous">Its HiDIYous</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/Clock-Glitching-with-a-chipwhisperer">Clock Glitching with a ChipWhisperer-Lite</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/reverse-engineering-an-unknown-digital-protocol">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/hardware/">
+                                
+                                    See all 3 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/ropemporium-0-ret2win">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2019/08/ropemporium-0-ret2win/exploit-development-1280x600.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/ropemporium-0-ret2win">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Exploit-dev</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">ROPEmporium: 0-Ret2Win (64-bit)</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  Doing a series on ROP and ROPEmporium, starting out with a simple ret2win
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      6 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/valentine-writeup">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2018/07/valentine-writeup/valentine-banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/valentine-writeup">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Ctf</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Valentine Writeup</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  Heartbleeds and dirty cows, i feel sorry for the creator!
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      5 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="/">
+            
+                <img src="/assets/images/static/blog-icon.png" alt="Securityits.io icon" />
+            
+            <span>Securityits.io</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Voltage glitching on the cheap</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Voltage+glitching+on+the+cheap&amp;url=https://jekyllt.github.io/jasper2/fault-injection-powerglitching-on-the-cheap"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://jekyllt.github.io/jasper2/fault-injection-powerglitching-on-the-cheap"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="/">Securityits.io</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyllt/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-115328400-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

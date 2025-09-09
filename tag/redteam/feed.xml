@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
+  <link href="/tag/redteam/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="/" rel="alternate" type="text/html" />
+  <updated>2025-09-09T13:46:37+00:00</updated>
+  <id>/tag/redteam/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">Securityits.io | </title>
+  
+
+  
+    <subtitle>Security researching from the nordics</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">Its HiDIYous</title>
+      <link href="/its-hidiyous" rel="alternate" type="text/html" title="Its HiDIYous" />
+      <published>2024-10-03T00:00:00+00:00</published>
+      <updated>2024-10-03T00:00:00+00:00</updated>
+      <id>/its-hidiyous</id>
+      <content type="html" xml:base="/its-hidiyous">&lt;blockquote&gt;
+  &lt;p&gt;Its HiDIYous, but it works!…&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;HiDIYous was an internal project, that came about when we needed a USB implant that acted like a Human Interface Device (keyboard). The only issue was that the organization we where testing had a security posture that made it impossible to use any over the counter devices (Hak5 Rubberducky, OMG Cable etc.). This spawned the idea that I should design my own, that should be robust, easy and have a really small footprint so that it can be implanted into a lot of different host devices.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-a-human-interface-device-hid&quot;&gt;What is a Human Interface Device (HID)&lt;/h2&gt;
+
+&lt;p&gt;A HID is any peripheral device that allows humans to interact with a computer by sending input data. Common examples include keyboards, mice, and game controllers. HIDs are trusted by operating systems by default, which means that they don’t require special drivers to function. This trust is central to how devices like the USB Rubber Ducky and the OMG Cable are able to exploit systems. These tools leverage the inherent trust computers place in HID devices to launch keystroke injection attacks. In this context, the HID protocol becomes a potential vector for delivering malicious commands, all while masquerading as a harmless device.&lt;/p&gt;
+
+&lt;p&gt;The HiDIYous project take advantage of this by pretending to be standard keyboards, which allows them to execute commands or inject scripts once plugged into a target machine. This tool highlight a fundamental flaw in how computers trust HIDs, showcasing how these devices can be repurposed to bypass security measures and gain unauthorized access to systems.&lt;/p&gt;
+
+&lt;h2 id=&quot;howto&quot;&gt;Howto?&lt;/h2&gt;
+&lt;p&gt;So next  question is how do you get one? I published a Git Repo with all the instructions and files needed which can be found here:
+&lt;a href=&quot;https://github.com/Securitybits-io/HiDIYous.git&quot;&gt;https://github.com/Securitybits-io/HiDIYous.git&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The repo also contains instructions on how to build and create your first implant.&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="redteam" />
+      
+        <category term="hardware" />
+      
+
+      
+        <summary type="html">Its HiDIYous, but it works!…</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">Password audits</title>
+      <link href="/password-audit" rel="alternate" type="text/html" title="Password audits" />
+      <published>2020-06-02T00:00:00+00:00</published>
+      <updated>2020-06-02T00:00:00+00:00</updated>
+      <id>/password-audit</id>
+      <content type="html" xml:base="/password-audit">&lt;blockquote&gt;
+  &lt;p&gt;This is be a brief overview on why and how to perform a password audit on a windows domain.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In this post we are going to explore some of the attacks/audits that can be performed on the Active Directory credential database. In order to be able to extract the hashes to crack, we need to acquire the NTDS.dit file in one way or another. The NTDS.dit is a database which stores the data and information about user objects, groups and group memberships. It also includes the LM (if configured) and the NTLM hashes for all users. A password audit should be performed on a regular basis, in order to ensure that a correct security level is upheld. So that there does not exist any kind fo weak or easily guessable passwords, eg. Winter2020, &lt;companyname&gt;2017 etc. It is also useful during penetration tests and red team operations to acquire the hashes and clear text passwords, in case there is domain trust between two domains with shared credentials, or to forge golden tickets.&lt;/companyname&gt;&lt;/p&gt;
+
+&lt;p&gt;While extracting the hashes makes it possible to use tools such as mimikatz, psexec or smbclient to pass the hash, we will in this post focus on getting to a state to audit the hashes (read cracking) using &lt;a href=&quot;https://hashcat.net/hashcat/&quot;&gt;hashcat&lt;/a&gt; or the LM/NTLM offline cracker of your choice.&lt;/p&gt;
+
+&lt;p&gt;The premise of these audits is that the administrator have access to a user with the correct rights to the Domain Controller, either by having Domain Administrative rights, or the ACL GetChangesAll for the domain or Domain Controller object. The examples below will utilize Domain Administrative credentials for simplicity’s sake.&lt;br /&gt;
+In order to create a successful dump to audit, we need two specific files:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;NTDS.dit&lt;/strong&gt; - The database itself, which depending on the size of the domain can be a few Megabytes to several Gigabytes.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;SYSTEM Hive&lt;/strong&gt; - Registry hive which contains the bootkey used to decrypt the NTDS.dit file.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;These files that are being created do contain all the domain controllers sensitive data, please ensure that they are stored  and handled properly according to your organizations security policy.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;ntdsutil&quot;&gt;NTDSUtil&lt;/h3&gt;
+&lt;p&gt;NTDSUtil is a builtin tool in every windows server with the domain controller role since Windows Server 2003, and is built to manage the domain from the command line. This is also one of the easier ways to export the database.&lt;br /&gt;
+Start by opening a powershell prompt as admin, and create a suitable folder to extract to.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PS C:\Windows\system32&amp;gt; cd ..\..
+PS C:\&amp;gt; mkdir passwordAudit
+PS C:\&amp;gt; cd .\passwordAudit\
+PS C:\passwordAudit&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;After its a few simple commands in order to export the database, SYSTEM and SECURITY hives, from a running domain controller.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PS C:\passwordAudit&amp;gt; ntdsutil
+ntdsutil.exe: activate instance ntds
+ntdsutil.exe: ifm
+ifm: create full c:\passwordAudit
+ifm: quit
+ntdsutil.exe: quit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This command uses the same underlying technique as VSSAdmin (See below), but does so without the need of any extra VBS script or process injection.&lt;br /&gt;
+&lt;img src=&quot;assets/images/posts/2020/06/password-audit/ntdsutil-screenshot.png&quot; alt=&quot;NTDSUtil export&quot; /&gt;&lt;br /&gt;
+Transfer these files to a host that has Impacket Secretsdump installed and jump to that section (Secretsdump &amp;gt; From NTDS.dit).&lt;/p&gt;
+
+&lt;h3 id=&quot;vssadmin&quot;&gt;VSSAdmin&lt;/h3&gt;
+&lt;p&gt;Now if you don’t like automation, and love to do things manually… look no further! Just beware that running the following commands might trigger some alerts if there is any kind of monitoring of the domain controller, as some ransomware strains utilize VSSAdmin for malicious purposes.&lt;br /&gt;
+Again create a working folder to put the exported database in and change o that directory (take note that we are using the command prompt and not powershell).&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;C:\Windows\system32&amp;gt; cd c:\
+C:\&amp;gt; mkdir passwordAudit
+C:\&amp;gt; cd .\passwordAudit\
+C:\passwordAudit&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The steps that we are taking are:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Creating a volume Shadow Copy.&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\&amp;gt; vssadmin create shadow /for=C:&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Manually copying the NTDS.dit file to the working directory from the Shadow Copy.&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\&amp;gt; copy &amp;lt;Shadow Copy Volume Name&amp;gt;\windows\ntds\ntds.dit c:\passwordAudit\ntds.dit&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Copy the System file.&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\&amp;gt; reg SAVE HKLM\SYSTEM C:\passwordAudit\SYSTEM&lt;/code&gt;&lt;br /&gt;
+or&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;copy &amp;lt;Shadow Copy Volume Name&amp;gt;\windows\system32\config\SYSTEM c:\passwordAudit\SYSTEM&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Deleting the Shadow Copy.&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\&amp;gt; vssadmin delete shadows /shadow=&amp;lt;Shadow Copy ID&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This approach is a bit more involving then using the NTDSUtil, but achieves the same results.&lt;br /&gt;
+&lt;img src=&quot;assets/images/posts/2020/06/password-audit/vssadmin-screenshot.png&quot; alt=&quot;VSSAdmin export&quot; /&gt;&lt;br /&gt;
+There is also the possibility to in case the user is not allowed to create shadow copies, to list available Shadow Volumes to perform copies from. They are usually named &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HarddiskVolumeShadowCopy#&lt;/code&gt; where # is denoted by a number, pick the highest number in order to get the latest Shadow Copy.&lt;br /&gt;
+&lt;img src=&quot;assets/images/posts/2020/06/password-audit/vssadmin-list-shadows.png&quot; alt=&quot;VSSAdmin list shadows&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;powersploits-ninjacopy&quot;&gt;Powersploits Ninjacopy&lt;/h3&gt;
+&lt;p&gt;Now its not really a Hacking blog/article if you don’t mention at least something related to Powersploit once in a while (More dedicated posts are coming though).&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;This is not recommended for production systems as we are basically going to run unsanitized Powershell code from GitHub. I know better, You know better… But sometimes its &lt;a href=&quot;https://medium.com/@notdan/curl-slight-of-hand-exploit-hysteria-29a82e5851d&quot;&gt;hilarious&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So lets create a working directory and have a powershell prompt with administrative privileges ready!&lt;/p&gt;
+
+&lt;p&gt;For this export we are taking the following steps:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Download &lt;strong&gt;Invoke-NinjaCopy.ps1&lt;/strong&gt; from &lt;a href=&quot;https://github.com/PowerShellMafia/PowerSploit&quot;&gt;PowerShellMafia&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Import Invoke-Ninjacopy.ps1 as a module in a Powershell&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PS C:\&amp;gt; Import-Module .\Invoke-NinjaCopy.ps1&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Run Invoke-NinjaCopy module to export the NTDS.dit&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PS C:\&amp;gt; Invoke-NinjaCopy -path c:\Windows\NTDS\ntds.dit -verbose -localdestination &amp;lt;Destination&amp;gt;&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Copy the System file.&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;C:\&amp;gt; reg SAVE HKLM\SYSTEM C:\passwordAudit\SYSTEM&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Yeah my Antivirus screamed too! Lucky for us, there are some bypasses and recommendations for getting around that (Later date).&lt;br /&gt;
+&lt;img src=&quot;assets/images/posts/2020/06/password-audit/Invoke-NinjaCopy-screenshot.png&quot; alt=&quot;Invoke-Ninja export&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;secretsdump&quot;&gt;Secretsdump&lt;/h3&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;The following hashes are you more then encouraged to crack, it is not a production system or something that is currently in use for other then this lab.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Secretdump from Impacket are one of those tried and true tools that work by doing a Domain Controller Sync, to extract the hashes from a remote system, without the need to move large database files. You can either run it directly from a bash terminal where it is installed, against the domain controller. Or take one of the other techniques shown above and run secretsdump against a local file.&lt;/p&gt;
+&lt;h4 id=&quot;from-domain-controller&quot;&gt;From Domain Controller&lt;/h4&gt;
+&lt;p&gt;Lets start with the remote export.&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Download and install Impacket according to the wiki: &lt;a href=&quot;https://github.com/SecureAuthCorp/impacket&quot;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Use the following syntax:&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;root@kali:~# secretsump.py &amp;lt;DOMAIN&amp;gt;/&amp;lt;DomainAdmin&amp;gt;@&amp;lt;DomainController&amp;gt;&lt;/code&gt;&lt;br /&gt;
+Add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-dc-ip &amp;lt;DomainController&amp;gt;&lt;/code&gt; if running through ProxyChains.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This will give a nicely formatted already crackable list of LM and NTLM hashes which are ready to be thrown into Hashcat or JohnTheRipper.&lt;br /&gt;
+&lt;img src=&quot;assets/images/posts/2020/06/password-audit/secretsdump-remote-screenshot.png&quot; alt=&quot;Secretsdump Remote Export&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;from-ntdsdit&quot;&gt;From NTDS.dit&lt;/h4&gt;
+&lt;p&gt;Once we have used any of the above techniques to extract the raw &lt;strong&gt;NTDS.dit&lt;/strong&gt; and &lt;strong&gt;SYSTEM hive&lt;/strong&gt;, we can use secretsdump in order to extract the raw hashes from the database. &lt;br /&gt;
+Use the following commands:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Transfer the files to a secure server and install Impacket according to the wiki: &lt;a href=&quot;https://github.com/SecureAuthCorp/impacket&quot;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Move the files to a working directory in my case /opt/passwordAudit&lt;/li&gt;
+  &lt;li&gt;Extract the hashes using following syntax:&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;root@kali:/opt/passwordAudit# secretsdump.py -system &amp;lt;SYSTEM FILE&amp;gt; -ntds &amp;lt;NTDS.dit File&amp;gt; LOCAL&lt;/code&gt;&lt;br /&gt;
+Save to a file by appending the parameter &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-outputfile &amp;lt;FILE&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2020/06/password-audit/secretsdump-local-screenshot.png&quot; alt=&quot;Secretsdump Local Export&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Thank you for reading this rather lengthy post, Especially if you also tried each technique (On your own domain controller with permission of course). I will keep coming back to this one and add new techniques as i find/learn them so remember to re-visit once in a while!&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="security" />
+      
+        <category term="redteam" />
+      
+
+      
+        <summary type="html">This is be a brief overview on why and how to perform a password audit on a windows domain.</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>

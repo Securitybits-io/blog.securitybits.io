@@ -1,0 +1,887 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
+  <link href="/tag/hardware/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="/" rel="alternate" type="text/html" />
+  <updated>2025-09-09T13:46:37+00:00</updated>
+  <id>/tag/hardware/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">Securityits.io | </title>
+  
+
+  
+    <subtitle>Security researching from the nordics</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">Its HiDIYous</title>
+      <link href="/its-hidiyous" rel="alternate" type="text/html" title="Its HiDIYous" />
+      <published>2024-10-03T00:00:00+00:00</published>
+      <updated>2024-10-03T00:00:00+00:00</updated>
+      <id>/its-hidiyous</id>
+      <content type="html" xml:base="/its-hidiyous">&lt;blockquote&gt;
+  &lt;p&gt;Its HiDIYous, but it works!…&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;HiDIYous was an internal project, that came about when we needed a USB implant that acted like a Human Interface Device (keyboard). The only issue was that the organization we where testing had a security posture that made it impossible to use any over the counter devices (Hak5 Rubberducky, OMG Cable etc.). This spawned the idea that I should design my own, that should be robust, easy and have a really small footprint so that it can be implanted into a lot of different host devices.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-a-human-interface-device-hid&quot;&gt;What is a Human Interface Device (HID)&lt;/h2&gt;
+
+&lt;p&gt;A HID is any peripheral device that allows humans to interact with a computer by sending input data. Common examples include keyboards, mice, and game controllers. HIDs are trusted by operating systems by default, which means that they don’t require special drivers to function. This trust is central to how devices like the USB Rubber Ducky and the OMG Cable are able to exploit systems. These tools leverage the inherent trust computers place in HID devices to launch keystroke injection attacks. In this context, the HID protocol becomes a potential vector for delivering malicious commands, all while masquerading as a harmless device.&lt;/p&gt;
+
+&lt;p&gt;The HiDIYous project take advantage of this by pretending to be standard keyboards, which allows them to execute commands or inject scripts once plugged into a target machine. This tool highlight a fundamental flaw in how computers trust HIDs, showcasing how these devices can be repurposed to bypass security measures and gain unauthorized access to systems.&lt;/p&gt;
+
+&lt;h2 id=&quot;howto&quot;&gt;Howto?&lt;/h2&gt;
+&lt;p&gt;So next  question is how do you get one? I published a Git Repo with all the instructions and files needed which can be found here:
+&lt;a href=&quot;https://github.com/Securitybits-io/HiDIYous.git&quot;&gt;https://github.com/Securitybits-io/HiDIYous.git&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The repo also contains instructions on how to build and create your first implant.&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="redteam" />
+      
+        <category term="hardware" />
+      
+
+      
+        <summary type="html">Its HiDIYous, but it works!…</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">Clock Glitching with a ChipWhisperer-Lite</title>
+      <link href="/Clock-Glitching-with-a-chipwhisperer" rel="alternate" type="text/html" title="Clock Glitching with a ChipWhisperer-Lite" />
+      <published>2023-01-01T00:00:00+00:00</published>
+      <updated>2023-01-01T00:00:00+00:00</updated>
+      <id>/Clock-Glitching-with-a-chipwhisperer</id>
+      <content type="html" xml:base="/Clock-Glitching-with-a-chipwhisperer">&lt;blockquote&gt;
+  &lt;p&gt;What happens when things get out of sync?… SCIENCE!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Purchasing a Chipwhisperer-lite and going through the Newae course is a really awesome experience. Though the course teach you alot obout each vulnerability and the Chipwhisperer API, I found it lacking alot in the “how to setup the hardware” department. So finishing up the course material, I’ve decided yet again to attack my favourite platform, the Arduino Uno and implement a bunch of the Riscure CTF challenges and yet again, attack the Fiesta challenge.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-clock-glitching&quot;&gt;What is Clock Glitching&lt;/h2&gt;
+
+&lt;p&gt;All Microcontrollers are bound by operating out of a clock cycle, where one cycle is defined by a pulse. During the start of each pulse, the microcontroller is executing and fetching a new instruction. The start of a clock cycle is usually defined by a rising edge (binary 1) followed by a falling edge (binary 0), for the duration of a fixed time period. The amount of cycles per second defines the processors clock speed, for example the Atmega328p defaults to a 16MHz Clock speed, which means that it performs &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;16E6&lt;/code&gt; instructions per second.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/clock-cycle.jpg&quot; alt=&quot;Defined Clock Cycle&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As with the Voltage Glitching in the post “&lt;a href=&quot;https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/&quot;&gt;Voltage glitching on the Cheap&lt;/a&gt;”, we defined that within a given set of parameters the hardware operates normally. But introducing faults into the voltage line corrupted the instructions enough to break out of the “Lock” loop. The same assumption is made with the clock line, that within a given set of parameters the hardware will operate normally.&lt;/p&gt;
+
+&lt;p&gt;In order to create the “glitch” for our clock glitch to work, we must introduce an additional clock cycle to the microcontroller. By doing so, we can make the microcontroller to essentially “skip” a step in the execution.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/clock-glitch.jpg&quot; alt=&quot;Glitched Clock Cycle&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;setup&quot;&gt;Setup&lt;/h2&gt;
+
+&lt;p&gt;Components needed:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Arduino UNO&lt;/li&gt;
+  &lt;li&gt;Chipwhisperer-Lite (or Pro)&lt;/li&gt;
+  &lt;li&gt;Breadboard&lt;/li&gt;
+  &lt;li&gt;DuPont Wires&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;(And some basic knowledge in Python and the Chipwhisperer API will not hurt)&lt;/p&gt;
+
+&lt;p&gt;Again, lets start by loading the source code onto our victim Uno using avrdude:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@linux:~# wget https://raw.githubusercontent.com/Riscure/Rhme-2016/master/challenges/binaries/fiesta/fiesta.hex
+root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&amp;lt;UNO Device&amp;gt; -b115200 -u -V -U flash:w:fiesta.hex
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Powering the Uno and connecting with your favourite serial terminal you should expect something like:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@linux:~# screen /dev/ttyACM1 19200
+RHME2 FI level 1.
+
+Chip status: LockLockLockLockLockLockLockLockLockLockLockLockLockLock[...]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Great, lets hook up our Chipwhisperer and get glitching!&lt;/p&gt;
+
+&lt;h2 id=&quot;connecting-the-chipwhisperer&quot;&gt;Connecting the Chipwhisperer&lt;/h2&gt;
+
+&lt;p&gt;The premise of the clock glitch, is to provide the clock source (CLK-SRC) from the Chipwhisperer, in order to control the clock pulses. We also want to use the Arduino UNO baseboard in order to power she Atmega328p as the Chipwhisperer-Lite are no able to provide the 5v output required.&lt;/p&gt;
+
+&lt;p&gt;Connecting the CW-Lite and Uno according to the scheme below, will ensure that the chip have a stable power connection, as well as the ability to receive a clock input from the CW-Lite.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;CW-Lite   &amp;lt;&amp;gt;   Atmega328p   &amp;lt;&amp;gt;  [Uno Baseboard]
+2  (GND)   &amp;gt;    8  (GND)    &amp;lt;       [GND]
+5  (NRST)  &amp;gt;    1  (RST)    
+6  (HS2)   &amp;gt;    9  (TOSC1)
+12 (IO2)   &amp;gt;    3  (TXD)
+                7  (VCC)    &amp;lt;       [5v]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;According to the following diagram:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/Arduino-Uno-ATmega328P-Pin-Mapping1_o.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Just to go into some further detail before we jump into the code about why we connect the pins the way we do. First of all we would like the CW-Lite and the Atmega328p to share a common &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2 GND &amp;lt;&amp;gt; 8 GND&lt;/code&gt;, it makes life a bit simpler in this case.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;NRST &amp;lt;&amp;gt; RST&lt;/code&gt; pins are connected so that we are able to programmtically reset the target, according to the &lt;a href=&quot;https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-7810-Automotive-Microcontrollers-ATmega328P_Datasheet.pdf&quot;&gt;Atmega328p Datasheet&lt;/a&gt; if the RST pin is LOW, the device will reset. Which is beneficial to us as we can utilize that in case of the device starts misbehaving in a way we dont want (See function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reboot_flush()&lt;/code&gt; in the later code). But that also means that the RST pin need to be HIGH in order for the device to operate.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HS2/OUT &amp;lt;&amp;gt; TOSC1&lt;/code&gt; is the actual Clock Source for the Atmega328p which we will manipulate.&lt;/p&gt;
+
+&lt;p&gt;The final pins &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IO2 &amp;lt;&amp;gt; TXD&lt;/code&gt; is used to capture the flag and Serial output of the Atmega328p in order to see if we are successful in our attempts to glitch past the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LockLockLock&lt;/code&gt; message.&lt;/p&gt;
+
+&lt;p&gt;Heres a complete picture of the setup:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/physical_setup.jpg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;glitching-time&quot;&gt;Glitching Time&lt;/h2&gt;
+
+&lt;p&gt;So we will be using a Chipwhisperer (If it wasn’t obvious already), the CW-Lite API and Python3 in order to create our Glitch loop. While it might look confusing at first, we’ll go through a couple key points in the code.&lt;/p&gt;
+
+&lt;h3 id=&quot;scope-setup&quot;&gt;Scope Setup&lt;/h3&gt;
+
+&lt;p&gt;The first thing we’ll do after connecting to the device is to run a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope.default_setup&lt;/code&gt; so that we do not have any lingering configurations lying around. We then move on to defining some of the GPIO pins, which is the same as the connection scheme before:&lt;/p&gt;
+
+&lt;h4 id=&quot;gpio&quot;&gt;GPIO&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;TIO1 &amp;gt; Serial_Tx&lt;/li&gt;
+  &lt;li&gt;TIO2 &amp;gt; Serial_Rx&lt;/li&gt;
+  &lt;li&gt;NRST &amp;gt; High (Because otherwise the Arduino will be stuck in reset loop)&lt;/li&gt;
+  &lt;li&gt;HS2  &amp;gt; Glitch (For the clock output)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;glitch-design&quot;&gt;Glitch design&lt;/h4&gt;
+
+&lt;p&gt;The next part is actually defining how the glitch will look like, and where the chipwhisperer is pulling its clock sync from. The parameter &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clk_src&lt;/code&gt; which is set to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clkgen&lt;/code&gt; tells the CW-Lite that it should provide the target with a clock signal. The parameter &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;clkgen_freq&lt;/code&gt; determines what frequency the clock signal should be at. This is something that we can use an oscilloscope or similar to determine, but according to the datasheet the Atmega328p runs at 16MHz or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;16E6&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The complete scope setup should look something like:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;adc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nrst&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;high&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tio1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;serial_tx&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tio2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;serial_rx&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tio4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;high_z&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hs2&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;glitch&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clk_src&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;clkgen&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;trigger_src&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;manual&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repeat&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;clock_xor&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clkgen_freq&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;16E6&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;glitch-time-and-shape&quot;&gt;Glitch Time and Shape&lt;/h4&gt;
+
+&lt;p&gt;The following lines of code are responsible for the timing of the glitch, and the shape of it.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;width&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;offset&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;35&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;ext_offset&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_global_step&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repeat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;These are the settings that worked for me, but your mileage may vary. Recommend tweaking &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ext_offset&lt;/code&gt; and increase the span of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;offset&lt;/code&gt; in order to vary the place of the glitch.&lt;/p&gt;
+
+&lt;h4 id=&quot;reset-function&quot;&gt;Reset Function&lt;/h4&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reboot_flush()&lt;/code&gt; function is defined according to the Atmega328p datasheet, where a chip reset occurs when the RST pin is set to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;low&lt;/code&gt; for more than a clock cycle and brought to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;high_z&lt;/code&gt;. The function is nice to have so that each execution of the glitch script works of a fresh slate for the microcontroller. But the function can also be used if the glitch cycle would be corrupting anything in the program memory which is not beneficial to us.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;reboot_flush&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nrst&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;low&quot;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.05&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nrst&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;high_z&quot;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.05&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flush&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;creating-the-glitch&quot;&gt;Creating the glitch&lt;/h3&gt;
+
+&lt;p&gt;Putting it all together should look something like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    &lt;span class=&quot;c1&quot;&gt;#!/usr/bin/env python3
+&lt;/span&gt;
+    &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;chipwhisperer&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cw&lt;/span&gt;
+    &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;chipwhisperer.common.results.glitch&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;
+    &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;time&lt;/span&gt;
+    &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;logging&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[+] Atmega328P Clock Glitch&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[+] Written for https://Blog.Securitybits.io&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[+] Connected to Chipwhisperer&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;default_setup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;adc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;timeout&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nrst&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;high&quot;&lt;/span&gt;          &lt;span class=&quot;c1&quot;&gt;# Pin 1 on DUT
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tio1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;serial_tx&quot;&lt;/span&gt;     
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tio2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;serial_rx&quot;&lt;/span&gt;     &lt;span class=&quot;c1&quot;&gt;# Pin 3 on DUT
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tio4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;high_z&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hs2&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;glitch&quot;&lt;/span&gt;        &lt;span class=&quot;c1&quot;&gt;# Pin 9 on DUT
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clk_src&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;clkgen&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;trigger_src&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;manual&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repeat&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;clock_xor&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;clkgen_freq&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;16E6&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# 16MHz Clock Signal
+&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;       &lt;span class=&quot;c1&quot;&gt;# Serial Rx Setup to communicate with target
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baud&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;19200&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GlitchController&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;groups&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;success&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;reset&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;normal&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; 
+            &lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;width&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;offset&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;ext_offset&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Parameters to set the timing of the glitch
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;width&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;       
+    &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;offset&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;35&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;   
+    &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;ext_offset&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_global_step&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repeat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Reset function for the DUT
+&lt;/span&gt;    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;reboot_flush&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nrst&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;low&quot;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.05&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;nrst&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;high_z&quot;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.05&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flush&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;cw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch_logger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setLevel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;logging&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ERROR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;[+] Reset target chip and Start the Glitch cycle&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;reboot_flush&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glitch_setting&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;gc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch_values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;width&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glitch_setting&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glitch_setting&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ext_offset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glitch_setting&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+        
+        &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flush&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;manualTrigger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;128&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'Chip unlocked'&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;val&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'[+] offset: {}  |  [+] width: {}  |  [+] ext_offset: {}'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+                        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                        &lt;span class=&quot;n&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glitch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ext_offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Full script is avalible at: &lt;a href=&quot;https://github.com/Securitybits-io/blog.securitybits.io/blob/master/misc/2023/01/clock-glitching-with-a-chipwhisperer/glitch.py&quot;&gt;Github Link&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;If everything is set up properly, running the code will eventually result in:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/glitch_result.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;sysexit&quot;&gt;sys.exit()&lt;/h2&gt;
+
+&lt;p&gt;I hope that you enjoyed reading some of this or that it at least was a bit useful, i can recommend that if you’d like to dive deeper into glitching to purchase a chipwhisperer at your &lt;a href=&quot;https://eu.mouser.com/manufacturer/newae-technology/featured-products/&quot;&gt;Newae Mouser Store&lt;/a&gt; as the free course dives really deep into the glitch.&lt;/p&gt;
+
+&lt;p&gt;And here are some cool links:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Replicant Trezor Wallet: &lt;a href=&quot;https://voidstarsec.com/blog/replicant-part-1&quot;&gt;https://voidstarsec.com/blog/replicant-part-1&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Chipwhisperer Docs: &lt;a href=&quot;https://chipwhisperer.readthedocs.io/en/latest/&quot;&gt;https://chipwhisperer.readthedocs.io/en/latest/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Intro to Clock glitching: &lt;a href=&quot;https://github.com/newaetech/chipwhisperer-jupyter/blob/b5b8192b5ef98909b8466234700fd306394cdeef/courses/fault101/Fault%201_1%20-%20Introduction%20to%20Clock%20Glitching.ipynb&quot;&gt;Long Link to Github&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;(Stay tuned, might actually do this on the cheap with a Raspberry Pico as well…)&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="hardware" />
+      
+        <category term="security" />
+      
+
+      
+        <summary type="html">What happens when things get out of sync?… SCIENCE!</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</title>
+      <link href="/reverse-engineering-an-unknown-digital-protocol" rel="alternate" type="text/html" title="Reverse Engineering an unknown digital protocol: RHME2, Whac a mole" />
+      <published>2021-05-18T00:00:00+00:00</published>
+      <updated>2021-05-18T00:00:00+00:00</updated>
+      <id>/reverse-engineering-an-unknown-digital-protocol</id>
+      <content type="html" xml:base="/reverse-engineering-an-unknown-digital-protocol">&lt;blockquote&gt;
+  &lt;p&gt;Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the darn things will be greatly rewarded. Are you up for the task?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So I wanted to do some more hardware based CTF, especially now in covid times I don’t get out as much to client sites doing some of these things on site. So I picked up yet another Riscure RHME2 CTF binary and tossed it into one of my Arduino Nano boards to have a go at it! This time I’ll tackle the challenge Whack a Mole (links are down below) which is a (at the time of writing) 5 year old challenge, but it’s been on my todo list for a while.&lt;/p&gt;
+
+&lt;h2 id=&quot;setup&quot;&gt;Setup&lt;/h2&gt;
+&lt;p&gt;So the Bill of Materials needed are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;2x Arduino Nano&lt;/li&gt;
+  &lt;li&gt;Breadboard&lt;/li&gt;
+  &lt;li&gt;Various cables for the breadboard&lt;/li&gt;
+  &lt;li&gt;Digital Oscilloscope with at least one channel (I used a Rigol DS1054Z)&lt;/li&gt;
+  &lt;li&gt;Optional: Logic Analyzer&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Lets kick things off by actually loading the binary onto our target arduino. The writing of the binary will be done by using avrdude, which is available in most package repos.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@linux:~# wget https://github.com/Riscure/Rhme-2016/raw/master/challenges/binaries/whac_the_mole/whac_the_mole.hex
+root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&amp;lt;NANO Device&amp;gt; -b115200 -u -V -U flash:w:whac_the_mole.hex
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Doing that should produce a successful flash of the device with the correct binary. The next step is to power up the board and check if there’s any data on the serial connection. But to do that we also need to find the baudrate of the device, which can be done by either trying and getting lucky, or using the oscilloscope to measure the peaks and data rate that is sent. But before actually hooking up the scope to the circuit,I highly recommend looking through EEVblogs guide on “&lt;a href=&quot;https://www.youtube.com/watch?v=xaELqAo4kkQ&quot;&gt;How NOT to blow up your oscilloscope&lt;/a&gt;”, first and last warning!&lt;/p&gt;
+
+&lt;p&gt;So just to give the low down on serial communication. Devices communicate over a serial connection to other devices, it does so in binary representation by managing Peaks and Valleys on a digital connection. The Digital connection have two states:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;+5/3.3v represent a 0&lt;/li&gt;
+  &lt;li&gt;+/-0v represent a 1&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;That means when hooking up a oscilloscope to a serial connection, we’ll see a natural +5v baseline on the screen. It also means that when we are triggering the probe in order to pause the data on the screen, we need to trigger on a downward slope. So hooking up the scope to the target Tx pin (Nano Pin0), setting the trigger to a -2.5v downward slope on the correct probe and resetting the arduino board we get presented with a fixed image of a serial transmission. Looking at the oscilloscopes automagic measurements, it’s quite easy to determine a Rate of 192kV/s, so a baudrate of 19200 will work perfectly. Another great feature of the DS1054Z and many other digital oscilloscopes is that it can do RS232 decode directly in the device. Plugging in the known baudate to the Decode function outputs some of the sent strings.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/RS232_Decode.png&quot; alt=&quot;Oscilloscope Serial Decoding&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;first-connection&quot;&gt;First Connection&lt;/h2&gt;
+
+&lt;p&gt;Having that knowledge that we have the correct baudrate, we can use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;screen /dev/&amp;lt;NANO Target&amp;gt; 19200&lt;/code&gt; or whichever fancy serial program that’s available. Once connected we get presented by the following screen:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@linux:~# screen /dev/ttyUSB0 19200
+Welcome adventurer.
+
+We are glad you are here. We are in dire need of assistance.
+A huge family of moles have found their way into our yard.
+We need you to get rid of all 20 of them.
+If you manage to extinguish them all we will greatly reward you.
+When you are ready, please step into the yard by pressing &amp;lt;Enter&amp;gt;
+
+Ready?
+Get set!
+GO!
+You missed it. Try again by pressing &amp;lt;Enter&amp;gt;.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Pressing enter at the screen just gives the following message over and over again, and the program does not seem to accepts characters or and form of input over the Serial connection. So it is time to start exploring other options!&lt;/p&gt;
+
+&lt;p&gt;The name of the challenge, refer to the physical game of Whack the mole! which is a carnival game where heads pop up through holes, and the objective is to hit those in order to score points. Ok so that’s easy enough if you’d know where to hit the moles.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png&quot; alt=&quot;Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Looking at the schematics of the Arduino Nano, we can identify that there are a bunch of digital pins. 0/1 are dedicated to Tx and Rx for the Serial, 2-13 are dedicated Digital pins, and 14-19 are analog pins. Lets hook up a Logic Analyzer to the digital pins in order to see if there’s any other signals.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg&quot; alt=&quot;Saleae Logic Setup&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Hooking up the Saleae Logic to the 2-8 pins gave no results after pressing enter on the Serial Prompt, but taking the next set of pins 9-13 and A0-A2 resulted in some traffic on the yellow cable, Channel 4, which was connected to the pin D13.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png&quot; alt=&quot;Logic Software result&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;making-some-assumptions&quot;&gt;Making some assumptions&lt;/h2&gt;
+&lt;p&gt;While further investigating the board and signals, I went in with a couple assumptions&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The Signals on pin D13, reflected the pin to hit&lt;/li&gt;
+  &lt;li&gt;The pin should be one of the other Digital pins 2-12&lt;/li&gt;
+  &lt;li&gt;There are multiple levels and not just one hit that has to be made&lt;/li&gt;
+  &lt;li&gt;The signal should be received within 100ms from the peak&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;While I was successful in making one or two hits and manually mapping out the pins that needed to be hit, each time that the board target resets the pins changed. Which pushed me in the direction of needing to do some proper logic on the micro controller in order to automate the process as much as possible.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png&quot; alt=&quot;Registering multiple mole whacks using the oscilloscope&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;codesplaining&quot;&gt;Codesplaining&lt;/h2&gt;
+&lt;p&gt;In order to successfully automate the process of retrieving the flag there are some code requirements:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Be able to bruteforce multiple pins&lt;/li&gt;
+  &lt;li&gt;The amount of observable peaks are between 1-6&lt;/li&gt;
+  &lt;li&gt;Automated process of verifying and resetting the board&lt;/li&gt;
+  &lt;li&gt;The time to hit should be ~100ms&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;So in order to solve the resetting and verifying problem, I relied on using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SoftwareSerial.h&lt;/code&gt; library, as that can create a Software emulated Serial Tx/Rx out of any other pin. The idea was to interpret the messages that the target board was echoing depending if you hit a mole or not. Where the different states are:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;You whacked it &amp;gt; Success&lt;/li&gt;
+  &lt;li&gt;You missed it &amp;gt; fFail&lt;/li&gt;
+  &lt;li&gt;Welcome &amp;gt; Start of the game&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;With that set, came the problem of number 1, to bruteforce the pins. We know from the research that there are pins 2-12 as input on the target board to hit, and there are a maximum of 6 peaks on each iteration.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;int candidates[6] = {2, 2, 2, 2, 2, 2};
+int pins[6] = {0, 0, 0, 0, 0, 0};
+
+void peak(int pin){
+    digitalWrite(pin, HIGH);
+    delay(PEAKDELAY);
+    digitalWrite(pin, LOW);
+  }
+
+void whack(int pin){
+    digitalWrite(PIN_MONITOR, HIGH);
+    if (pins[pin] != 0) {
+      peak(pins[pin]);
+    } else {
+      peak(candidates[pin]);
+    }
+    digitalWrite(PIN_MONITOR, LOW);
+  }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The bruteforce function simply checks the amount of peaks that are registered on the input D13 pin, which corresponds to the array &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pins[n]&lt;/code&gt;. If the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pin[peak] is 0&lt;/code&gt; try the pin in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;candidates[peak]&lt;/code&gt; in this case, it starts by sending a peak out on pin D2. If the hit missed, the function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;miss()&lt;/code&gt; will increase &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;candidates[peak]&lt;/code&gt; with one, so that the next time the program registers the same peak it will try pin D3. If however the peak would be a hit, the method &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hit()&lt;/code&gt; will be called and register pin D2 into the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pins[n]&lt;/code&gt; table to be remembered for the future identical number of peaks.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png&quot; alt=&quot;Console of the microcontroller which is performing the bruteforce&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Running the code should eventually bruteforce each pin position, and print the flag in your terminal connected to the target!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png&quot; alt=&quot;Successful bruteforce of the pin positions for the flag on the target Nano&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;source-code&quot;&gt;Source Code&lt;/h3&gt;
+&lt;p&gt;Putting all the code together should look something like:
+    #include &lt;SoftwareSerial.h&gt;&lt;/SoftwareSerial.h&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;#define MAXPINS 12
+#define PEAKDELAY 30
+#define BAUDRATE 19200
+#define SER_TX 18
+#define SER_RX 19
+#define PIN_READ 13
+#define PIN_MONITOR 14
+
+int state = 0;
+int peak_count;
+int peak_state;
+int top_level = 1;
+int current_level = 1;
+
+char inData;
+String strBuf;
+String str;
+unsigned long peak_start = 0;
+
+String pins_used[12] = {&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;,&quot;[ ]&quot;};
+int candidates[6] = {2, 2, 2, 2, 2, 2};
+int pins[6] = {0, 0, 0, 0, 0, 0};
+
+SoftwareSerial target(SER_RX, SER_TX);
+
+void setup() {
+  Serial.begin(BAUDRATE);
+
+  pinMode(PIN_READ, INPUT);
+  pinMode(PIN_MONITOR, OUTPUT);
+  digitalWrite(PIN_MONITOR, LOW);
+
+  for (int i=2;i&amp;lt;MAXPINS+1;i++){
+    pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
+    }
+
+  Serial.println(&quot;Ready&quot;);
+  target.begin(19200);
+}
+
+void set_used_pins(int pin){
+  if (pins_used[pin-1] == &quot;[ ]&quot;)
+    pins_used[pin-1] = &quot;[*]&quot;;
+  }
+
+void print_status(){
+  for (int i=0;i&amp;lt;2;i++) Serial.println(&quot;\r&quot;);  
+  Serial.print(&quot;Used Pins: &quot;);
+  for (int i=0;i&amp;lt;12;i++){
+    Serial.print(pins_used[i]);
+    Serial.print(&quot; &quot;);
+  }
+  Serial.println(&quot;\r&quot;);
+  Serial.println(&quot;------------------&quot;);
+  Serial.print(&quot;Peaks: 1 2 3 4 5 6  &quot;);
+  Serial.print(&quot;| Level: &quot;);
+  Serial.println(current_level);
+  Serial.print(&quot;Pins : &quot;);
+
+  for (int i=0;i&amp;lt;6;i++){
+    Serial.print(pins[i]);
+    Serial.print(&quot; &quot;);
+    }
+
+  Serial.print(&quot; | Top: &quot;);
+  Serial.print(top_level);
+  Serial.println(&quot;/50&quot;);
+}
+
+void peak(int pin){
+    digitalWrite(pin, HIGH);
+    delay(PEAKDELAY);
+    digitalWrite(pin, LOW);
+  }
+
+void whack(int pin){
+    digitalWrite(PIN_MONITOR, HIGH);
+    if (pins[pin] != 0) {
+      peak(pins[pin]);
+    } else {
+      peak(candidates[pin]);
+    }
+    digitalWrite(PIN_MONITOR, LOW);
+  }
+
+void hit(){
+    if (pins[peak_state] == 0){
+        int candidate = candidates[peak_state];
+        set_used_pins(candidate);
+        pins[peak_state] = candidate;
+      }
+    print_status();
+    current_level++;
+    if (current_level &amp;gt; top_level)
+      top_level++;
+  }
+
+void miss(){
+    candidates[peak_state] = candidates[peak_state] + 1;
+
+    if (candidates[peak_state] &amp;gt; 12){
+      Serial.println(&quot;INVALID PIN.... Resetting to 2&quot;);
+      candidates[peak_state] = 2;
+    }
+
+    print_status();
+    current_level = 0;
+  }
+
+void loop() {
+  while(target.available()){
+    inData = target.read();
+    strBuf += inData;
+    }
+
+  if (strBuf.endsWith(F(&quot;\n&quot;))){
+    strBuf.trim();
+    if (strBuf.length() &amp;gt; 0) { str = strBuf; }
+    strBuf = &quot;&quot;;
+    }
+
+  if (str.indexOf(F(&quot;missed&quot;)) &amp;gt;= 0) {
+    miss();
+    str = &quot;&quot;;
+    target.write(&quot;\r&quot;);
+
+  } else if (str.indexOf(F(&quot;whacked&quot;)) &amp;gt;= 0) {
+    hit();
+    str = &quot;&quot;;     
+
+  } else if (str.indexOf(F(&quot;When you are ready&quot;)) &amp;gt;= 0) {
+    Serial.println(&quot;Start the game&quot;);
+    delay(500);
+    print_status();
+    str = &quot;&quot;;
+    target.write(&quot;\r&quot;);
+  }
+
+  int value = digitalRead(PIN_READ);
+  if (value != state){
+    state = value;
+    if (state == 1){
+      peak_start = millis();
+      peak_count++;
+      }
+    }
+
+  if (state == 0 &amp;amp;&amp;amp; peak_start &amp;amp;&amp;amp; peak_start + 100 &amp;lt; millis()){
+    peak_state = peak_count - 1;
+    whack(peak_state);
+    peak_start = 0;
+    peak_count = 0;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;resources&quot;&gt;Resources&lt;/h3&gt;
+&lt;p&gt;The complete source code and fritzing scheme can be found at:&lt;br /&gt;
+Fritzing - &lt;a href=&quot;https://blog.securitybits.io/assets/files/2021/05/reverse-engineering-an-unknown-digital-protocol/scheme.fzz&quot;&gt;scheme.fzz&lt;/a&gt;&lt;br /&gt;
+Arduino Sketch - &lt;a href=&quot;https://blog.securitybits.io/assets/files/2021/05/reverse-engineering-an-unknown-digital-protocol/whacker.ino&quot;&gt;whacker.ino&lt;/a&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="hardware" />
+      
+        <category term="ctf" />
+      
+        <category term="security" />
+      
+
+      
+        <summary type="html">Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the darn things will be greatly rewarded. Are you up for the task?</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">Voltage glitching on the cheap</title>
+      <link href="/fault-injection-powerglitching-on-the-cheap" rel="alternate" type="text/html" title="Voltage glitching on the cheap" />
+      <published>2019-06-01T00:00:00+00:00</published>
+      <updated>2019-06-01T00:00:00+00:00</updated>
+      <id>/fault-injection-powerglitching-on-the-cheap</id>
+      <content type="html" xml:base="/fault-injection-powerglitching-on-the-cheap">&lt;blockquote&gt;
+  &lt;p&gt;Stand back! We’re doing science! voltage glitching on an Arduino&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;So a couple a weeks ago I decided that I needed more hardware and electronics experience (also writing code and making lights go blink blink is awesome). The foremost purpose of this post is to actually document what I am doing. The base setup will be two arduinos, one Nano and a Uno, also the firmware for a CTF Challenge from Riscure called Fiesta (links further down). The end goal is to use the Nano to modify the voltage that the Unos atmega328p chip receives enough so that the code execution changes and displays the flag.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-voltage-glitching&quot;&gt;What is voltage glitching?&lt;/h2&gt;
+
+&lt;p&gt;Doing voltage glitching is basically precisely controlling the power supply of a micro controller. This can either mean increasing or decreasing the power during a couple of clock cycles.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2019/06/voltage-glitching-on-the-cheap/Vccglitch_working.png&quot; alt=&quot;VCCGlitch Working&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In the diagram above, the blue represents the power (V/DC), and red represents the micro controllers clock cycles. Manipulating the amount of power and the length can result in interesting thing, such like a instruction misbehaving in making an extra jump, or changing the value of an integer. And this power glitching must be done with some degree of accuracy, like using a FPGA card or even better a &lt;a href=&quot;https://newae.com/tools/chipwhisperer/&quot;&gt;Chipwhisperer&lt;/a&gt;. Though dropping the power for too long will result in a chip reset, or a corrupted firmware. Which the latter can be quite expensive if one does not have the source code of the firmware.  &lt;/p&gt;
+
+&lt;p&gt;But a good FPGA or Chipwhisperer can be expensive for a first time hardware hacker and I had a couple of Arduinos laying around, so challenge accepted…&lt;/p&gt;
+
+&lt;h2 id=&quot;setup&quot;&gt;Setup&lt;/h2&gt;
+
+&lt;p&gt;Components needed:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Arduino Uno&lt;/li&gt;
+  &lt;li&gt;Arduino Nano&lt;/li&gt;
+  &lt;li&gt;Breadboard&lt;/li&gt;
+  &lt;li&gt;2N7000 Transistor&lt;/li&gt;
+  &lt;li&gt;630Ω Resistor&lt;/li&gt;
+  &lt;li&gt;Various Breadboard Lab Cables&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Lets start by loading the target source code onto our victim (Uno) using avrdude.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@linux:~# wget https://raw.githubusercontent.com/Riscure/Rhme-2016/master/challenges/binaries/fiesta/fiesta.hex
+root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&amp;lt;UNO Device&amp;gt; -b115200 -u -V -U flash:w:fiesta.hex
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Powering on the Arduino Uno, and connecting over serial displays an eternal loop that we are to break out of, which is saying “Lock”.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;root@linux:~# screen /dev/ttyACM1 19200
+18:12:58.044 -&amp;gt; RHME2 FI level 1.
+18:12:58.044 -&amp;gt;
+18:12:58.076 -&amp;gt; Chip status: LockLockLockLockLockLockLockLockLockLockLockLockLockLock[...]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Cool, so step one works, loading the victim firmware onto the board.&lt;/p&gt;
+
+&lt;h2 id=&quot;connecting-glitching-source&quot;&gt;Connecting glitching source&lt;/h2&gt;
+
+&lt;p&gt;Step two, connecting the cables from the glitch source (Nano) to the Uno. On a high level picture it would look something like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2019/06/voltage-glitching-on-the-cheap/diagram-2.JPG&quot; alt=&quot;Connection Diagram&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;But the immediate problem is that the Uno contains capacitors in order to store and filter electricity to the micro controller, in case of… glitches. Which means, in order to power glitch the Atmega328p, the micro controller has to be put onto a breadboard, and connect the relevant cables for it to send and receive data. That way it is fairly trivial to control the micro controllers ground, without any interfering capacitors. This can also be achieved on other hardware (like a Nano which does not have a removable micro controller) by looking up the specification and with a steady hand, desolder the ground pin.&lt;/p&gt;
+
+&lt;p&gt;Carefully removing the micro controller and placing it on the breadboard, the next step would be to reconnect it back to the arduino board itself on the corresponding terminals.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2019/06/voltage-glitching-on-the-cheap/Arduino-Uno-ATmega328P-Pin-Mapping1.png&quot; alt=&quot;Arduino Uno ATmega328P Pin Mapping&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The pins that should be connected back are at least Pin 1, 2, 3, 7,9,10 and 20. Which will handle basic power and operations, as well as Serial send/receive/reset to the micro controller. From the Uno board we also want to have the Uno serial send its data to the Nanos Serial Rx port, so Connect Uno (Tx) to Nano (Rx). Next step is actually wiring up the Glitching logic to control the Uno Micro controllers ground, on the Nano using the Transistor (2N7000) according to the high level scheme above.&lt;/p&gt;
+
+&lt;p&gt;The final assembly should be something like the image below. In this case I’ve connected the Nano Ground to Uno micro controller ground pin 8.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2019/06/voltage-glitching-on-the-cheapassets/IMG_6324-1.JPG&quot; alt=&quot;Arduino Setup&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The 2N7000 Transistor is what is actually going to control the ground to the micro controller. By connecting Nano D2 to the transistors middle pin though the resistor, the circuit is open as long as the pin has a HIGH state, thus providing the controller with power. As soon as D2 goes into a LOW state, the transistor will close and therefor the controller will loose power. The trick is to do it long enough so that the CPU Instruction glitches, but not so long so that it’ll reset or corrupt he device…&lt;/p&gt;
+
+&lt;h2 id=&quot;glitching-time&quot;&gt;Glitching time&lt;/h2&gt;
+
+&lt;p&gt;Time to actually write and load the source code onto the Nano that will perform the glitching steps. The code that I wrote for this challenge is fairly simple, but still go through a couple key points.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void loop() {
+  // put your main code here, to run repeatedly:
+
+  for (int i = 0; i&amp;lt;200;i++){
+      if (Serial.available() &amp;gt; 0) {
+        // read the incoming byte:
+        incomingByte = Serial.read();
+        Serial.print(char(incomingByte));
+      }
+    }
+    delay(1000);
+    glitch();
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The for loop is intended to read 200 bytes on serial Rx, in order to if the glitch is successful, read the flag. then create a delay of 1 second for the power to normalize before calling the function glitch(), this is important as if the target chip is not in a normal state the glitch can have some interesting (read corrupting) results.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;void glitch(){
+  int waste = 0;
+  digitalWrite(powerPin, LOW); //Powerpin = D2
+
+  for (int i = 0; i&amp;lt;glitchDelay; i++){waste++;}
+
+  digitalWrite(powerPin, HIGH);
+  glitchDelay +=10;
+
+  Serial.println();
+  Serial.print(&quot;Glich Delay set to: &quot;);
+  Serial.print(glitchDelay);
+  Serial.println();
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The glitch function have a couple things going on. First of all, it sets the powerPin to LOW, in reference to earlier it simply cuts off the Unos Micro controllers ground. Having the D2 Pin to LOW, enter the for loop. Now you might as why a for loop, and not the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;delay()&lt;/code&gt; function. Simply because even setting a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;delay(1)&lt;/code&gt; for a millisecond, is too slow. Therefor i defined a for loop that will do a simple &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;waste++;&lt;/code&gt; so that it does a couple instructions each loop.&lt;/p&gt;
+
+&lt;p&gt;After the for loop setting the D2 pin to HIGH again in order supply the micro controller with power again, completing one &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;glitch()&lt;/code&gt; function call. Now since this is a loop, the code also increases the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;glitchDelay&lt;/code&gt;  with 10 each loop, in order to extend the length of the glitch automatically.&lt;/p&gt;
+
+&lt;p&gt;Putting all the code together it should look something like:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;int incomingByte = 0;
+char b[5];
+
+int powerPin = 2;
+int glitchDelay = 0;
+
+void setup() {
+  Serial.begin(19200);
+  Serial.println(&quot;Arduino is ready&quot;);
+
+  pinMode(powerPin, OUTPUT);
+
+  digitalWrite(powerPin, HIGH);
+  delay(5000);
+
+  Serial.println(&quot;Gliching is ready&quot;);
+}
+
+void glitch(){
+  int waste = 0;
+
+  digitalWrite(powerPin, LOW);
+  for (int i = 0; i&amp;lt;glitchDelay; i++){ waste++; }                    
+  digitalWrite(powerPin, HIGH);
+
+  glitchDelay +=10;
+  Serial.println();
+  Serial.print(&quot;Glich Delay set to: &quot;);
+  Serial.print(glitchDelay);
+  Serial.println();
+}
+
+void loop() {
+
+  for (int i = 0; i&amp;lt;200;i++){
+      if (Serial.available() &amp;gt; 0) {
+        // read the incoming byte:
+        incomingByte = Serial.read();
+        Serial.print(char(incomingByte));
+      }
+    }
+
+    delay(1000);
+    glitch();
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Running the code it should eventually display the flag from the Arduino Uno!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;assets/images/posts/2019/06/voltage-glitching-on-the-cheap/Screenshot-from-2019-05-17-22-05-43.png&quot; alt=&quot;Successful glitch&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;While this might seem like a trivial implementation, there are accounts where ex. the Xbox360 was unlocked using this method, &lt;a href=&quot;https://github.com/Free60Project/wiki&quot;&gt;link to wiki&lt;/a&gt;.&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Christoffer Claesson</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="hardware" />
+      
+        <category term="security" />
+      
+
+      
+        <summary type="html">Stand back! We’re doing science! voltage glitching on an Arduino</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>

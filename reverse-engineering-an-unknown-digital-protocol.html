@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Security researching from the nordics" />
+    <link rel="shortcut icon" href="/assets/images/static/blog-icon.png" type="image/png" />
+    <link rel="canonical" href="/reverse-engineering-an-unknown-digital-protocol" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Securityits.io" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Reverse Engineering an unknown digital protocol: RHME2, Whac a mole" />
+    <meta property="og:description" content="Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the" />
+    <meta property="og:url" content="/reverse-engineering-an-unknown-digital-protocol" />
+    <meta property="og:image" content="/assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2021-05-18T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2021-05-18T00:00:00+00:00" />
+    <meta property="article:tag" content="Hardware" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Reverse Engineering an unknown digital protocol: RHME2, Whac a mole" />
+    <meta name="twitter:description" content="Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:image" content="/assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Securityits.io" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Hardware" />
+    <meta name="twitter:site" content="@Securitybits_io" />
+    <meta name="twitter:creator" content="@Securitybits_io" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Securityits.io",
+        "logo": "/assets/images/static/blog-icon.png"
+    },
+    "url": "/reverse-engineering-an-unknown-digital-protocol",
+    "image": {
+        "@type": "ImageObject",
+        "url": "/assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/reverse-engineering-an-unknown-digital-protocol"
+    },
+    "description": "Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Reverse Engineering an unknown digital protocol: RHME2, Whac a mole" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="/"><img src="/assets/images/static/blog-icon.png" alt="Securityits.io" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-github" role="menuitem"><a href="https://github.com/securitybits-io">Github</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-hardware tag-ctf tag-security post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="18 May 2021">18 May 2021</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/hardware/'>HARDWARE</a>,
+                            
+                        
+                            
+                               <a href='/tag/ctf/'>CTF</a>,
+                            
+                        
+                            
+                               <a href='/tag/security/'>SECURITY</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <blockquote>
+  <p>Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the darn things will be greatly rewarded. Are you up for the task?</p>
+</blockquote>
+
+<p>So I wanted to do some more hardware based CTF, especially now in covid times I don’t get out as much to client sites doing some of these things on site. So I picked up yet another Riscure RHME2 CTF binary and tossed it into one of my Arduino Nano boards to have a go at it! This time I’ll tackle the challenge Whack a Mole (links are down below) which is a (at the time of writing) 5 year old challenge, but it’s been on my todo list for a while.</p>
+
+<h2 id="setup">Setup</h2>
+<p>So the Bill of Materials needed are:</p>
+
+<ul>
+  <li>2x Arduino Nano</li>
+  <li>Breadboard</li>
+  <li>Various cables for the breadboard</li>
+  <li>Digital Oscilloscope with at least one channel (I used a Rigol DS1054Z)</li>
+  <li>Optional: Logic Analyzer</li>
+</ul>
+
+<p>Lets kick things off by actually loading the binary onto our target arduino. The writing of the binary will be done by using avrdude, which is available in most package repos.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~# wget https://github.com/Riscure/Rhme-2016/raw/master/challenges/binaries/whac_the_mole/whac_the_mole.hex
+root@linux:~# avrdude -c arduino -p atmega328p -p /dev/&lt;NANO Device&gt; -b115200 -u -V -U flash:w:whac_the_mole.hex
+</code></pre></div></div>
+
+<p>Doing that should produce a successful flash of the device with the correct binary. The next step is to power up the board and check if there’s any data on the serial connection. But to do that we also need to find the baudrate of the device, which can be done by either trying and getting lucky, or using the oscilloscope to measure the peaks and data rate that is sent. But before actually hooking up the scope to the circuit,I highly recommend looking through EEVblogs guide on “<a href="https://www.youtube.com/watch?v=xaELqAo4kkQ">How NOT to blow up your oscilloscope</a>”, first and last warning!</p>
+
+<p>So just to give the low down on serial communication. Devices communicate over a serial connection to other devices, it does so in binary representation by managing Peaks and Valleys on a digital connection. The Digital connection have two states:</p>
+
+<ul>
+  <li>+5/3.3v represent a 0</li>
+  <li>+/-0v represent a 1</li>
+</ul>
+
+<p>That means when hooking up a oscilloscope to a serial connection, we’ll see a natural +5v baseline on the screen. It also means that when we are triggering the probe in order to pause the data on the screen, we need to trigger on a downward slope. So hooking up the scope to the target Tx pin (Nano Pin0), setting the trigger to a -2.5v downward slope on the correct probe and resetting the arduino board we get presented with a fixed image of a serial transmission. Looking at the oscilloscopes automagic measurements, it’s quite easy to determine a Rate of 192kV/s, so a baudrate of 19200 will work perfectly. Another great feature of the DS1054Z and many other digital oscilloscopes is that it can do RS232 decode directly in the device. Plugging in the known baudate to the Decode function outputs some of the sent strings.</p>
+
+<p><img src="assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/RS232_Decode.png" alt="Oscilloscope Serial Decoding" /></p>
+
+<h2 id="first-connection">First Connection</h2>
+
+<p>Having that knowledge that we have the correct baudrate, we can use <code class="language-plaintext highlighter-rouge">screen /dev/&lt;NANO Target&gt; 19200</code> or whichever fancy serial program that’s available. Once connected we get presented by the following screen:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@linux:~# screen /dev/ttyUSB0 19200
+Welcome adventurer.
+
+We are glad you are here. We are in dire need of assistance.
+A huge family of moles have found their way into our yard.
+We need you to get rid of all 20 of them.
+If you manage to extinguish them all we will greatly reward you.
+When you are ready, please step into the yard by pressing &lt;Enter&gt;
+
+Ready?
+Get set!
+GO!
+You missed it. Try again by pressing &lt;Enter&gt;.
+</code></pre></div></div>
+
+<p>Pressing enter at the screen just gives the following message over and over again, and the program does not seem to accepts characters or and form of input over the Serial connection. So it is time to start exploring other options!</p>
+
+<p>The name of the challenge, refer to the physical game of Whack the mole! which is a carnival game where heads pop up through holes, and the objective is to hit those in order to score points. Ok so that’s easy enough if you’d know where to hit the moles.</p>
+
+<p><img src="assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png" alt="Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/" /></p>
+
+<p>Looking at the schematics of the Arduino Nano, we can identify that there are a bunch of digital pins. 0/1 are dedicated to Tx and Rx for the Serial, 2-13 are dedicated Digital pins, and 14-19 are analog pins. Lets hook up a Logic Analyzer to the digital pins in order to see if there’s any other signals.</p>
+
+<p><img src="assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg" alt="Saleae Logic Setup" /></p>
+
+<p>Hooking up the Saleae Logic to the 2-8 pins gave no results after pressing enter on the Serial Prompt, but taking the next set of pins 9-13 and A0-A2 resulted in some traffic on the yellow cable, Channel 4, which was connected to the pin D13.</p>
+
+<p><img src="assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png" alt="Logic Software result" /></p>
+
+<h2 id="making-some-assumptions">Making some assumptions</h2>
+<p>While further investigating the board and signals, I went in with a couple assumptions</p>
+<ul>
+  <li>The Signals on pin D13, reflected the pin to hit</li>
+  <li>The pin should be one of the other Digital pins 2-12</li>
+  <li>There are multiple levels and not just one hit that has to be made</li>
+  <li>The signal should be received within 100ms from the peak</li>
+</ul>
+
+<p>While I was successful in making one or two hits and manually mapping out the pins that needed to be hit, each time that the board target resets the pins changed. Which pushed me in the direction of needing to do some proper logic on the micro controller in order to automate the process as much as possible.</p>
+
+<p><img src="assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png" alt="Registering multiple mole whacks using the oscilloscope" /></p>
+
+<h2 id="codesplaining">Codesplaining</h2>
+<p>In order to successfully automate the process of retrieving the flag there are some code requirements:</p>
+<ol>
+  <li>Be able to bruteforce multiple pins</li>
+  <li>The amount of observable peaks are between 1-6</li>
+  <li>Automated process of verifying and resetting the board</li>
+  <li>The time to hit should be ~100ms</li>
+</ol>
+
+<p>So in order to solve the resetting and verifying problem, I relied on using the <code class="language-plaintext highlighter-rouge">SoftwareSerial.h</code> library, as that can create a Software emulated Serial Tx/Rx out of any other pin. The idea was to interpret the messages that the target board was echoing depending if you hit a mole or not. Where the different states are:</p>
+<ul>
+  <li>You whacked it &gt; Success</li>
+  <li>You missed it &gt; fFail</li>
+  <li>Welcome &gt; Start of the game</li>
+</ul>
+
+<p>With that set, came the problem of number 1, to bruteforce the pins. We know from the research that there are pins 2-12 as input on the target board to hit, and there are a maximum of 6 peaks on each iteration.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>int candidates[6] = {2, 2, 2, 2, 2, 2};
+int pins[6] = {0, 0, 0, 0, 0, 0};
+
+void peak(int pin){
+    digitalWrite(pin, HIGH);
+    delay(PEAKDELAY);
+    digitalWrite(pin, LOW);
+  }
+
+void whack(int pin){
+    digitalWrite(PIN_MONITOR, HIGH);
+    if (pins[pin] != 0) {
+      peak(pins[pin]);
+    } else {
+      peak(candidates[pin]);
+    }
+    digitalWrite(PIN_MONITOR, LOW);
+  }
+</code></pre></div></div>
+
+<p>The bruteforce function simply checks the amount of peaks that are registered on the input D13 pin, which corresponds to the array <code class="language-plaintext highlighter-rouge">pins[n]</code>. If the <code class="language-plaintext highlighter-rouge">pin[peak] is 0</code> try the pin in <code class="language-plaintext highlighter-rouge">candidates[peak]</code> in this case, it starts by sending a peak out on pin D2. If the hit missed, the function <code class="language-plaintext highlighter-rouge">miss()</code> will increase <code class="language-plaintext highlighter-rouge">candidates[peak]</code> with one, so that the next time the program registers the same peak it will try pin D3. If however the peak would be a hit, the method <code class="language-plaintext highlighter-rouge">hit()</code> will be called and register pin D2 into the <code class="language-plaintext highlighter-rouge">pins[n]</code> table to be remembered for the future identical number of peaks.</p>
+
+<p><img src="assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png" alt="Console of the microcontroller which is performing the bruteforce" /></p>
+
+<p>Running the code should eventually bruteforce each pin position, and print the flag in your terminal connected to the target!</p>
+
+<p><img src="assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png" alt="Successful bruteforce of the pin positions for the flag on the target Nano" /></p>
+
+<h3 id="source-code">Source Code</h3>
+<p>Putting all the code together should look something like:
+    #include <SoftwareSerial.h></SoftwareSerial.h></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#define MAXPINS 12
+#define PEAKDELAY 30
+#define BAUDRATE 19200
+#define SER_TX 18
+#define SER_RX 19
+#define PIN_READ 13
+#define PIN_MONITOR 14
+
+int state = 0;
+int peak_count;
+int peak_state;
+int top_level = 1;
+int current_level = 1;
+
+char inData;
+String strBuf;
+String str;
+unsigned long peak_start = 0;
+
+String pins_used[12] = {"[ ]","[ ]","[ ]","[ ]","[ ]","[ ]","[ ]","[ ]","[ ]","[ ]","[ ]","[ ]"};
+int candidates[6] = {2, 2, 2, 2, 2, 2};
+int pins[6] = {0, 0, 0, 0, 0, 0};
+
+SoftwareSerial target(SER_RX, SER_TX);
+
+void setup() {
+  Serial.begin(BAUDRATE);
+
+  pinMode(PIN_READ, INPUT);
+  pinMode(PIN_MONITOR, OUTPUT);
+  digitalWrite(PIN_MONITOR, LOW);
+
+  for (int i=2;i&lt;MAXPINS+1;i++){
+    pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
+    }
+
+  Serial.println("Ready");
+  target.begin(19200);
+}
+
+void set_used_pins(int pin){
+  if (pins_used[pin-1] == "[ ]")
+    pins_used[pin-1] = "[*]";
+  }
+
+void print_status(){
+  for (int i=0;i&lt;2;i++) Serial.println("\r");  
+  Serial.print("Used Pins: ");
+  for (int i=0;i&lt;12;i++){
+    Serial.print(pins_used[i]);
+    Serial.print(" ");
+  }
+  Serial.println("\r");
+  Serial.println("------------------");
+  Serial.print("Peaks: 1 2 3 4 5 6  ");
+  Serial.print("| Level: ");
+  Serial.println(current_level);
+  Serial.print("Pins : ");
+
+  for (int i=0;i&lt;6;i++){
+    Serial.print(pins[i]);
+    Serial.print(" ");
+    }
+
+  Serial.print(" | Top: ");
+  Serial.print(top_level);
+  Serial.println("/50");
+}
+
+void peak(int pin){
+    digitalWrite(pin, HIGH);
+    delay(PEAKDELAY);
+    digitalWrite(pin, LOW);
+  }
+
+void whack(int pin){
+    digitalWrite(PIN_MONITOR, HIGH);
+    if (pins[pin] != 0) {
+      peak(pins[pin]);
+    } else {
+      peak(candidates[pin]);
+    }
+    digitalWrite(PIN_MONITOR, LOW);
+  }
+
+void hit(){
+    if (pins[peak_state] == 0){
+        int candidate = candidates[peak_state];
+        set_used_pins(candidate);
+        pins[peak_state] = candidate;
+      }
+    print_status();
+    current_level++;
+    if (current_level &gt; top_level)
+      top_level++;
+  }
+
+void miss(){
+    candidates[peak_state] = candidates[peak_state] + 1;
+
+    if (candidates[peak_state] &gt; 12){
+      Serial.println("INVALID PIN.... Resetting to 2");
+      candidates[peak_state] = 2;
+    }
+
+    print_status();
+    current_level = 0;
+  }
+
+void loop() {
+  while(target.available()){
+    inData = target.read();
+    strBuf += inData;
+    }
+
+  if (strBuf.endsWith(F("\n"))){
+    strBuf.trim();
+    if (strBuf.length() &gt; 0) { str = strBuf; }
+    strBuf = "";
+    }
+
+  if (str.indexOf(F("missed")) &gt;= 0) {
+    miss();
+    str = "";
+    target.write("\r");
+
+  } else if (str.indexOf(F("whacked")) &gt;= 0) {
+    hit();
+    str = "";     
+
+  } else if (str.indexOf(F("When you are ready")) &gt;= 0) {
+    Serial.println("Start the game");
+    delay(500);
+    print_status();
+    str = "";
+    target.write("\r");
+  }
+
+  int value = digitalRead(PIN_READ);
+  if (value != state){
+    state = value;
+    if (state == 1){
+      peak_start = millis();
+      peak_count++;
+      }
+    }
+
+  if (state == 0 &amp;&amp; peak_start &amp;&amp; peak_start + 100 &lt; millis()){
+    peak_state = peak_count - 1;
+    whack(peak_state);
+    peak_start = 0;
+    peak_count = 0;
+    }
+}
+</code></pre></div></div>
+
+<h3 id="resources">Resources</h3>
+<p>The complete source code and fritzing scheme can be found at:<br />
+Fritzing - <a href="https://blog.securitybits.io/assets/files/2021/05/reverse-engineering-an-unknown-digital-protocol/scheme.fzz">scheme.fzz</a><br />
+Arduino Sketch - <a href="https://blog.securitybits.io/assets/files/2021/05/reverse-engineering-an-unknown-digital-protocol/whacker.ino">whacker.ino</a></p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="christoffer" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/christoffer">Christoffer Claesson</a></h4>
+                                
+                                    <p>I am Christoffer Claesson, a professional security researcher from Sweden who spends his days (and many nights) on red teaming, security deep dives, and homelab experiments. This blog is my way of giving back to the community by sharing lessons, notes, and the occasional side project that grew bigger than planned.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/christoffer">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/static/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Securityits.io &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/hardware/">Hardware</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/its-hidiyous">Its HiDIYous</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/Clock-Glitching-with-a-chipwhisperer">Clock Glitching with a ChipWhisperer-Lite</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/fault-injection-powerglitching-on-the-cheap">Voltage glitching on the cheap</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/hardware/">
+                                
+                                    See all 3 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/securityaudit-of-an-open-source-project-takserver">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/securityaudit-of-an-open-source-project-takserver">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Pentest</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Security</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Securityaudit of an OpenSource Software: FreeTAKServer</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  The parrot is not dead, its RESTing
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      8 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/password-audit">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2020/06/password-audit/active-directory-header.png)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/password-audit">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Security</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Redteam</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Password audits</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  This is be a brief overview on why and how to perform a password audit on a windows domain.
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      5 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="/">
+            
+                <img src="/assets/images/static/blog-icon.png" alt="Securityits.io icon" />
+            
+            <span>Securityits.io</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Reverse+Engineering+an+unknown+digital+protocol%3A+RHME2%2C+Whac+a+mole&amp;url=https://jekyllt.github.io/jasper2/reverse-engineering-an-unknown-digital-protocol"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://jekyllt.github.io/jasper2/reverse-engineering-an-unknown-digital-protocol"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="/">Securityits.io</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyllt/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-115328400-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

