@@ -249,7 +249,8 @@ So this is one of the first gameservers that I put up, and is a always on server
 Same as the ODA-Arma3 server but this is for DayZ Standalone.
 
 ### TakServer
-![TakServer Logo](assets/images/posts/2020/05/what-virtual-machines-am-i-running/TAK-CIV-Banner.png)
+![TakServer Logo](assets/images/posts/2020/05/what-virtual-machines-am-i-running/TAK-CIV-Banner.png)  
+
 2 vCPU/2GB RAM/100GB Disk  
 So ATAK-Civ has been one of those applications that I really wanted to try out for a long time. What it is, a Blue Force Tracker and information sharing app for Android and Windows. FreeTAKServer is built on a python3 Implementation of TakServer, which is lightweight and easy to run on much of any hardware that has pip and python. (Stay Tuned for a SaltStack installation script)
 
