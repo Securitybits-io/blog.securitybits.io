@@ -53,7 +53,7 @@ Let's start of with something easy. Flask signs all their client sessions with a
 
 This gives a malicious user the ability to sign their own cookies (using for example: [Flask-Unsign](https://github.com/Paradoxis/Flask-Unsign)), and internally change the UID of the current user and assume any other user, for example UID 1 which is the Admin. (Privilege Escalation)
 
-Another interessting issue that you run into aswell is that having two Flask servers with the same _secret key_ makes it possible for a user to reuse a UID 1 cookie from Server A, and apply that cookie to Server B logging in to the same UID 1. (Lateral movement/Authentication bypass)
+Another interesting issue that you run into as well is that having two Flask servers with the same _secret key_ makes it possible for a user to reuse a UID 1 cookie from Server A, and apply that cookie to Server B logging in to the same UID 1. (Lateral movement/Authentication bypass)
 
 ### \[CVE-2022-25512\] API and Websocket Keys galore
 
