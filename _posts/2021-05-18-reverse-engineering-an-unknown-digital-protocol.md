@@ -1,29 +1,18 @@
 ---
+layout: post
+current: post
+cover: assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg
+logo: assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg
+navigation: True
 title: 'Reverse Engineering an unknown digital protocol: RHME2, Whac a mole'
 date: 2021-05-18
-thumbnailImagePosition: left
-thumbnailImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/banner.jpg
-coverImage: /img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/thumbnail.jpg
-coversize: partial
-coverMeta: out
-metaAlignment: center
-clearReading: true
-categories:
-- Hardware
-- CTF
-tags:
-- riscure
-- rhme2
-- hardware
-- ctf
-- security
-- pentest
-showTags: false
-showPagination: true
-showSocial: true
-showDate: true
-comments: false
-summary: "Almost like King of the Lab this time!"
+tags: 
+  - hardware
+  - ctf
+  - security
+class: post-template
+subclass: 'post'
+author: christoffer
 ---
 
 > Who doesn't like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer's family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the darn things will be greatly rewarded. Are you up for the task?
@@ -53,7 +42,7 @@ So just to give the low down on serial communication. Devices communicate over a
 
 That means when hooking up a oscilloscope to a serial connection, we'll see a natural +5v baseline on the screen. It also means that when we are triggering the probe in order to pause the data on the screen, we need to trigger on a downward slope. So hooking up the scope to the target Tx pin (Nano Pin0), setting the trigger to a -2.5v downward slope on the correct probe and resetting the arduino board we get presented with a fixed image of a serial transmission. Looking at the oscilloscopes automagic measurements, it's quite easy to determine a Rate of 192kV/s, so a baudrate of 19200 will work perfectly. Another great feature of the DS1054Z and many other digital oscilloscopes is that it can do RS232 decode directly in the device. Plugging in the known baudate to the Decode function outputs some of the sent strings.
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/RS232_Decode.png" title="Oscilloscope Serial Decoding" >}}
+![Oscilloscope Serial Decoding](assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/RS232_Decode.png)
 
 ## First Connection
 
@@ -77,15 +66,15 @@ Pressing enter at the screen just gives the following message over and over agai
 
 The name of the challenge, refer to the physical game of Whack the mole! which is a carnival game where heads pop up through holes, and the objective is to hit those in order to score points. Ok so that's easy enough if you'd know where to hit the moles.
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png" title="Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/" >}}
+![Arduino Nano pinout schematic from http://lab.dejaworks.com/arduino-nano-pinouts/](assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Arduino-Nano-pinout.png)
 
 Looking at the schematics of the Arduino Nano, we can identify that there are a bunch of digital pins. 0/1 are dedicated to Tx and Rx for the Serial, 2-13 are dedicated Digital pins, and 14-19 are analog pins. Lets hook up a Logic Analyzer to the digital pins in order to see if there's any other signals.
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg" title="Saleae Logic Setup" >}}
+![Saleae Logic Setup](assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Lab-desktop-saleae.jpg)
 
 Hooking up the Saleae Logic to the 2-8 pins gave no results after pressing enter on the Serial Prompt, but taking the next set of pins 9-13 and A0-A2 resulted in some traffic on the yellow cable, Channel 4, which was connected to the pin D13.
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png" title="Logic Software result" >}}
+![Logic Software result](assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Logic_analyzer_software.png)
 
 ## Making some assumptions
 While further investigating the board and signals, I went in with a couple assumptions
@@ -96,7 +85,7 @@ While further investigating the board and signals, I went in with a couple assum
 
 While I was successful in making one or two hits and manually mapping out the pins that needed to be hit, each time that the board target resets the pins changed. Which pushed me in the direction of needing to do some proper logic on the micro controller in order to automate the process as much as possible.
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png" title="Registering multiple mole whacks using the oscilloscope" >}}
+![Registering multiple mole whacks using the oscilloscope](assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/Multiple_hits.png)
 
 ## Codesplaining
 In order to successfully automate the process of retrieving the flag there are some code requirements:
@@ -133,11 +122,11 @@ With that set, came the problem of number 1, to bruteforce the pins. We know fro
 
 The bruteforce function simply checks the amount of peaks that are registered on the input D13 pin, which corresponds to the array `pins[n]`. If the `pin[peak] is 0` try the pin in `candidates[peak]` in this case, it starts by sending a peak out on pin D2. If the hit missed, the function `miss()` will increase `candidates[peak]` with one, so that the next time the program registers the same peak it will try pin D3. If however the peak would be a hit, the method `hit()` will be called and register pin D2 into the `pins[n]` table to be remembered for the future identical number of peaks.
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png" title="Console of the microcontroller which is performing the bruteforce" >}}
+![Console of the microcontroller which is performing the bruteforce](assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/bruteforce.png)
 
 Running the code should eventually bruteforce each pin position, and print the flag in your terminal connected to the target!
 
-{{< image classes="fancybox center" src="/img/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png" title="Successful bruteforce of the pin positions for the flag on the target Nano" >}}
+![Successful bruteforce of the pin positions for the flag on the target Nano](assets/images/posts/2021/05/reverse-engineering-an-unknown-digital-protocol/flag.png)
 
 ### Source Code
 Putting all the code together should look something like:
@@ -301,5 +290,5 @@ Putting all the code together should look something like:
 
 ### Resources
 The complete source code and fritzing scheme can be found at:  
-Fritzing - [scheme.fzz](https://blog.securitybits.io/misc/2021/05/reverse-engineering-an-unknown-digital-protocol/scheme.fzz)  
-Arduino Sketch - [whacker.ino](https://blog.securitybits.io/misc/2021/05/reverse-engineering-an-unknown-digital-protocol/whacker.ino)
+Fritzing - [scheme.fzz](https://blog.securitybits.io/assets/files/2021/05/reverse-engineering-an-unknown-digital-protocol/scheme.fzz)  
+Arduino Sketch - [whacker.ino](https://blog.securitybits.io/assets/files/2021/05/reverse-engineering-an-unknown-digital-protocol/whacker.ino)
