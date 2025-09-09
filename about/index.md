@@ -7,7 +7,8 @@ logo: 'assets/images/static/blog-icon.png'
 class: page-template
 subclass: 'post page'
 ---
-![Presentation of Early developed BloodhoundAD](assets/images/pages/profile/christoffer/cover.jpg)
+
+![Presentation of Early developed BloodhoundAD](../assets/images/pages/profile/christoffer/cover.jpg)
 
 I just want some place to give back to the community and help people learn. That is the reason I put up this blog.
 
