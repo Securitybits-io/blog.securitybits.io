@@ -1,41 +1,24 @@
 ---
+layout: post
+current: post
+cover: assets/images/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg
+navigation: True
 title: 'Beats 7.5.0 on PFsense 2.4.4'
 date: 2019-12-11
-thumbnailImagePosition: left
-thumbnailImage: /img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg
-coverImage: /img/posts/2019/12/beats-7-5-0-on-pfsense/314799.jpg
-coversize: partial
-coverMeta: out
-metaAlignment: center
-clearReading: true
-categories:
-- Homelab
-- Elastic-co
-tags:
-- homelab
-- security
-- filebeat
-- auditbeat
-- metricbeat
-- packetbeat
-- elasticsearch
-- elk
-- kibana
-- logstash
-- elastic-co
-showTags: false
-showPagination: true
-showSocial: true
-showDate: true
-comments: false
-summary: "Long time wanting a beats client to PFsense which runs on FreeBSD, so lets compile it our self from source!"
+tags: 
+  - homelab
+  - security
+class: post-template
+subclass: 'post'
+author: christoffer
 ---
+> Long time wanting a beats client to PFSense which runs on FreeBSD, so lets compile it our self from source!
 
 There is always the option to send it via syslog, but it would be easier just using the beats to parse and send logs to a centralized logging platform. in this case a Hot-Warm elastic search cluster fronted by two Logstash machines (definitely overkill though).
 
 ## Initial Setup
 
-So for this task i'll be using Vagrant in order to simple have a VM that i can build the beats from the git source.
+So for this task I'll be using Vagrant in order to simple have a VM that I can build the beats from the git source.
 
 Best way to install with current instructions is using the official [Vagrant Installation Guide](https://www.vagrantup.com/docs/installation/).
 
@@ -45,7 +28,7 @@ I'll be also using Virtual box as a provider.
 
 Vagrant deploys virtual machines by a Vagrant File specification. We are compiling to a FreeBSD 11.2 system which means that we'll also specify for vagrant to spin up such a box.
 
-My Vagrant file looks like following, now you can certainly put it somewhere else, bu i just need the FreeBSD machine for this purpose, and will be destroyed after this compile hence putting it into /tmp.
+My Vagrant file looks like following, now you can certainly put it somewhere else, but I just need the FreeBSD machine for this purpose, and will be destroyed after this compile hence putting it into ``/tmp.``
 ```
 root@ubuntu:~# mkdir freebsd-compile
 root@ubuntu:~# cd freebsd-compile/^C
@@ -88,7 +71,7 @@ root@freebsd:/home/vagrant # cd
 root@freebsd:~ #
 ```
 
-Now comes the compiling of beats. And for this chapter i actually want to give a very large kudos to [Jakommo](https://github.com/jakommo) who came up with it, but its too good not to have it drown in a [github issue.](https://github.com/elastic/beats/issues/1034#issuecomment-557276051)
+Now comes the compiling of beats. And for this chapter I actually want to give a very large kudos to [Jakommo](https://github.com/jakommo) who came up with it, but its too good not to have it drown in a [github issue.](https://github.com/elastic/beats/issues/1034#issuecomment-557276051)
 
 ## Package installation and Compilation
 
