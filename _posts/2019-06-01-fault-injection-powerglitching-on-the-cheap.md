@@ -1,44 +1,30 @@
 ---
+layout: post
+current: post
+cover: assets/images/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg
+navigation: True
 title: 'Voltage glitching on the cheap'
 date: 2019-06-01
-thumbnailImagePosition: left
-thumbnailImage: /img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg
-coverImage: /img/posts/2019/06/voltage-glitching-on-the-cheap/pexels-photo-132700.jpeg
-coversize: partial
-coverMeta: out
-metaAlignment: center
-clearReading: true
-categories:
-- Hardware
-- CTF
-tags:
-- riscure
-- rhme2
-- hardware
-- ctf
-- security
-- pentest
-showTags: false
-showPagination: true
-showSocial: true
-showDate: true
-comments: false
-summary: "Stand back! We're doing science! voltage glitching on an Arduino"
+tags: 
+  - hardware
+  - security
+class: post-template
+subclass: 'post'
+author: christoffer
 ---
+> Stand back! We're doing science! voltage glitching on an Arduino
+
 So a couple a weeks ago I decided that I needed more hardware and electronics experience (also writing code and making lights go blink blink is awesome). The foremost purpose of this post is to actually document what I am doing. The base setup will be two arduinos, one Nano and a Uno, also the firmware for a CTF Challenge from Riscure called Fiesta (links further down). The end goal is to use the Nano to modify the voltage that the Unos atmega328p chip receives enough so that the code execution changes and displays the flag.
 
 ## What is voltage glitching?
 
 Doing voltage glitching is basically precisely controlling the power supply of a micro controller. This can either mean increasing or decreasing the power during a couple of clock cycles.
-<!--
-![VCCGlitch Working](/img/posts/2019/06/voltage-glitching-on-the-cheap/Vccglitch_working.png)
--->
 
-{{< image classes="fancybox center fig-100" src="/img/posts/2019/06/voltage-glitching-on-the-cheap/Vccglitch_working.png" title="Working glitch" >}}
+![VCCGlitch Working](assets/images/posts/2019/06/voltage-glitching-on-the-cheap/Vccglitch_working.png)
 
 In the diagram above, the blue represents the power (V/DC), and red represents the micro controllers clock cycles. Manipulating the amount of power and the length can result in interesting thing, such like a instruction misbehaving in making an extra jump, or changing the value of an integer. And this power glitching must be done with some degree of accuracy, like using a FPGA card or even better a [Chipwhisperer](https://newae.com/tools/chipwhisperer/). Though dropping the power for too long will result in a chip reset, or a corrupted firmware. Which the latter can be quite expensive if one does not have the source code of the firmware. &nbsp;
 
-But a good FPGA or Chipwhisperer can be expensive for a first time hardware hacker and i had a couple of arduinos laying around, so challenge accepted...
+But a good FPGA or Chipwhisperer can be expensive for a first time hardware hacker and I had a couple of Arduinos laying around, so challenge accepted...
 
 ## Setup
 
@@ -69,19 +55,19 @@ Cool, so step one works, loading the victim firmware onto the board.
 
 Step two, connecting the cables from the glitch source (Nano) to the Uno. On a high level picture it would look something like this:
 
-![Connection Diagram](/img/posts/2019/06/voltage-glitching-on-the-cheap/diagram-2.JPG)
+![Connection Diagram](assets/images/posts/2019/06/voltage-glitching-on-the-cheap/diagram-2.JPG)
 
 But the immediate problem is that the Uno contains capacitors in order to store and filter electricity to the micro controller, in case of... glitches. Which means, in order to power glitch the Atmega328p, the micro controller has to be put onto a breadboard, and connect the relevant cables for it to send and receive data. That way it is fairly trivial to control the micro controllers ground, without any interfering capacitors. This can also be achieved on other hardware (like a Nano which does not have a removable micro controller) by looking up the specification and with a steady hand, desolder the ground pin.
 
 Carefully removing the micro controller and placing it on the breadboard, the next step would be to reconnect it back to the arduino board itself on the corresponding terminals.
 
-![Arduino Uno ATmega328P Pin Mapping](/img/posts/2019/06/voltage-glitching-on-the-cheap/Arduino-Uno-ATmega328P-Pin-Mapping1.png)
+![Arduino Uno ATmega328P Pin Mapping](assets/images/posts/2019/06/voltage-glitching-on-the-cheap/Arduino-Uno-ATmega328P-Pin-Mapping1.png)
 
 The pins that should be connected back are at least Pin 1, 2, 3, 7,9,10 and 20. Which will handle basic power and operations, as well as Serial send/receive/reset to the micro controller. From the Uno board we also want to have the Uno serial send its data to the Nanos Serial Rx port, so Connect Uno (Tx) to Nano (Rx). Next step is actually wiring up the Glitching logic to control the Uno Micro controllers ground, on the Nano using the Transistor (2N7000) according to the high level scheme above.
 
 The final assembly should be something like the image below. In this case I've connected the Nano Ground to Uno micro controller ground pin 8.
 
-![Arduino Setup](/img/posts/2019/06/voltage-glitching-on-the-cheap/IMG_6324-1.JPG)
+![Arduino Setup](assets/images/posts/2019/06/voltage-glitching-on-the-cheapassets/images_6324-1.JPG)
 
 The 2N7000 Transistor is what is actually going to control the ground to the micro controller. By connecting Nano D2 to the transistors middle pin though the resistor, the circuit is open as long as the pin has a HIGH state, thus providing the controller with power. As soon as D2 goes into a LOW state, the transistor will close and therefor the controller will loose power. The trick is to do it long enough so that the CPU Instruction glitches, but not so long so that it'll reset or corrupt he device...
 
@@ -174,6 +160,6 @@ Putting all the code together it should look something like:
 
 Running the code it should eventually display the flag from the Arduino Uno!
 
-![Successful glitch](/img/posts/2019/06/voltage-glitching-on-the-cheap/Screenshot-from-2019-05-17-22-05-43.png)
+![Successful glitch](assets/images/posts/2019/06/voltage-glitching-on-the-cheap/Screenshot-from-2019-05-17-22-05-43.png)
 
 While this might seem like a trivial implementation, there are accounts where ex. the Xbox360 was unlocked using this method, [link to wiki](https://github.com/Free60Project/wiki).
