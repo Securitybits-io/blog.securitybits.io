@@ -1,31 +1,22 @@
 ---
+layout: post
+current: post
+cover: assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg
+logo: assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/thumbnail.jpg
+navigation: True
 title: 'Securityaudit of an OpenSource Software: FreeTAKServer'
 date: 2022-02-14
-thumbnailImagePosition: left
-thumbnailImage: /img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/thumbnail.jpg
-coverImage: /img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/banner.jpg
-coversize: partial
-coverMeta: out
-metaAlignment: center
-clearReading: true
-categories:
-- Opensource
-- pentest
-tags:
-- freetakserver
-- atak
-- takserver
-- security
-- pentest
-showTags: false
-showPagination: true
-showSocial: true
-showDate: true
-comments: false
-summary: "The parrot is not dead, its RESTing"
+tags: 
+  - pentest
+  - security
+class: post-template
+subclass: 'post'
+author: christoffer
 ---
 
-> A colleague and I decided to have a look at a open-source project called [FreeTAKServer](https://github.com/FreeTAKTeam/FreeTakServer) and its frontend [FreeTAKServer-UI](https://github.com/FreeTAKTeam/UI). Mostly for fun, but there's always bugs to be had!
+> The parrot is not dead, its RESTing
+
+A colleague and I decided to have a look at a open-source project called [FreeTAKServer](https://github.com/FreeTAKTeam/FreeTakServer) and its frontend [FreeTAKServer-UI](https://github.com/FreeTAKTeam/UI). Mostly for fun, but there's always bugs to be had!
 
 ## What is FreeTAKServer
 
@@ -58,7 +49,7 @@ Lets begin!
 ### \[CVE-2022-25510\] Hardcoded Flask Secrets Key
 
 Let's start of with something easy. Flask signs all their client sessions with a secret key, usually defined in an _Environment Variable_. In this case though there's three places that these are hardcoded into. 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/Github_Flask_Secret-key.jpg" title="Flask secret keys" >}}
+![Flask secret keys](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/Github_Flask_Secret-key.jpg)
 
 This gives a malicious user the ability to sign their own cookies (using for example: [Flask-Unsign](https://github.com/Paradoxis/Flask-Unsign)), and internally change the UID of the current user and assume any other user, for example UID 1 which is the Admin. (Privilege Escalation)
 
@@ -70,11 +61,11 @@ With FreeTAKServer comes also a REST API, and Websockets to programatically mana
 
 ##### API Bearer Token
 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/SourceCode_RestAPI-key.jpg" title="RestAPI Key" >}}
+![RestAPI Key](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/SourceCode_RestAPI-key.jpg)
 
 ##### Websocket Token
 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/SourceCode_WebSocket-key.jpg" title="WebSocket Token" >}}
+![WebSocket Token](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/SourceCode_WebSocket-key.jpg)
 
 > Remember to always check the source code!
 
@@ -82,7 +73,7 @@ With FreeTAKServer comes also a REST API, and Websockets to programatically mana
 
 In the RestAPI there is also the Endpoint _/ManageRoute/postRoute_ which is unauthenticated. While this might not seem interesting at first, it is possible to broadcast new routes (suggested tracks to take) to every End User Device (EUD) connected to the server. This can create two issues, either create a Denial of Service situation where a malicious user can fill the entire map with routes, making it impossible to use the map in the EUD. The second scenario might be to create a route on which possible users might take and therefor control some of the paths and direct users into bad situations.
 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/Unauthenticated-Endpoint.jpg" title="Unauthenticated PostRoute Endpoint" >}}
+![Unauthenticated PostRoute Endpoint](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/Unauthenticated-Endpoint.jpg)
 
 Example Request
 ```json
@@ -109,20 +100,20 @@ In the FreeTAKServer-UI there is a function to create and view Emergency Alerts 
 
 In the case of a XSS in the WebUI it is as simple as having a callsign with the payload of `<img src onerror=alert(/payload/)>` which will trigger the Emergency function and display the emergency in the WebUI.
 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_webui_payload.jpg" title="XSS WebUI Payload" >}}  
+![XSS WebUI Payload](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_webui_payload.jpg)  
 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_webui_alert.jpg" title="XSS WebUI Alert" >}}  
+![XSS WebUI Alert](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_webui_alert.jpg)  
 
 ##### End User Device
 What's more interesting of a scenario is that it is possible to push Emergencies from any of the EUDs, these can range from a 911, TIC (Troops in Contact) or similar. This Emergency will broadcast to each EUD (Which are not affected) but also shown in the WebUI, again triggering the XSS payload.
 
 This can be chained together with the API keys in the reponse in order to obtain a server RestAPI key for further exploitation, which can take a normal user in the field to a Web Server admin
 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_alert.jpg" title="XSS End User Device Payload" >}}  
+![XSS End User Device Payload](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_alert.jpg)  
 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_webui_payload.jpg" title="XSS End User Device WebUI Payload" >}}  
+![XSS End User Device WebUI Payload](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_webui_payload.jpg)  
 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_alert.jpg" title="XSS End User Device WebUI Alert" >}}  
+![XSS End User Device WebUI Alert](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/xss_enduserdevice_alert.jpg)  
 
 ### \[CVE-2022-25506\] SQL Injection on AuthenticateUser
 
@@ -146,7 +137,7 @@ fetch("http://atak.FreeTAKServer.com:19023/AuthenticateUser?username=abc\" UNION
 ```
 
 Will return the following response:  
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/sqli_response.jpg" title="SQL Injection Response, Network Tab" >}}  
+![SQL Injection Response, Network Tab](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/sqli_response.jpg)  
 
 Which clearly shows the database results in clear-text.
 
@@ -165,10 +156,10 @@ This was achieved using a transparent proxy to catch and modify the webrequest, 
 ###### Proof Of Concept
 
 Request through Burpsuite:  
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_webui_request.jpg" title="Burpsuite Request" >}} 
+![Burpsuite Request](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_webui_request.jpg) 
 
 File on system:  
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_webui_tmp-file.jpg" title="File on system" >}}  
+![File on system](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_webui_tmp-file.jpg)  
 (Note that the webserver is at that moment run as root, _Not Recommended_)
 
 Bash equivalent PoC:  
@@ -222,11 +213,11 @@ Note that this does not require any _authentication_ only that you are connected
 curl -vvv -F "assetfile=@rce.html" "http://atak.FreeTAKServer.com:8080/Marti/sync/missionupload?hash=/../../../../../../../usr/local/lib/python3.8/dist-packages/FreeTAKServer-UI/app/home/templates/&filename=janne2.html&creatorUid="
 ```
 Sending the file contents to the missionupload endpoint results in a valid response and browsing to the file on the WebUI results in Code Execution:  
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_marti_curl.jpg" title="Marti curl request and file contents" >}}
+![Marti curl request and file contents](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_marti_curl.jpg)
 
 The file will be uploaded to `/usr/local/lib/python3.8/dist-packages/FreeTAKServer-UI/app/home/templates` which is where the Flask server is hosting its files from.
 
-{{< image classes="fancybox center" src="/img/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_marti_result.jpg" title="Code Execution through Templating" >}}
+![Code Execution through Templating](assets/images/posts/2022/02/securityaudit-of-an-open-source-project-takserver/arbitrary-file-write_marti_result.jpg)
 
 {{< alert warning no-icon >}}
 In discussions with the developers, they mentioned that FreeTAKServer is Unsafe due to the architecture and should not be accessible to the public internet but only ran inside a trusted network.
