@@ -1,31 +1,18 @@
 ---
+layout: post
+current: post
+cover: assets/images/posts/2019/12/ropemporium-3-write4/rop.jpg
+navigation: True
 title: 'ROPEmporium: 3-Write4 (64-bit)'
 date: 2019-12-03
-thumbnailImagePosition: left
-thumbnailImage: /img/posts/2019/12/ropemporium-3-write4/rop.jpg
-coverImage: /img/posts/2019/12/ropemporium-3-write4/rop.jpg
-coversize: partial
-coverMeta: out
-metaAlignment: center
-clearReading: true
-categories:
-- Exploit-Development
-- ROPEmporium
-- CTF
-tags:
-- ctf
-- dev
-- getting-started
-- ropemporium
-- rop
-- exploit
-showTags: false
-showPagination: true
-showSocial: true
-showDate: true
-comments: false
-summary: "Moving on to the 4th installment of this series with Write4"
+tags: 
+  - exploit-dev
+class: post-template
+subclass: 'post'
+author: christoffer
 ---
+
+> Moving on to the 4th instalment of this series with Write4
 
 Continuing on the series of ROPEmporium, lets do number 3 "Write4".
 
@@ -99,7 +86,7 @@ root@linux:~# r2 write4 -AAA
 
 Checking the `sym.usefulFunction` reveals that there's a systemcall, but it calls `/bin/ls`. So the goal is to write `/bin/sh\x00` somewhere in the binary, and use the `system()` to execute the string.
 
-{{< image classes="fancybox center" src="/img/posts/2019/12/ropemporium-3-write4/image-1.png" title="Radare2 useful symbols" >}}
+![Radare2 useful symbols](assets/posts/2019/12/ropemporium-3-write4/image-1.png)
 
 Finding a home for our string should be fairly trivial, as we should be able to put it into the _.data_ section of the binary_._ As we can clearly see the perms on _.data_ is `-rw- (read/write).`
 ```
@@ -285,6 +272,6 @@ io.sendline(payload)
 io.interactive()
 ```
 
-{{< image classes="fancybox center" src="/img/posts/2019/12/ropemporium-3-write4/image-2.png" title="Flag" >}}
+![Flag](assets/img/posts/2019/12/ropemporium-3-write4/image-2.png)
 
 GitHub: [https://github.com/Securitybits-io/ROPEmporium](https://github.com/Securitybits-io/ROPEmporium)
