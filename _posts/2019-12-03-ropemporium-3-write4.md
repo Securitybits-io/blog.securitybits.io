@@ -86,7 +86,7 @@ root@linux:~# r2 write4 -AAA
 
 Checking the `sym.usefulFunction` reveals that there's a systemcall, but it calls `/bin/ls`. So the goal is to write `/bin/sh\x00` somewhere in the binary, and use the `system()` to execute the string.
 
-![Radare2 useful symbols](assets/posts/2019/12/ropemporium-3-write4/image-1.png)
+![Radare2 useful symbols](assets/iamges/posts/2019/12/ropemporium-3-write4/image-1.png)
 
 Finding a home for our string should be fairly trivial, as we should be able to put it into the _.data_ section of the binary_._ As we can clearly see the perms on _.data_ is `-rw- (read/write).`
 ```
@@ -188,7 +188,7 @@ def arbitrary_write(address, data):
 ```
 ## Putting it all together
 
-Now i wont bore you with creating a template or finding the overflow offset, as that can be found in the earlier blog posts. Constructing the ROP Chain will look something like the following:
+Now I wont bore you with creating a template or finding the overflow offset, as that can be found in the earlier blog posts. Constructing the ROP Chain will look something like the following:
 ```
 [junk] + arbitrary_write(.data, "/bin/sh\x00") + [pop_rdi] + [.data] + [system]
 ```
@@ -272,6 +272,6 @@ io.sendline(payload)
 io.interactive()
 ```
 
-![Flag](assets/img/posts/2019/12/ropemporium-3-write4/image-2.png)
+![Flag](assets/images/posts/2019/12/ropemporium-3-write4/image-2.png)
 
 GitHub: [https://github.com/Securitybits-io/ROPEmporium](https://github.com/Securitybits-io/ROPEmporium)
