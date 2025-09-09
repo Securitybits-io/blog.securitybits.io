@@ -67,7 +67,7 @@ The pins that should be connected back are at least Pin 1, 2, 3, 7,9,10 and 20. 
 
 The final assembly should be something like the image below. In this case I've connected the Nano Ground to Uno micro controller ground pin 8.
 
-![Arduino Setup](assets/images/posts/2019/06/voltage-glitching-on-the-cheapassets/images_6324-1.JPG)
+![Arduino Setup](assets/images/posts/2019/06/voltage-glitching-on-the-cheapassets/IMG_6324-1.JPG)
 
 The 2N7000 Transistor is what is actually going to control the ground to the micro controller. By connecting Nano D2 to the transistors middle pin though the resistor, the circuit is open as long as the pin has a HIGH state, thus providing the controller with power. As soon as D2 goes into a LOW state, the transistor will close and therefor the controller will loose power. The trick is to do it long enough so that the CPU Instruction glitches, but not so long so that it'll reset or corrupt he device...
 
