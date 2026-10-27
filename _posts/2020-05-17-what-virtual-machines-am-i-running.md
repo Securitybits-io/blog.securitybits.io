@@ -17,7 +17,7 @@ author: christoffer
 
 ![The 'current' network architecture](assets/images/posts/2020/05/what-virtual-machines-am-i-running/home_network-securitybits-v2.5.png)
 
-To start off everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1.
+To start off, everything that you can see is running under ESXi-6.7 on my VRTX, which is managed by vCenter-6.7. Though this will soon be upgraded to 7.0 as soon as VMware releases 7.0u1.
 
 ## Hypervisor
 ### Dell VRTX (Aegir)
