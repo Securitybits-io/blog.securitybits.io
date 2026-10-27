@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title> - Articles</title>
+    <description>Security researching from the nordics</description>
+    <link>
+    </link>
+    
+      
+      <item>
+        <title>Its HiDIYous</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Its HiDIYous, but it works!…&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Thu, 03 Oct 2024 00:00:00 +0000</pubDate>
+        <link>
+        /its-hidiyous</link>
+        <guid isPermaLink="true">/its-hidiyous</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Clock Glitching with a ChipWhisperer-Lite</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;What happens when things get out of sync?… SCIENCE!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Sun, 01 Jan 2023 00:00:00 +0000</pubDate>
+        <link>
+        /Clock-Glitching-with-a-chipwhisperer</link>
+        <guid isPermaLink="true">/Clock-Glitching-with-a-chipwhisperer</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Securityaudit of an OpenSource Software: FreeTAKServer</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;The parrot is not dead, its RESTing&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Mon, 14 Feb 2022 00:00:00 +0000</pubDate>
+        <link>
+        /securityaudit-of-an-open-source-project-takserver</link>
+        <guid isPermaLink="true">/securityaudit-of-an-open-source-project-takserver</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Reverse Engineering an unknown digital protocol: RHME2, Whac a mole</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Who doesn’t like a classic game of whac-the-mole? This time the moles infiltrated deep into the backyard of a poor farmer’s family. The moles are ruining the crops, which the farmer desperately needs to provide for his wife and 2 children. Any traveler able to help him by extinguishing the darn things will be greatly rewarded. Are you up for the task?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Tue, 18 May 2021 00:00:00 +0000</pubDate>
+        <link>
+        /reverse-engineering-an-unknown-digital-protocol</link>
+        <guid isPermaLink="true">/reverse-engineering-an-unknown-digital-protocol</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Password audits</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;This is be a brief overview on why and how to perform a password audit on a windows domain.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Tue, 02 Jun 2020 00:00:00 +0000</pubDate>
+        <link>
+        /password-audit</link>
+        <guid isPermaLink="true">/password-audit</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>What Virtual Machines Am I Running?</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Disclaimer, this is subject to change… very often and very quickly!&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Sun, 17 May 2020 00:00:00 +0000</pubDate>
+        <link>
+        /what-virtual-machines-am-i-running</link>
+        <guid isPermaLink="true">/what-virtual-machines-am-i-running</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Beats 7.5.0 on PFsense 2.4.4</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Long time wanting a beats client to PFSense which runs on FreeBSD, so lets compile it our self from source!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Wed, 11 Dec 2019 00:00:00 +0000</pubDate>
+        <link>
+        /beats-7-5-0-on-pfsense</link>
+        <guid isPermaLink="true">/beats-7-5-0-on-pfsense</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>ROPEmporium: 3-Write4 (64-bit)</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Moving on to the 4th instalment of this series with Write4&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Tue, 03 Dec 2019 00:00:00 +0000</pubDate>
+        <link>
+        /ropemporium-3-write4</link>
+        <guid isPermaLink="true">/ropemporium-3-write4</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>ROPEmporium: 2-Callme (64-bit)</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Continuing the ROP Series with Callme, this time going through Calling conventions&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Sat, 17 Aug 2019 00:00:00 +0000</pubDate>
+        <link>
+        /ropemporium-2-callme</link>
+        <guid isPermaLink="true">/ropemporium-2-callme</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>ROPEmporium: 1-Split (64-bit)</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Doing a ROPEmporium Series, time to switch it up with Split!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Sat, 10 Aug 2019 00:00:00 +0000</pubDate>
+        <link>
+        /ropemporium-1-split</link>
+        <guid isPermaLink="true">/ropemporium-1-split</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>ROPEmporium: 0-Ret2Win (64-bit)</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Doing a series on ROP and ROPEmporium, starting out with a simple ret2win&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Thu, 08 Aug 2019 00:00:00 +0000</pubDate>
+        <link>
+        /ropemporium-0-ret2win</link>
+        <guid isPermaLink="true">/ropemporium-0-ret2win</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Voltage glitching on the cheap</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Stand back! We’re doing science! voltage glitching on an Arduino&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Sat, 01 Jun 2019 00:00:00 +0000</pubDate>
+        <link>
+        /fault-injection-powerglitching-on-the-cheap</link>
+        <guid isPermaLink="true">/fault-injection-powerglitching-on-the-cheap</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Valentine Writeup</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Heartbleeds and dirty cows, i feel sorry for the creator!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Fri, 27 Jul 2018 00:00:00 +0000</pubDate>
+        <link>
+        /valentine-writeup</link>
+        <guid isPermaLink="true">/valentine-writeup</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Falafel Writeup</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;My writeup of the Hack the box Falafel.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Sat, 23 Jun 2018 00:00:00 +0000</pubDate>
+        <link>
+        /falafel-writeup</link>
+        <guid isPermaLink="true">/falafel-writeup</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Chatterbox Writeup</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;My writeup of the Hack the box Chatterbox.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Mon, 18 Jun 2018 00:00:00 +0000</pubDate>
+        <link>
+        /chatterbox-writeup</link>
+        <guid isPermaLink="true">/chatterbox-writeup</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>RSA Prime Decryption</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Description and usage of a decryption script that I wrote for CTF Challenges.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Mon, 16 Apr 2018 00:00:00 +0000</pubDate>
+        <link>
+        /rsa-prime-decryption</link>
+        <guid isPermaLink="true">/rsa-prime-decryption</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>Nibbles Writeup</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;“My writeup of the Hack the box Nibbles box… Nibble nibble!”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+</description>
+        
+        <pubDate>Thu, 08 Mar 2018 00:00:00 +0000</pubDate>
+        <link>
+        /nibbles-writeup</link>
+        <guid isPermaLink="true">/nibbles-writeup</guid>
+      </item>
+      
+    
+      
+      <item>
+        <title>SDL: Bolt on or Built in?</title>
+        
+          <description>&lt;blockquote&gt;
+  &lt;p&gt;Time is of the essence. Every day that a business is anything less then fully secure is a day exposed to hackers. It’s also another day that developers continue building applications without factoring security into their lifecycle.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;There’s two strategies when you are developing, either you bolt on security, or you build it in. Lets start with defining those!&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 03 Mar 2018 00:00:00 +0000</pubDate>
+        <link>
+        /sdl-bolt-on-or-buit-in</link>
+        <guid isPermaLink="true">/sdl-bolt-on-or-buit-in</guid>
+      </item>
+      
+    
+  </channel>
+</rss>
